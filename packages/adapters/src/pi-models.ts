@@ -53,6 +53,7 @@ const RECOMMENDED_MODEL_IDS: Readonly<Record<string, string>> = {
   google: "gemini-3.8-flash",
   groq: "openai/gpt-oss-120b",
   minimax: "MiniMax-M3",
+  meta: "muse-spark-1.3",
 };
 
 export function isRecommendedCatalogModel(provider: string, id: string): boolean {

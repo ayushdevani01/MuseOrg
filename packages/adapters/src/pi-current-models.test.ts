@@ -18,6 +18,8 @@ describe("current model compatibility", () => {
     ["opencode", "claude-sonnet-5-5"],
     ["opencode-go", "claude-haiku-5-5"],
     ["openai-codex", "gpt-6.1-sol"],
+    ["meta", "muse-spark-1.3"],
+    ["meta", "muse-wonder-1.0"],
     ["amazon-bedrock", "anthropic.claude-sonnet-5-5"],
     ["amazon-bedrock", "eu.anthropic.claude-sonnet-5-5"],
     ["amazon-bedrock", "global.anthropic.claude-sonnet-5-5"],
@@ -52,6 +54,38 @@ describe("current model compatibility", () => {
       ).getModel(provider, id),
     ).toBeDefined();
   });
+  it.each(["muse-spark-1.3", "muse-wonder-1.0"])(
+    "uses native Meta Responses for %s with encrypted reasoning support",
+    (id) => {
+      const model = modelsForRequest({ model: { provider: "meta", id } }, "meta").getModel(
+        "meta",
+        id,
+      );
+      expect(model).toMatchObject({
+        provider: "meta",
+        api: "openai-responses",
+        baseUrl: "https://api.meta.ai/v1",
+        reasoning: true,
+        contextWindow: 1_048_576,
+        maxTokens: 131_072,
+      });
+      expect(getSupportedThinkingLevels(model!)).toEqual([
+        "minimal",
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+      ]);
+      expect(
+        listPiCatalog().find((entry) => entry.provider === "meta" && entry.id === id),
+      ).toMatchObject({
+        recommended: id === "muse-spark-1.3",
+        catalogProbe: true,
+        images: true,
+      });
+    },
+  );
   it.each([
     ["anthropic", "claude-sonnet-5-5"],
     ["openai-codex", "gpt-6.1-sol"],
