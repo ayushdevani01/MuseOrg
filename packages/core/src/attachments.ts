@@ -206,10 +206,16 @@ const MIME_TYPE_EXTENSIONS: Record<AttachmentMimeType, string> = {
   "application/zip": ".zip",
 };
 
+/** Code attachments are data, including when a picker reports an executable MIME type. */
+const SOURCE_EXTENSIONS = new Set([".py", ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx"]);
+
 export function inferAttachmentMimeType(
   name: string,
   reportedType?: string,
 ): AttachmentMimeType | null {
+  const dot = name.lastIndexOf(".");
+  const extension = dot < 0 ? "" : name.slice(dot).toLowerCase();
+  if (SOURCE_EXTENSIONS.has(extension)) return "text/plain";
   if (
     reportedType === "application/x-zip-compressed" ||
     reportedType === "application/x-zip" ||
@@ -227,8 +233,7 @@ export function inferAttachmentMimeType(
   if (reportedType && Object.hasOwn(audioAliases, reportedType)) return audioAliases[reportedType]!;
   // audio/aac may describe an M4A's codec, not its container. Infer from .m4a;
   // do not advertise standalone AAC streams as MP4 containers.
-  const dot = name.lastIndexOf(".");
-  const extensionType = dot < 0 ? undefined : EXTENSION_MIME_TYPES[name.slice(dot).toLowerCase()];
+  const extensionType = EXTENSION_MIME_TYPES[extension];
   // Some browsers and native document pickers report Markdown as text/plain.
   if (extensionType === "text/markdown" && (!reportedType || reportedType === "text/plain")) {
     return extensionType;

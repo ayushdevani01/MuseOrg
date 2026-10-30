@@ -12,6 +12,23 @@ import {
 } from "./attachments.js";
 
 describe("attachment helpers", () => {
+  it.each(["py", "js", "mjs", "cjs", "ts", "tsx", "jsx"])(
+    "shares %s source as plain text without an executable MIME type",
+    (extension) => {
+      for (const reported of [
+        undefined,
+        "application/octet-stream",
+        "application/javascript",
+        "text/html",
+      ]) {
+        expect(inferAttachmentMimeType(`source.${extension}`, reported)).toBe("text/plain");
+        expect(inferAttachmentMimeType(`SOURCE.${extension.toUpperCase()}`, reported)).toBe(
+          "text/plain",
+        );
+      }
+      expect(() => validateAttachmentMimeType("text/plain")).not.toThrow();
+    },
+  );
   it.each([
     ["mp3", "audio/mpeg"],
     ["wav", "audio/wav"],
