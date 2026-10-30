@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { signupPolicyFromEnv } from "@rakazo/core";
 import type { PrismaClient } from "./client.js";
 
@@ -25,7 +25,9 @@ export async function bootstrapUserSpace(
   // Concurrent bootstraps for the same user (e.g. overlapping first phone
   // inbounds) race on every unique key below; each step either wins or
   // joins the winner's state instead of failing.
-  const slug = `user-${user.id.slice(0, 12)}`;
+  // Bind the slug to the complete identity. A shared ID prefix must never
+  // turn one person's bootstrap into membership of another person's org.
+  const slug = `user-${createHash("sha256").update(user.id).digest("hex")}`;
   let orgId = newId();
   try {
     await prisma.organization.create({
@@ -33,7 +35,14 @@ export async function bootstrapUserSpace(
     });
   } catch (error) {
     if (!isUniqueViolation(error)) throw error;
-    orgId = (await prisma.organization.findUniqueOrThrow({ where: { slug } })).id;
+    const existing = await prisma.organization.findUniqueOrThrow({
+      where: { slug },
+      select: { id: true, members: { select: { userId: true } } },
+    });
+    if (existing.members.some((member) => member.userId !== user.id)) {
+      throw new Error("Personal organization belongs to another user");
+    }
+    orgId = existing.id;
   }
   await prisma.member
     .create({

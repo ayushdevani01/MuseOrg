@@ -44,7 +44,7 @@ describe("bootstrapUserSpace", () => {
     expect(prisma.organization.create).toHaveBeenCalledTimes(1);
     const orgData = prisma.organization.create.mock.calls[0]![0].data;
     expect(orgData.name).toBe("Personal");
-    expect(orgData.slug).toBe("user-user-1".slice(0, 16));
+    expect(orgData.slug).toEqual(expect.stringMatching(/^user-/));
     expect(result.spaceId).toBe(orgData.id);
 
     const memberData = prisma.member.create.mock.calls[0]![0].data;
@@ -81,6 +81,32 @@ describe("bootstrapUserSpace", () => {
     expect(create.signupAllowlist).toBe("a@example.com,b@example.com");
     expect(create.signupPolicyInitialized).toBe(true);
     expect(update).toEqual({});
+  });
+
+  it("keeps users with the same ID prefix in separate private organizations", async () => {
+    const first = makePrisma(null);
+    const second = makePrisma(null);
+    const firstUser = "shared-prefix-first-user";
+    const secondUser = "shared-prefix-second-user";
+    expect(firstUser.slice(0, 12)).toBe(secondUser.slice(0, 12));
+
+    const firstSpace = await bootstrapUserSpace(
+      first as unknown as PrismaClient,
+      { id: firstUser },
+      env,
+    );
+    const secondSpace = await bootstrapUserSpace(
+      second as unknown as PrismaClient,
+      { id: secondUser },
+      env,
+    );
+
+    expect(first.organization.create.mock.calls[0]![0].data.slug).not.toBe(
+      second.organization.create.mock.calls[0]![0].data.slug,
+    );
+    expect(firstSpace.spaceId).not.toBe(secondSpace.spaceId);
+    expect(first.member.create.mock.calls[0]![0].data.userId).toBe(firstUser);
+    expect(second.member.create.mock.calls[0]![0].data.userId).toBe(secondUser);
   });
 
   it.each([null, "user-0"])(
@@ -121,7 +147,10 @@ describe("bootstrapUserSpace concurrency", () => {
     const prisma = {
       organization: {
         create: vi.fn(uniqueViolation),
-        findUniqueOrThrow: vi.fn(async () => ({ id: "org-winner" })),
+        findUniqueOrThrow: vi.fn(async () => ({
+          id: "org-winner",
+          members: [{ userId: "user-1" }],
+        })),
       },
       member: { create: vi.fn(uniqueViolation) },
       space: { create: vi.fn(uniqueViolation) },
@@ -146,5 +175,27 @@ describe("bootstrapUserSpace concurrency", () => {
     );
 
     expect(result.spaceId).toBe("org-winner");
+  });
+
+  it("refuses to join an existing organization owned by another user", async () => {
+    const prisma = {
+      ...makePrisma(null),
+      organization: {
+        create: vi.fn(async () => {
+          throw Object.assign(new Error("Unique constraint failed"), { code: "P2002" });
+        }),
+        findUniqueOrThrow: vi.fn(async () => ({
+          id: "other-organization",
+          members: [{ userId: "other-user" }],
+        })),
+      },
+    };
+
+    await expect(
+      bootstrapUserSpace(prisma as unknown as PrismaClient, { id: "user-1" }, env),
+    ).rejects.toThrow("Personal organization belongs to another user");
+    expect(prisma.member.create).not.toHaveBeenCalled();
+    expect(prisma.space.create).not.toHaveBeenCalled();
+    expect(prisma.spaceMember.create).not.toHaveBeenCalled();
   });
 });

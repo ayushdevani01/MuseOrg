@@ -61,7 +61,7 @@ describePostgres("provisionMessagingIdentity (PostgreSQL)", () => {
 
     const org = await asSystem(prisma).organization.findUnique({ where: { id: result.spaceId } });
     expect(org!.name).toBe("Personal");
-    expect(org!.slug).toBe(`user-${result.userId.slice(0, 12)}`);
+    expect(org!.slug).toMatch(/^user-[a-f0-9]{64}$/);
 
     const space = await asSystem(prisma).space.findUnique({
       where: { id: result.spaceId },
