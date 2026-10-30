@@ -12,10 +12,11 @@ import {
   catalogItemAccounts,
   catalogItemKey,
   connectCatalogItem,
-  EMPTY_PLUGIN_CATALOG_MESSAGE,
   filterConnectionCatalogItems,
   humanizeToolName,
   isCatalogItemConnected,
+  MCP_PRESETS,
+  mcpPresetForEndpoint,
 } from "@rakazo/core";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -33,6 +34,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ConnectorIcon } from "../../components/connector-icon";
+import { MenuPickerMenu } from "../../components/menu-picker";
 import { NativeActionButton } from "../../components/native-action-button";
 import { Chevron } from "../../components/row-accessories";
 import { rpc } from "../../lib/api";
@@ -184,6 +186,7 @@ export default function Integrations() {
     setMcpError(null);
     setDetailKey(null);
     setLabelDrafts({});
+    closeSource();
     setPending(null);
     connectionAttempt.current?.abort();
   }
@@ -216,6 +219,7 @@ export default function Integrations() {
       setMcpError(null);
       setDetailKey(null);
       setLabelDrafts({});
+      closeSource();
     }
     cacheScope.current = scope;
     if (!previous || previous.userId !== scope.userId || previous.spaceId !== scope.spaceId) {
@@ -352,14 +356,18 @@ export default function Integrations() {
     };
   }, [detailKey, toolsTick]);
 
-  function closeAdvanced() {
-    setAdvancedOpen(false);
+  function closeSource() {
     setSourceKind(null);
     setSourceError(null);
     setName("");
     setUrl("");
     setCredential("");
     setRequiresAuth(true);
+  }
+
+  function closeAdvanced() {
+    setAdvancedOpen(false);
+    if (sourceKind === "treg" || sourceKind === "executor") closeSource();
   }
 
   function openDetail(item: ConnectionCatalogItem) {
@@ -513,6 +521,8 @@ export default function Integrations() {
 
   async function addSource() {
     if (!sourceKind) return;
+    const isCurrent = captureConnectionScope();
+    if (!isCurrent()) return;
     setPending("source");
     setSourceError(null);
     try {
@@ -541,26 +551,30 @@ export default function Integrations() {
                     auth: { type: sourceKind === "executor" || requiresAuth ? "bearer" : "none" },
                   },
       });
+      if (!isCurrent()) return;
       setCredential("");
       setSourceKind(null);
       await refresh();
     } catch (reason) {
-      setSourceError(errorText(reason, t("Could not add source")));
+      if (isCurrent()) setSourceError(errorText(reason, t("Could not add source")));
     } finally {
-      setPending(null);
+      if (isCurrent()) setPending(null);
     }
   }
 
   async function removeSource(source: CapabilityInstall) {
+    const isCurrent = captureConnectionScope();
+    if (!isCurrent()) return;
     setPending(source.id);
     setSourceError(null);
     try {
       await rpc("capabilities/remove", { id: source.id });
+      if (!isCurrent()) return;
       setSources((current) => current.filter((item) => item.id !== source.id));
     } catch (reason) {
-      setSourceError(errorText(reason, t("Could not remove source")));
+      if (isCurrent()) setSourceError(errorText(reason, t("Could not remove source")));
     } finally {
-      setPending(null);
+      if (isCurrent()) setPending(null);
     }
   }
 
@@ -731,6 +745,106 @@ export default function Integrations() {
     );
   }
 
+  function renderSourceForm() {
+    const preset = sourceKind === "mcp" ? mcpPresetForEndpoint(url) : undefined;
+    return (
+      <>
+        {sourceError ? <Text style={styles.error}>{sourceError}</Text> : null}
+        {sourceKind ? (
+          <View style={styles.card}>
+            {preset ? (
+              <NativeActionButton
+                label={t("Setup guide")}
+                fill={false}
+                prominence="secondary"
+                onPress={() => void Linking.openURL(preset.docsUrl)}
+              />
+            ) : null}
+            <Text style={styles.title}>
+              {sourceKind === "treg"
+                ? t("Connect Treg")
+                : sourceKind === "executor"
+                  ? t("Connect Executor")
+                  : sourceKind === "mcp"
+                    ? t("Remote MCP server")
+                    : sourceKind === "graphql"
+                      ? t("GraphQL endpoint")
+                      : t("OpenAPI JSON")}
+            </Text>
+            <TextInput
+              value={name}
+              onChangeText={setName}
+              placeholder={t("Display name")}
+              placeholderTextColor={native.tertiaryLabel}
+              style={styles.input}
+            />
+            {sourceKind !== "treg" ? (
+              <TextInput
+                value={url}
+                onChangeText={setUrl}
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder={
+                  sourceKind === "mcp"
+                    ? t("https://example.com/mcp")
+                    : sourceKind === "executor"
+                      ? t("https://executor.example/mcp")
+                      : sourceKind === "graphql"
+                        ? t("https://example.com/graphql")
+                        : t("https://example.com/openapi.json")
+                }
+                placeholderTextColor={native.tertiaryLabel}
+                style={styles.input}
+              />
+            ) : null}
+            {sourceKind !== "treg" && sourceKind !== "executor" ? (
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setRequiresAuth((value) => !value)}
+                style={styles.authToggle}
+              >
+                <Text style={styles.secondary}>
+                  {requiresAuth ? t("Bearer authentication") : t("No authentication")}
+                </Text>
+              </Pressable>
+            ) : null}
+            {sourceKind === "treg" || sourceKind === "executor" || requiresAuth ? (
+              <TextInput
+                value={credential}
+                onChangeText={setCredential}
+                secureTextEntry
+                autoCapitalize="none"
+                autoCorrect={false}
+                placeholder={
+                  sourceKind === "treg"
+                    ? t("Treg token")
+                    : sourceKind === "executor"
+                      ? t("Executor token")
+                      : t("Bearer token")
+                }
+                placeholderTextColor={native.tertiaryLabel}
+                style={styles.input}
+              />
+            ) : null}
+            <View style={styles.accountActions}>
+              <NativeActionButton
+                busy={pending === "source"}
+                label={t("Verify and add")}
+                onPress={() => void addSource()}
+                prominence="secondary"
+              />
+              <NativeActionButton
+                label={t("Cancel")}
+                onPress={closeSource}
+                prominence="secondary"
+              />
+            </View>
+          </View>
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <SafeAreaView edges={["bottom"]} style={styles.screen}>
       <ScrollView
@@ -739,6 +853,35 @@ export default function Integrations() {
         contentInsetAdjustmentBehavior="automatic"
         keyboardShouldPersistTaps="handled"
       >
+        {!detailItem ? (
+          <>
+            <MenuPickerMenu
+              label={t("Add integration")}
+              choices={[
+                { key: "mcp", label: t("MCP server") },
+                { key: "api", label: t("OpenAPI") },
+                { key: "graphql", label: t("GraphQL") },
+              ]}
+              value=""
+              disabled={pending !== null}
+              onChange={(kind) => {
+                if (kind === "mcp" || kind === "api" || kind === "graphql") beginSource(kind);
+              }}
+            >
+              <View
+                accessibilityRole="button"
+                accessibilityLabel={t("Add integration")}
+                accessible
+                style={styles.row}
+              >
+                <Text style={[styles.title, styles.grow]}>{t("Add integration")}</Text>
+                <Chevron />
+              </View>
+            </MenuPickerMenu>
+            {renderSourceForm()}
+          </>
+        ) : null}
+
         {!detailItem ? (
           <TextInput
             value={query}
@@ -778,7 +921,11 @@ export default function Integrations() {
               )
               .map((server) => (
                 <View key={server.id} testID="registered-mcp-server" style={styles.row}>
-                  <ConnectorIcon name={server.name} size={LOGO_SIZE} />
+                  <ConnectorIcon
+                    name={server.name}
+                    iconPath={mcpPresetForEndpoint(server.endpoint)?.iconPath}
+                    size={LOGO_SIZE}
+                  />
                   <Text numberOfLines={1} style={[styles.title, styles.grow]}>
                     {server.name}
                   </Text>
@@ -798,6 +945,29 @@ export default function Integrations() {
           </View>
         ) : null}
 
+        {!detailItem && sources.length > 0 ? (
+          <View testID="installed-tool-sources" style={styles.catalogStack}>
+            <Text style={styles.section}>{t("Tool sources")}</Text>
+            {sources.map((source) => (
+              <View key={source.id} style={styles.row}>
+                <View style={styles.grow}>
+                  <Text style={styles.title}>{source.name}</Text>
+                  <Text style={styles.secondary}>{source.kind.toUpperCase()}</Text>
+                  <Text numberOfLines={1} style={styles.secondary}>
+                    {source.source}
+                  </Text>
+                </View>
+                <NativeActionButton
+                  fill={false}
+                  label={pending === source.id ? t("Removing…") : t("Remove")}
+                  onPress={() => void removeSource(source)}
+                  prominence="destructive"
+                />
+              </View>
+            ))}
+          </View>
+        ) : null}
+
         {catalogError ? (
           <View style={styles.catalogStack}>
             <Text style={styles.error}>{catalogError}</Text>
@@ -814,6 +984,52 @@ export default function Integrations() {
           renderDetail(detailItem)
         ) : (
           <>
+            <View testID="mcp-presets" style={styles.catalogStack}>
+              {MCP_PRESETS.filter((preset) =>
+                preset.name.toLowerCase().includes(query.trim().toLowerCase()),
+              ).map((preset) => {
+                const installed =
+                  mcpServers.some(
+                    (server) => mcpPresetForEndpoint(server.endpoint)?.id === preset.id,
+                  ) ||
+                  sources.some((source) => mcpPresetForEndpoint(source.source)?.id === preset.id);
+                return (
+                  <View key={preset.id} testID="mcp-preset" style={styles.row}>
+                    <ConnectorIcon name={preset.name} iconPath={preset.iconPath} size={LOGO_SIZE} />
+                    <View style={styles.grow}>
+                      <Text style={styles.title}>{preset.name}</Text>
+                      <Text style={styles.secondary}>
+                        {preset.auth === "none"
+                          ? t("No account needed")
+                          : preset.auth === "bearer" || preset.supportsBearer
+                            ? t("API token")
+                            : t("Account sign-in")}
+                      </Text>
+                    </View>
+                    <NativeActionButton
+                      label={installed ? t("Added") : t("Add")}
+                      accessibilityLabel={`${t("Add")} ${preset.name}`}
+                      disabled={installed || pending !== null}
+                      fill={false}
+                      prominence="secondary"
+                      onPress={() => {
+                        if (preset.auth === "oauth" && !preset.supportsBearer) {
+                          Alert.alert(
+                            preset.name,
+                            t("Connect this MCP server in the web app to sign in with OAuth."),
+                          );
+                          return;
+                        }
+                        beginSource("mcp");
+                        setName(preset.name);
+                        setUrl(preset.endpoint);
+                        setRequiresAuth(preset.auth !== "none");
+                      }}
+                    />
+                  </View>
+                );
+              })}
+            </View>
             {!catalogReady && !catalogError ? (
               <View
                 testID="integrations-loading"
@@ -834,10 +1050,6 @@ export default function Integrations() {
                   </View>
                 ))}
               </View>
-            ) : null}
-
-            {catalogReady && catalog.length === 0 ? (
-              <Text style={styles.secondary}>{t(EMPTY_PLUGIN_CATALOG_MESSAGE)}</Text>
             ) : null}
 
             {catalogReady && catalog.length > 0 ? (
@@ -905,133 +1117,15 @@ export default function Integrations() {
             {advancedOpen ? (
               <View style={styles.advancedBody}>
                 <View style={styles.accountActions}>
-                  {(["mcp", "api", "graphql", "executor", "treg"] as const).map((kind) => (
+                  {(["executor", "treg"] as const).map((kind) => (
                     <NativeActionButton
                       key={kind}
-                      label={
-                        kind === "treg"
-                          ? t("Add Treg")
-                          : kind === "executor"
-                            ? t("Add Executor")
-                            : kind === "mcp"
-                              ? t("Add MCP server")
-                              : kind === "graphql"
-                                ? t("Add GraphQL")
-                                : t("Add OpenAPI")
-                      }
+                      label={kind === "treg" ? t("Add Treg") : t("Add Executor")}
                       onPress={() => beginSource(kind)}
                       prominence="secondary"
                     />
                   ))}
                 </View>
-
-                {sourceError ? <Text style={styles.error}>{sourceError}</Text> : null}
-
-                {sourceKind ? (
-                  <View style={styles.card}>
-                    <Text style={styles.title}>
-                      {sourceKind === "treg"
-                        ? t("Connect Treg")
-                        : sourceKind === "executor"
-                          ? t("Connect Executor")
-                          : sourceKind === "mcp"
-                            ? t("Remote MCP server")
-                            : sourceKind === "graphql"
-                              ? t("GraphQL endpoint")
-                              : t("OpenAPI JSON")}
-                    </Text>
-                    <TextInput
-                      value={name}
-                      onChangeText={setName}
-                      placeholder={t("Display name")}
-                      placeholderTextColor={native.tertiaryLabel}
-                      style={styles.input}
-                    />
-                    {sourceKind !== "treg" ? (
-                      <TextInput
-                        value={url}
-                        onChangeText={setUrl}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        placeholder={
-                          sourceKind === "mcp"
-                            ? t("https://example.com/mcp")
-                            : sourceKind === "executor"
-                              ? t("https://executor.example/mcp")
-                              : sourceKind === "graphql"
-                                ? t("https://example.com/graphql")
-                                : t("https://example.com/openapi.json")
-                        }
-                        placeholderTextColor={native.tertiaryLabel}
-                        style={styles.input}
-                      />
-                    ) : null}
-                    {sourceKind !== "treg" && sourceKind !== "executor" ? (
-                      <Pressable
-                        accessibilityRole="button"
-                        onPress={() => setRequiresAuth((value) => !value)}
-                        style={styles.authToggle}
-                      >
-                        <Text style={styles.secondary}>
-                          {requiresAuth ? t("Bearer authentication") : t("No authentication")}
-                        </Text>
-                      </Pressable>
-                    ) : null}
-                    {sourceKind === "treg" || sourceKind === "executor" || requiresAuth ? (
-                      <TextInput
-                        value={credential}
-                        onChangeText={setCredential}
-                        secureTextEntry
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        placeholder={
-                          sourceKind === "treg"
-                            ? t("Treg token")
-                            : sourceKind === "executor"
-                              ? t("Executor token")
-                              : t("Bearer token")
-                        }
-                        placeholderTextColor={native.tertiaryLabel}
-                        style={styles.input}
-                      />
-                    ) : null}
-                    <View style={styles.accountActions}>
-                      <NativeActionButton
-                        busy={pending === "source"}
-                        label={t("Verify and add")}
-                        onPress={() => void addSource()}
-                        prominence="secondary"
-                      />
-                      <NativeActionButton
-                        label={t("Cancel")}
-                        onPress={() => setSourceKind(null)}
-                        prominence="secondary"
-                      />
-                    </View>
-                  </View>
-                ) : null}
-
-                <Text style={styles.section}>{t("Tool sources")}</Text>
-                {sources.length === 0 ? (
-                  <Text style={styles.secondary}>{t("No custom sources installed.")}</Text>
-                ) : null}
-                {sources.map((source) => (
-                  <View key={source.id} style={styles.row}>
-                    <View style={styles.grow}>
-                      <Text style={styles.title}>{source.name}</Text>
-                      <Text style={styles.secondary}>{source.kind.toUpperCase()}</Text>
-                      <Text numberOfLines={1} style={styles.secondary}>
-                        {source.source}
-                      </Text>
-                    </View>
-                    <NativeActionButton
-                      fill={false}
-                      label={pending === source.id ? t("Removing…") : t("Remove")}
-                      onPress={() => void removeSource(source)}
-                      prominence="destructive"
-                    />
-                  </View>
-                ))}
               </View>
             ) : null}
           </>

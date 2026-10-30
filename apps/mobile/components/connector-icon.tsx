@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { SvgUri } from "react-native-svg";
+import Svg, { Path, SvgUri } from "react-native-svg";
 import { native, useThemedStyles } from "../lib/native";
 
 /** Use the catalog artwork, matching web, with a local fallback for missing logos. */
 export function ConnectorIcon({
   name,
   logo,
+  iconPath,
   size = 36,
 }: {
   name: string;
   logo?: string | null;
+  iconPath?: string;
   size?: number;
 }) {
   const styles = useThemedStyles(createStyles);
@@ -28,7 +30,11 @@ export function ConnectorIcon({
       importantForAccessibility="no-hide-descendants"
       style={[styles.frame, { width: size, height: size }]}
     >
-      {uri ? (
+      {iconPath ? (
+        <Svg width={art} height={art} viewBox="0 0 24 24">
+          <Path d={iconPath} fill={native.label} />
+        </Svg>
+      ) : uri ? (
         svg ? (
           <SvgUri
             uri={uri}

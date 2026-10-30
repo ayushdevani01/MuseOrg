@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import type { ReactNode } from "react";
-import { act, createElement, useEffect } from "react";
+import { act, createElement, useEffect, useState } from "react";
 import type { Root } from "react-dom/client";
 import { createRoot } from "react-dom/client";
+import { Alert } from "react-native";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Integrations from "../app/(settings)/integrations";
 import { ConnectorIcon } from "../components/connector-icon";
@@ -40,6 +41,42 @@ vi.mock("./i18n", () => ({
   useI18n: () => ({ t: (text: string) => text }),
 }));
 vi.mock("../components/row-accessories", () => ({ Chevron: () => null }));
+vi.mock("../components/menu-picker", () => ({
+  MenuPickerMenu: function MockMenuPickerMenu({
+    label,
+    choices,
+    onChange,
+    disabled,
+  }: {
+    label: string;
+    choices: Array<{ key: string; label: string }>;
+    onChange: (key: string) => void;
+    disabled?: boolean;
+  }) {
+    const [open, setOpen] = useState(false);
+    return (
+      <div>
+        <button type="button" disabled={disabled} onClick={() => setOpen((value) => !value)}>
+          {label}
+        </button>
+        {open
+          ? choices.map((choice) => (
+              <button
+                key={choice.key}
+                type="button"
+                onClick={() => {
+                  onChange(choice.key);
+                  setOpen(false);
+                }}
+              >
+                {choice.label}
+              </button>
+            ))
+          : null}
+      </div>
+    );
+  },
+}));
 vi.mock("react-native-safe-area-context", () => ({
   SafeAreaView: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }));
@@ -59,6 +96,8 @@ vi.mock("../components/native-action-button", () => ({
   ),
 }));
 vi.mock("react-native-svg", () => ({
+  default: ({ children }: { children: ReactNode }) => createElement("svg", null, children),
+  Path: ({ d }: { d: string }) => createElement("path", { d }),
   SvgUri: ({ uri, onError }: { uri: string; onError: () => void }) =>
     createElement("svg", { "data-uri": uri, onClick: onError }),
 }));
@@ -156,6 +195,151 @@ afterEach(() => {
 async function render(node: ReactNode = <Integrations />) {
   await act(async () => root.render(node));
 }
+
+it.each([
+  ["Cloudflare Docs", "https://docs.mcp.cloudflare.com/mcp", "none"],
+  ["GitHub", "https://api.githubcopilot.com/mcp/", "bearer"],
+])("prefills %s and installs with its advertised authentication", async (name, endpoint, auth) => {
+  await render();
+  await act(async () => resolveCatalog([]));
+  const row = [...container.querySelectorAll('[data-testid="mcp-preset"]')].find((entry) =>
+    entry.textContent?.startsWith(name),
+  )!;
+  expect(row.querySelector("svg path")).not.toBeNull();
+  await act(async () => row.querySelector("button")?.click());
+  expect(
+    container.querySelector<HTMLInputElement>('input[placeholder="Display name"]')?.value,
+  ).toBe(name);
+  expect(
+    container.querySelector<HTMLInputElement>('input[placeholder="https://example.com/mcp"]')
+      ?.value,
+  ).toBe(endpoint);
+  expect(state.rpc).not.toHaveBeenCalledWith("capabilities/install", expect.anything());
+  await act(async () =>
+    [...container.querySelectorAll("button")]
+      .find((entry) => entry.textContent === "Verify and add")
+      ?.click(),
+  );
+  expect(state.rpc).toHaveBeenCalledWith(
+    "capabilities/install",
+    expect.objectContaining({
+      kind: "mcp",
+      name,
+      source: endpoint,
+      config: { preset: "custom", auth: { type: auth } },
+    }),
+  );
+});
+
+it("explains the native OAuth limitation only when an OAuth-only preset is selected", async () => {
+  vi.mocked(Alert.alert).mockClear();
+  await render();
+  const row = [...container.querySelectorAll('[data-testid="mcp-preset"]')].find((entry) =>
+    entry.textContent?.startsWith("Notion"),
+  )!;
+  await act(async () => row.querySelector("button")?.click());
+  expect(Alert.alert).toHaveBeenCalledWith(
+    "Notion",
+    "Connect this MCP server in the web app to sign in with OAuth.",
+  );
+  expect(container.querySelector('input[placeholder="Display name"]')).toBeNull();
+  expect(state.rpc).not.toHaveBeenCalledWith("capabilities/install", expect.anything());
+});
+
+it.each([
+  { label: "MCP server", kind: "mcp", endpoint: "https://example.test/mcp" },
+  { label: "OpenAPI", kind: "api", endpoint: "https://example.test/openapi.json" },
+  { label: "GraphQL", kind: "graphql", endpoint: "https://example.test/graphql" },
+])(
+  "adds $label without opening Advanced or configuring a catalog",
+  async ({ label, kind, endpoint }) => {
+    let installed = false;
+    const source = { id: "source-a", name: "Example integration", kind, source: endpoint };
+    const fallback = state.rpc.getMockImplementation()!;
+    state.rpc.mockImplementation((proc: string) => {
+      if (proc === "capabilities/install") {
+        installed = true;
+        return Promise.resolve(source);
+      }
+      if (proc === "capabilities/list") return Promise.resolve(installed ? [source] : []);
+      return fallback(proc);
+    });
+    await render();
+    await act(async () => resolveCatalog([]));
+    expect(container.textContent).not.toContain("Add Treg");
+    const button = (name: string) =>
+      [...container.querySelectorAll("button")].find((entry) => entry.textContent === name);
+    await act(async () => button("Add integration")?.click());
+    await act(async () => button(label)?.click());
+    expect(container.textContent).not.toContain("Add Treg");
+    const inputs = container.querySelectorAll("input");
+    const nameInput = [...inputs].find((entry) => entry.placeholder === "Display name")!;
+    const endpointInput = [...inputs].find(
+      (entry) => entry.placeholder === endpoint.replace(".test", ".com"),
+    )!;
+    await act(async () => {
+      for (const [input, value] of [
+        [nameInput, source.name],
+        [endpointInput, endpoint],
+      ] as const) {
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(
+          input,
+          value,
+        );
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+    await act(async () => button("Verify and add")?.click());
+    expect(state.rpc).toHaveBeenCalledWith("capabilities/install", {
+      kind,
+      name: source.name,
+      source: endpoint,
+      credential: undefined,
+      config: {
+        ...(kind === "api" ? { openApi: true } : kind === "mcp" ? { preset: "custom" } : {}),
+        auth: { type: "none" },
+      },
+    });
+    expect(
+      container.querySelector('[data-testid="installed-tool-sources"]')?.textContent,
+    ).toContain(source.name);
+    expect(container.querySelector('input[placeholder="Display name"]')).toBeNull();
+  },
+);
+
+it("clears a custom source form on scope change and ignores its late install result", async () => {
+  await render();
+  await act(async () => resolveCatalog([]));
+  const button = (label: string) =>
+    [...container.querySelectorAll("button")].find((entry) => entry.textContent === label);
+  await act(async () => button("Add integration")?.click());
+  await act(async () => button("MCP server")?.click());
+  const fallback = state.rpc.getMockImplementation()!;
+  let finish!: (value: unknown) => void;
+  const installing = new Promise((resolve) => {
+    finish = resolve;
+  });
+  state.rpc.mockImplementation((proc: string) =>
+    proc === "capabilities/install" ? installing : fallback(proc),
+  );
+  await act(async () => button("Verify and add")?.click());
+  expect(state.rpc).toHaveBeenCalledWith("capabilities/install", expect.anything());
+  state.focused = false;
+  await render();
+  state.current = false;
+  state.scope.mockImplementation(async () => {
+    state.current = true;
+    return { userId: "user-a", spaceId: "space-b" };
+  });
+  state.rpc.mockImplementation(() => Promise.resolve([]));
+  state.focused = true;
+  await render();
+  expect(container.querySelector('input[placeholder="Display name"]')).toBeNull();
+  const calls = state.rpc.mock.calls.length;
+  await act(async () => finish({ id: "old-source" }));
+  expect(state.rpc).toHaveBeenCalledTimes(calls);
+  expect(container.querySelector('[data-testid="installed-tool-sources"]')).toBeNull();
+});
 
 it("keeps Search visible and shows rows on a cold load until the first success", async () => {
   await render();
@@ -307,7 +491,7 @@ it("persists a completed connection before refreshing", async () => {
     return Promise.resolve([]);
   });
   const add = [...container.querySelectorAll("button")].find(
-    (button) => button.textContent === "Add",
+    (button) => button.textContent === "Add" && !button.closest('[data-testid="mcp-presets"]'),
   );
   await act(async () => add?.click());
   expect(state.write).toHaveBeenLastCalledWith(expect.anything(), {
