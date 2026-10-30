@@ -41,6 +41,7 @@ import {
   undoAgentImport,
 } from "../agent-import.js";
 import { deleteAgentSecret, listAgentSecrets, putAgentSecret } from "../agent-secrets.js";
+import { assertBotModelProviderAllowed } from "../model-pins.js";
 import type { RouterDeps } from "../router.js";
 import { loadMessagePage } from "../thread-message-pages.js";
 import type { RouterContext } from "./context.js";
@@ -226,6 +227,19 @@ export function botsRoutes(ctx: RouterContext) {
         return found;
       }),
       create: authed.bots.create.handler(async ({ context, input }) => {
+        if (input.modelProvider && input.modelId) {
+          assertBotModelProviderAllowed(deps, {
+            provider: input.modelProvider,
+            model: input.modelId,
+          });
+          const model = await validateBotModelChange(botModelValidation(context.actor), {
+            userId: context.actor.userId,
+            spaceId: context.actor.spaceId,
+            provider: input.modelProvider,
+            model: input.modelId,
+          });
+          if (!model.ok) throw new ORPCError("BAD_REQUEST", { message: model.error });
+        }
         let bot: Bot;
         try {
           bot = await repos.createBot(context.actor, input);
@@ -261,6 +275,10 @@ export function botsRoutes(ctx: RouterContext) {
       ),
       duplicate: authed.bots.duplicate.handler(async ({ context, input }) => {
         const source = await repos.getBot(context.actor, input.botId);
+        assertBotModelProviderAllowed(deps, {
+          provider: source.modelProvider,
+          model: source.modelId,
+        });
         const duplicate = await repos
           .createBot(context.actor, {
             name: duplicateBotName(source.name),
@@ -316,7 +334,7 @@ export function botsRoutes(ctx: RouterContext) {
           });
           if (!section) throw new IsolationError();
         }
-        const modelChange = await validateBotModelChange(botModelValidation(context.actor), {
+        const modelInput = {
           userId: context.actor.userId,
           spaceId: context.actor.spaceId,
           provider:
@@ -324,7 +342,12 @@ export function botsRoutes(ctx: RouterContext) {
           model: input.modelId !== undefined ? input.modelId : existing.modelId,
           thinkingLevel: input.thinkingLevel,
           current: { provider: existing.modelProvider, model: existing.modelId },
-        });
+        };
+        assertBotModelProviderAllowed(deps, modelInput);
+        const modelChange = await validateBotModelChange(
+          botModelValidation(context.actor),
+          modelInput,
+        );
         if (!modelChange.ok) throw new ORPCError("BAD_REQUEST", { message: modelChange.error });
         const thinkingLevel = input.thinkingLevel;
         if (!existing.thread) throw new IsolationError();
