@@ -121,6 +121,8 @@ export interface RouterDeps {
     teamChatJudgeModel?: string;
     defaultProvider: string;
     defaultModel: string;
+    /** When set, native runs require this provider on the signed-in user's own connection. */
+    requiredPersonalModelProvider?: string;
     deploymentModelConfigured?: boolean;
     deploymentModelHostCredentials?: boolean;
     webOrigin: string;

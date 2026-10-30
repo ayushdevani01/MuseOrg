@@ -4,6 +4,7 @@ import { findConnectedModelCredential, validateConnectedModelChoice } from "@rak
 import type { Actor } from "@rakazo/contracts";
 import { OPENAI_COMPATIBLE_PROVIDER_ID, usableModelId } from "@rakazo/contracts";
 import { modelRoleTarget, runAsSystem } from "@rakazo/db";
+import { assertModelProviderAllowed } from "./model-provider-policy.js";
 import type { RouterDeps } from "./router.js";
 
 /**
@@ -134,6 +135,20 @@ export async function assertCompatibleDefaultChange(
   );
 }
 
+/** Existing pins survive unrelated edits; a changed pin must satisfy deployment policy. */
+export function assertBotModelProviderAllowed(
+  deps: Pick<RouterDeps, "env">,
+  input: {
+    provider: string | null;
+    model: string | null;
+    current?: { provider: string | null; model: string | null };
+  },
+) {
+  if (!input.provider || !input.model) return;
+  if (input.provider === input.current?.provider && input.model === input.current?.model) return;
+  assertModelProviderAllowed(deps.env, input.provider);
+}
+
 /** A routine may only name a model the space has connected. */
 export async function assertRoutineModel(
   deps: RouterDeps,
@@ -142,6 +157,7 @@ export async function assertRoutineModel(
   codexCatalog: CodexLiveCatalog,
 ) {
   if (!model.modelProvider || !model.modelId) return;
+  assertModelProviderAllowed(deps.env, model.modelProvider);
   const message = await validateConnectedModelChoice(
     deps.prisma,
     deps.secrets,

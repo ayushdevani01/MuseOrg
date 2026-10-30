@@ -7,6 +7,17 @@ const base = {
 };
 
 describe("loadEnv", () => {
+  it("loads the required personal model provider without relying on a deployment key", () => {
+    expect(loadEnv(base).requiredPersonalModelProvider).toBeUndefined();
+    expect(
+      loadEnv({ ...base, REQUIRED_PERSONAL_MODEL_PROVIDER: " meta " })
+        .requiredPersonalModelProvider,
+    ).toBe("meta");
+    expect(
+      loadEnv({ ...base, REQUIRED_PERSONAL_MODEL_PROVIDER: " " }).requiredPersonalModelProvider,
+    ).toBeUndefined();
+  });
+
   it("keeps calls off unless explicitly enabled", () => {
     expect(loadEnv(base).phoneCallsEnabled).toBe(false);
     for (const value of ["false", "1", ""]) {
