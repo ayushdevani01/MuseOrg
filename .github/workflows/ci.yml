@@ -170,7 +170,7 @@ jobs:
   # image this run built instead of building on the production host.
   publish-server-image:
     name: Publish server images
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.SERVER_IMAGE_PUBLISH_ENABLED == 'true'
     uses: ./.github/workflows/publish-server-image.yml
     permissions:
       contents: read
@@ -180,7 +180,7 @@ jobs:
 
   publish-mobile-update:
     name: Publish compatible mobile update
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.MOBILE_UPDATE_ENABLED == 'true'
     needs: [lint, check, build, test, test-integration, test-e2e]
     runs-on: ubuntu-latest
     timeout-minutes: 20

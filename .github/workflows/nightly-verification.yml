@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   visual-web:
+    if: vars.VISUAL_REPORT_PUBLISH_ENABLED == 'true'
     name: Daily web screenshots
     uses: ./.github/workflows/playwright.yml
     with:
