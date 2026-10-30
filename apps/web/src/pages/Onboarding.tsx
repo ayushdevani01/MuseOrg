@@ -1,5 +1,5 @@
 import { Plural, Trans, useLingui } from "@lingui/react/macro";
-import type { ModelHeaderRow, ThinkingLevel } from "@rakazo/contracts";
+import type { Me, ModelHeaderRow, ThinkingLevel } from "@rakazo/contracts";
 import {
   CLOUDFLARE_AI_GATEWAY_PROVIDER_ID,
   cloudflareModelRouting,
@@ -47,6 +47,7 @@ import {
   modelPreflightTestingLabel,
 } from "../components/ModelConnectionPreflightNotice";
 import { ModelHeadersEditor } from "../components/ModelHeadersEditor";
+import { OnboardingUnavailable } from "../components/OnboardingUnavailable";
 import { PageLoading } from "../components/PageLoading";
 import { SignupSurvey } from "../components/SignupSurvey";
 import { useCopyText } from "../lib/copy-text";
@@ -59,9 +60,11 @@ import {
   runModelConnectionPreflight,
   unavailableSelectedModel,
 } from "../lib/model-connection-preflight";
-import { rpc } from "../lib/rpc";
+import type { RpcClient } from "../lib/rpc";
+import { createSpaceRpc, rpc } from "../lib/rpc";
 import { useModelOAuthSignIn } from "../lib/use-model-oauth-signin";
 import { errorText } from "../lib/user-error";
+import { MetaOnboarding } from "./MetaOnboarding";
 import { CompatibleKeyField } from "./model-settings/compatible-key-field";
 import { OnboardingImport } from "./onboarding-import";
 
@@ -88,7 +91,7 @@ const FIRST_BOT_SPAWN_KEY = "onboarding:first";
 const FIRST_BOT_LOCK = "rakazo:onboarding-first-bot";
 
 /** Survives StrictMode remounts; concurrent first-bot creates share one in-flight attempt. */
-let firstBotEnsure: Promise<{ id: string }> | null = null;
+const firstBotEnsures = new Map<string, Promise<{ id: string }>>();
 
 function findFirstBot(
   bots: Array<{ id: string; name: string; spawnKey: string | null }>,
@@ -100,12 +103,12 @@ function findFirstBot(
   return byName ? { id: byName.id } : undefined;
 }
 
-async function createOrReuseFirstBot(): Promise<{ id: string }> {
-  const existing = await rpc.bots.list();
+async function createOrReuseFirstBot(client: RpcClient): Promise<{ id: string }> {
+  const existing = await client.bots.list();
   const reuse = findFirstBot(existing);
   if (reuse) return reuse;
   try {
-    const created = await rpc.bots.create({
+    const created = await client.bots.create({
       name: FIRST_BOT_NAME,
       title: "",
       description: "",
@@ -116,7 +119,7 @@ async function createOrReuseFirstBot(): Promise<{ id: string }> {
     return { id: created.id };
   } catch (error) {
     // Another tab won the unique (spaceId, spawnKey) race; reuse that bot only.
-    const afterConflict = await rpc.bots.list();
+    const afterConflict = await client.bots.list();
     const winner = afterConflict.find((bot) => bot.spawnKey === FIRST_BOT_SPAWN_KEY);
     if (winner) return { id: winner.id };
     throw error;
@@ -129,18 +132,69 @@ async function withFirstBotLock<T>(run: () => Promise<T>): Promise<T> {
   return locks.request(FIRST_BOT_LOCK, run);
 }
 
-async function ensureFirstBot(): Promise<{ id: string }> {
-  if (firstBotEnsure) return firstBotEnsure;
+async function ensureFirstBot(accountBoundary: string, client: RpcClient): Promise<{ id: string }> {
+  const pending = firstBotEnsures.get(accountBoundary);
+  if (pending) return pending;
   // Web Lock serializes cross-tab creates; module promise covers same-tab StrictMode.
   // spawnKey makes create idempotent when locks are unavailable.
   // Clear after settle so a later empty-space visit re-lists instead of reusing a deleted id.
-  firstBotEnsure = withFirstBotLock(createOrReuseFirstBot).finally(() => {
-    firstBotEnsure = null;
+  const attempt = withFirstBotLock(() => createOrReuseFirstBot(client)).finally(() => {
+    firstBotEnsures.delete(accountBoundary);
   });
-  return firstBotEnsure;
+  firstBotEnsures.set(accountBoundary, attempt);
+  return attempt;
 }
 
 export function OnboardingPage() {
+  const [loaded, setLoaded] = useState<{ me: Me; models: ModelCatalogEntry[] } | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    setFailed(false);
+    void Promise.all([rpc.me(), rpc.models.list()]).then(
+      ([me, models]) => {
+        if (active) setLoaded({ me, models });
+      },
+      () => {
+        if (active) setFailed(true);
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [attempt]);
+
+  if (failed) return <OnboardingUnavailable onRetry={() => setAttempt((value) => value + 1)} />;
+  if (!loaded) return <PageLoading />;
+  return loaded.me.requiredPersonalModelProvider === "meta" ? (
+    <MetaOnboarding
+      key={loaded.me.userId}
+      initialMe={loaded.me}
+      catalog={loaded.models}
+      onReload={() => {
+        setLoaded(null);
+        setAttempt((value) => value + 1);
+      }}
+    />
+  ) : (
+    <GenericOnboardingPage
+      key={loaded.me.userId}
+      initialMe={loaded.me}
+      initialCatalog={loaded.models}
+    />
+  );
+}
+
+function GenericOnboardingPage({
+  initialMe,
+  initialCatalog,
+}: {
+  initialMe: Me;
+  initialCatalog: ModelCatalogEntry[];
+}) {
+  const [rpc] = useState(() => createSpaceRpc(initialMe.spaceId));
   const { t } = useLingui();
   const navigate = useNavigate();
   const fieldId = useId();
@@ -210,18 +264,11 @@ export function OnboardingPage() {
   });
 
   useEffect(() => {
-    void Promise.all([rpc.me(), rpc.models.list().catch(() => [])])
-      .then(([me, models]) => {
-        setBillingEnabled(me.billingEnabled);
-        setCatalog(models);
-        const next = me.needsModel ? "model" : "bot";
-        setAfterSurvey(next);
-        if (!linkedStep) goTo(me.needsSignupSurvey ? "survey" : next);
-      })
-      .catch(() => {
-        setAfterSurvey("bot");
-        if (!linkedStep) goTo("bot");
-      });
+    setBillingEnabled(initialMe.billingEnabled);
+    setCatalog(initialCatalog);
+    const next = initialMe.needsModel ? "model" : "bot";
+    setAfterSurvey(next);
+    if (!linkedStep) goTo(initialMe.needsSignupSurvey ? "survey" : next);
     return () => {
       modelProbe.invalidate();
     };
@@ -540,7 +587,8 @@ export function OnboardingPage() {
     setError(null);
     try {
       const imported = importedBotRef.current;
-      const bot = imported ?? (await ensureFirstBot());
+      const bot =
+        imported ?? (await ensureFirstBot(`${initialMe.userId}:${initialMe.spaceId}`, rpc));
       // Onboarding continues conversationally in the thread: greeting first,
       // then the focus choice (immediate for the first bot), which an imported
       // bot already answered.

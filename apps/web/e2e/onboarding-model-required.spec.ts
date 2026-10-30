@@ -24,8 +24,13 @@ test("onboarding cannot continue with an empty or failed model catalog", async (
       unavailable = next;
       await page.reload();
     }
-    await expect(page.getByRole("heading", { name: "Connect a model" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Continue", exact: true })).toBeDisabled();
+    if (next === "failed") {
+      await expect(page.getByRole("alert")).toHaveText("Could not load setup.");
+      await expect(page.getByRole("button", { name: "Try again", exact: true })).toBeVisible();
+    } else {
+      await expect(page.getByRole("heading", { name: "Connect a model" })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Continue", exact: true })).toBeDisabled();
+    }
     await expect(page.getByRole("heading", { name: "Create your first bot" })).toHaveCount(0);
     await expect(page.getByRole("combobox", { name: "Message Chief" })).toHaveCount(0);
   }

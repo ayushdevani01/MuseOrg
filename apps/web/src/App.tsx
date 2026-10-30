@@ -15,6 +15,7 @@ import { Navigate, Outlet, Route, Routes, useLocation, useSearchParams } from "r
 import { LoadingState } from "./components/ai/primitives";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PageLoading } from "./components/PageLoading";
+import { PersonalModelGate } from "./components/PersonalModelGate";
 import { SubscriptionGate } from "./components/SubscriptionGate";
 import { authClient } from "./lib/auth";
 import { getTicketBoardEnabled, subscribeTicketBoardEnabled } from "./lib/bootstrap";
@@ -190,7 +191,7 @@ function SessionApp() {
             <Route
               element={
                 user ? (
-                  <SubscriptionGate fallback={<PageLoading />}>
+                  <SubscriptionGate key={user.id} fallback={<PageLoading />}>
                     <Outlet />
                   </SubscriptionGate>
                 ) : (
@@ -199,13 +200,21 @@ function SessionApp() {
               }
             >
               <Route path="/onboarding/:step?" element={<OnboardingPage />} />
-              <Route path="/app" element={<ShellPage />} />
-              <Route path="/app/g/:groupId" element={<ShellPage />} />
-              <Route path="/app/artifacts" element={<ArtifactsPage />} />
-              <Route path="/app/artifacts/:artifactId" element={<ArtifactsPage />} />
-              {ticketBoardEnabled ? <Route path="/app/board" element={<BoardPage />} /> : null}
-              <Route path="/app/x/:linkId" element={<NavLinkPage />} />
-              <Route path="/app/:botId" element={<ShellPage />} />
+              <Route
+                element={
+                  <PersonalModelGate key={user?.id}>
+                    <Outlet />
+                  </PersonalModelGate>
+                }
+              >
+                <Route path="/app" element={<ShellPage />} />
+                <Route path="/app/g/:groupId" element={<ShellPage />} />
+                <Route path="/app/artifacts" element={<ArtifactsPage />} />
+                <Route path="/app/artifacts/:artifactId" element={<ArtifactsPage />} />
+                {ticketBoardEnabled ? <Route path="/app/board" element={<BoardPage />} /> : null}
+                <Route path="/app/x/:linkId" element={<NavLinkPage />} />
+                <Route path="/app/:botId" element={<ShellPage />} />
+              </Route>
             </Route>
           </Routes>
         </Suspense>
