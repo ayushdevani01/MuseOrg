@@ -272,6 +272,8 @@ async function main() {
     mcpStdio,
     deploymentModelKey,
     deploymentModelConfigured,
+    requiredPersonalModelProvider:
+      process.env.REQUIRED_PERSONAL_MODEL_PROVIDER?.trim() || undefined,
     dataDir,
     notifications,
     jobs,

@@ -2793,16 +2793,38 @@ description: Prepare standup notes
     expect(enqueue).toHaveBeenCalledOnce();
   });
 
-  it.each([
+  it.each<{
+    configuration: string;
+    settings: boolean;
+    stored?: boolean;
+    plaintext?: string;
+    deploymentKey?: string;
+    requiredPersonalModelProvider?: string;
+    trigger?: string;
+  }>([
     { configuration: "no model", settings: false },
     { configuration: "saved default without credentials", settings: true },
     { configuration: "missing secret row", settings: true, stored: true },
     { configuration: "empty decrypted key", settings: true, stored: true, plaintext: "" },
     { configuration: "blank decrypted key", settings: true, stored: true, plaintext: "   " },
     { configuration: "blank deployment key", settings: true, deploymentKey: "   " },
+    ...["routine", "webhook", "bot_message"].map((trigger) => ({
+      configuration: `required personal model for ${trigger} with only a deployment key`,
+      settings: true,
+      deploymentKey: "offline-deployment-key",
+      requiredPersonalModelProvider: "openrouter",
+      trigger,
+    })),
   ])(
     "fails before the model call for $configuration",
-    async ({ settings, stored, plaintext, deploymentKey }) => {
+    async ({
+      settings,
+      stored,
+      plaintext,
+      deploymentKey,
+      requiredPersonalModelProvider,
+      trigger,
+    }) => {
       let status = "queued";
       const runtimeRun = vi.fn();
       const finalizeRun = vi.fn(async () => {
@@ -2817,7 +2839,7 @@ description: Prepare standup notes
         userId: "user-1",
         spaceId: "ws-1",
         status: "queued",
-        trigger: "user",
+        trigger: trigger ?? "user",
         routineId: null,
         sourceMessageId: null,
         checkpoint: null,
@@ -2905,6 +2927,7 @@ description: Prepare standup notes
         prisma,
         billingEnabled: false,
         deploymentModelKey: deploymentKey,
+        requiredPersonalModelProvider,
         secretStore: { load: vi.fn(async () => plaintext), put: vi.fn() },
         runtime: {
           describe: () => ({ capabilities: { scripted: false } }),

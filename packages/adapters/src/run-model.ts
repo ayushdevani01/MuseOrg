@@ -8,6 +8,7 @@ import type {
 import {
   CLOUDFLARE_AI_GATEWAY_CONFIG_MESSAGE,
   CLOUDFLARE_WORKERS_AI_PROVIDER_ID,
+  canonicalPiProviderId,
   cloudflareModelConfigMessage,
   OPENAI_COMPATIBLE_PROVIDER_ID,
 } from "@rakazo/contracts";
@@ -51,6 +52,13 @@ import {
 
 export function runtimeFallbackModel(runtime: AgentRuntime) {
   return runtime.describe().capabilities.scripted ? { provider: "scripted", id: "scripted" } : null;
+}
+
+function requiredPersonalModelProvider(deps: ExecutorDeps): string | null {
+  const provider = deps.requiredPersonalModelProvider?.trim();
+  return provider && !deps.runtime?.describe().capabilities.scripted
+    ? canonicalPiProviderId(provider)
+    : null;
 }
 
 export function isTerminalModelSetupError(error: unknown): boolean {
@@ -151,7 +159,18 @@ export async function modelCreditBillingEnabled(deps: ExecutorDeps): Promise<boo
 
 export async function resolveModelKey(...args: Parameters<typeof resolveModelKeyMaterial>) {
   const [deps, userId, spaceId, , provider] = args;
-  const billingEnabled = await modelCreditBillingEnabled(deps);
+  const requiredProvider = requiredPersonalModelProvider(deps);
+  const personalCredential = args[3];
+  if (
+    requiredProvider &&
+    (!personalCredential ||
+      personalCredential.userId !== userId ||
+      canonicalPiProviderId(provider) !== requiredProvider ||
+      canonicalPiProviderId(personalCredential.provider) !== requiredProvider)
+  ) {
+    throw new UnavailableModelForAuthError(MISSING_MODEL_RUN_ERROR);
+  }
+  const billingEnabled = !requiredProvider && (await modelCreditBillingEnabled(deps));
   const scope = { userId, spaceId };
   if (billingEnabled && (await hasHostedModelCredits(deps.prisma, scope, provider))) {
     args[3] = null;
@@ -164,13 +183,16 @@ export async function resolveModelKey(...args: Parameters<typeof resolveModelKey
   // Local and compatible endpoints can intentionally be keyless. Host auth is
   // allowed only for the deployment provider that explicitly opted into it.
   const keyless =
-    provider === LOCAL_PROVIDER_ID ||
-    (provider === OPENAI_COMPATIBLE_PROVIDER_ID && Boolean(material.baseUrl)) ||
-    (provider === "scripted" && deps.runtime?.describe().capabilities.scripted) ||
-    (!credential && deployment.provider === provider && deployment.hostCredentials);
+    !requiredProvider &&
+    (provider === LOCAL_PROVIDER_ID ||
+      (provider === OPENAI_COMPATIBLE_PROVIDER_ID && Boolean(material.baseUrl)) ||
+      (provider === "scripted" && deps.runtime?.describe().capabilities.scripted) ||
+      (!credential && deployment.provider === provider && deployment.hostCredentials));
   // Match Pi's OpenRouter fallback only when no explicit key overrides it.
   const runtimeKey =
-    material.apiKey === undefined && (provider === "openrouter" || provider === "scripted")
+    !requiredProvider &&
+    material.apiKey === undefined &&
+    (provider === "openrouter" || provider === "scripted")
       ? process.env.OPENROUTER_API_KEY
       : undefined;
   if (!material.apiKey?.trim() && !runtimeKey?.trim() && !keyless) {
@@ -187,6 +209,7 @@ async function resolveModelKeyMaterial(
   spaceId: string,
   credential: {
     id: string;
+    userId?: string;
     secretId: string;
     provider: string;
     defaultModel?: string | null;
@@ -227,6 +250,8 @@ async function resolveModelKeyMaterial(
         where: { id: credential.secretId, userId, spaceId: null },
       });
       if (!row) {
+        if (requiredPersonalModelProvider(deps))
+          throw new UnavailableModelForAuthError(MISSING_MODEL_RUN_ERROR);
         if (await modelCreditBillingEnabled(deps))
           throw new Error("Connect that model provider again.");
         if (requireStoredSecret) throw new Error("Backup model credential is no longer available");
@@ -237,7 +262,21 @@ async function resolveModelKeyMaterial(
         return { apiKey: deploymentKeyFor(deps, provider), redact: [] };
       }
       const plaintext = await deps.secretStore.load(row.ciphertext, row.id);
-      registerSecrets?.(secretValuesToRedact(parseModelSecret(plaintext)));
+      let stored: StoredModelSecret;
+      try {
+        stored = parseModelSecret(plaintext);
+      } catch (error) {
+        if (requiredPersonalModelProvider(deps))
+          throw new UnavailableModelForAuthError(MISSING_MODEL_RUN_ERROR);
+        throw error;
+      }
+      if (
+        requiredPersonalModelProvider(deps) &&
+        (stored.kind !== "api_key" || !stored.key.trim())
+      ) {
+        throw new UnavailableModelForAuthError(MISSING_MODEL_RUN_ERROR);
+      }
+      registerSecrets?.(secretValuesToRedact(stored));
       const persist = persistStoredModelSecret(
         deps.prisma,
         deps.secretStore,

@@ -45,6 +45,8 @@ export interface ExecutorDeps {
   deploymentModelKey?: string;
   /** The deployment default model can run; see resolveDeploymentModel. */
   deploymentModelConfigured?: boolean;
+  /** Native model calls require this provider on the run user's own connection. */
+  requiredPersonalModelProvider?: string;
   dataDir?: string;
   notifications?: NotificationProvider;
   jobs: JobPublisher;
