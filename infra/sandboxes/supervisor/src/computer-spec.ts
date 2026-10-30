@@ -335,7 +335,10 @@ export function computerHomeStorage(
   const mount = info?.Mounts.find((entry) => entry.Destination === dataDir);
   if (mount?.Type === "volume") {
     if (!mount.Name) throw new Error("computer data volume has no name");
-    return { homePath: serviceHomePath, homeVolume: { name: mount.Name, subpath: relative } };
+    return {
+      homePath: serviceHomePath,
+      homeVolume: { name: mount.Name, subpath: relative.split(path.sep).join("/") },
+    };
   }
   return { homePath: mount?.Source ? path.join(mount.Source, relative) : serviceHomePath };
 }
