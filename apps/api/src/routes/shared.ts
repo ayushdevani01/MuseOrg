@@ -2,7 +2,9 @@ import {
   deploymentModelRole,
   hasHostedModelCredits,
   hostCredentialSource,
+  loadStoredModelSecret,
   mcpStdioAvailable,
+  parseModelSecret,
   resolveMemberMainModel,
 } from "@rakazo/adapters";
 import type { Actor, Me } from "@rakazo/contracts";
@@ -36,11 +38,13 @@ export async function meDto(deps: RouterDeps, actor: Actor): Promise<Me> {
     spaceId: actor.spaceId,
     isDeploymentOwner: false,
     needsModel: setup.needsModel,
-    defaultProvider: canonicalPiProviderId(setup.model?.provider ?? deps.env.defaultProvider),
-    defaultModel: setup.model?.modelId ?? deps.env.defaultModel,
+    requiredPersonalModelProvider: setup.requiredPersonalModelProvider,
+    defaultProvider: setup.model ? canonicalPiProviderId(setup.model.provider) : null,
+    defaultModel: setup.model?.modelId ?? null,
     // Set only while the active default is the deployment's own, running on host credentials.
     ...hostCredentials(
-      !setup.main &&
+      !setup.requiresPersonalModel &&
+        !setup.main &&
         !setup.settings?.defaultModelProvider &&
         Boolean(deps.env.deploymentModelHostCredentials),
       deps.env.defaultProvider,
@@ -56,8 +60,9 @@ export async function meDto(deps: RouterDeps, actor: Actor): Promise<Me> {
     avatarStyle: "organic",
     timezone: user.timezone ?? null,
     billingEnabled: Boolean(deps.billing),
-    // Only billing deployments ask; self-hosted installs never see the survey.
-    needsSignupSurvey: Boolean(deps.billing) && !user.signupSurvey,
+    // Personal-provider setup is the only first-run step on BYOK deployments.
+    needsSignupSurvey:
+      !setup.requiredPersonalModelProvider && Boolean(deps.billing) && !user.signupSurvey,
   };
 }
 
@@ -71,31 +76,68 @@ function computerHostFor(
   return null;
 }
 
-/** The main model chat runs: the member's while it can run, else the deployment's. */
+/** The runnable main model, honoring deployments that require a personal connection. */
 export async function modelSetup(deps: RouterDeps, actor: Actor) {
+  const configuredProvider = deps.env.requiredPersonalModelProvider?.trim();
+  const requiredPersonalModelProvider = configuredProvider
+    ? canonicalPiProviderId(configuredProvider)
+    : null;
+  // The deterministic scripted runtime deliberately has no real credentials.
+  const requiresPersonalModel =
+    requiredPersonalModelProvider !== null && deps.env.agentRuntime !== "scripted";
   const [member, settings] = await Promise.all([
     resolveMemberMainModel({ prisma: deps.prisma, secretStore: deps.secrets }, actor),
     deps.prisma.deploymentSettings.findUnique({ where: { id: "default" } }),
   ]);
+  let hasPersonalCredential = Boolean(
+    member?.credential &&
+      (!requiresPersonalModel ||
+        (member.credential.userId === actor.userId &&
+          canonicalPiProviderId(member.provider) === requiredPersonalModelProvider &&
+          canonicalPiProviderId(member.credential.provider) === requiredPersonalModelProvider)),
+  );
+  if (requiresPersonalModel && hasPersonalCredential && member?.credential) {
+    const stored = await loadStoredModelSecret(
+      deps.prisma,
+      deps.secrets,
+      actor.userId,
+      member.credential.secretId,
+    );
+    hasPersonalCredential = false;
+    if (stored.status === "loaded") {
+      try {
+        const secret = parseModelSecret(stored.plaintext);
+        hasPersonalCredential = secret.kind === "api_key" && Boolean(secret.key.trim());
+      } catch {
+        // Corrupt credentials need reconnection, just like removed credentials.
+      }
+    }
+  }
   const main =
     member &&
-    (member.credential ||
-      (deps.billing?.modelCreditsEnabled &&
+    (hasPersonalCredential ||
+      (!requiresPersonalModel &&
+        deps.billing?.modelCreditsEnabled &&
         (await hasHostedModelCredits(deps.prisma, actor, member.provider))))
       ? member
       : null;
   const funding = deps.billing ? await deps.billing.status(actor) : null;
   const hasDeployment =
+    !requiresPersonalModel &&
     Boolean(deps.env.deploymentModelConfigured) &&
     (!funding?.creditPurchasesEnabled || funding.funding === "credits");
   return {
     main,
     model:
       main ??
-      deploymentModelRole("main", {
-        settings,
-        deployment: { provider: deps.env.defaultProvider, model: deps.env.defaultModel },
-      }).primary,
+      (requiresPersonalModel
+        ? null
+        : deploymentModelRole("main", {
+            settings,
+            deployment: { provider: deps.env.defaultProvider, model: deps.env.defaultModel },
+          }).primary),
+    requiredPersonalModelProvider,
+    requiresPersonalModel,
     settings,
     funding,
     hasDeployment,

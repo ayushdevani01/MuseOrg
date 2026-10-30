@@ -11,6 +11,7 @@ import {
   expandSkillReferencesInPrompt,
   hasMixedOneShotSchedule,
   isOneShotRoutineCrons,
+  MODEL_REQUIRED_SEND_ERROR,
 } from "@rakazo/core";
 import { IsolationError, Prisma } from "@rakazo/db";
 import { getLogger } from "@rakazo/logging";
@@ -26,7 +27,7 @@ import {
   routineRowData,
 } from "../routines.js";
 import type { RouterContext } from "./context.js";
-import { isRecordNotFound } from "./shared.js";
+import { isRecordNotFound, modelSetup } from "./shared.js";
 
 export function routinesRoutes(ctx: RouterContext) {
   const { deps, repos, announceRoutine, codexCatalog, agentSkills, authed } = ctx;
@@ -289,6 +290,12 @@ export function routinesRoutes(ctx: RouterContext) {
         return { ok: true as const };
       }),
       testRun: authed.routines.testRun.handler(async ({ context, input }) => {
+        if (
+          deps.env.requiredPersonalModelProvider &&
+          (await modelSetup(deps, context.actor)).needsModel
+        ) {
+          throw new ORPCError("BAD_REQUEST", { message: MODEL_REQUIRED_SEND_ERROR });
+        }
         const routine = await deps.prisma.routine.findFirst({
           where: {
             id: input.routineId,

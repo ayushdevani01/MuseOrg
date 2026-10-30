@@ -42,6 +42,11 @@ import { createAgentSkillsService } from "../agent-skills.js";
 import { createBotRemoval } from "../bot-removal.js";
 import { createMcpServers } from "../mcp-servers.js";
 import { createModelConnector, prepareAllowedThinkingLevels } from "../model-credentials.js";
+import {
+  assertModelProviderAllowed,
+  modelCatalogForPolicy,
+  requiredApiKeyProvider,
+} from "../model-provider-policy.js";
 import type { RouterDeps } from "../router.js";
 import { createRoutineAnnouncer } from "../routines.js";
 import { procedureSecurityEvent } from "../security-audit.js";
@@ -137,7 +142,10 @@ export function createRouterContext(deps: RouterDeps) {
   // cannot execute it, so it stays out of the user-facing catalog otherwise.
   const chatCatalog = async (actor: Actor) => {
     const catalog = await catalogForSpace(actor);
-    return deps.env.agentRuntime === "scripted" ? [...catalog, scriptedCatalogEntry] : catalog;
+    return modelCatalogForPolicy(
+      deps.env,
+      deps.env.agentRuntime === "scripted" ? [...catalog, scriptedCatalogEntry] : catalog,
+    );
   };
   const catalogForSpace = async (actor: Actor) => {
     const auth = await modelCredentialAuthKindsForSpace(
@@ -148,12 +156,14 @@ export function createRouterContext(deps: RouterDeps) {
     );
     const available = listAvailablePiCatalog(auth.byProvider, auth.byModel);
     const [live, providerLive] = await Promise.all([
-      codexLiveCatalogsForSpace(deps.prisma, deps.secrets, actor, auth, codexCatalog, {
-        // An expired bearer yields no catalog this round; kick the runtime's
-        // locked refresh so the next read can see the account's real list.
-        onExpiredToken: (secretId) =>
-          refreshExpiredCredential(actor, secretId, CHATGPT_OAUTH_PROVIDER),
-      }),
+      requiredApiKeyProvider(deps.env)
+        ? Promise.resolve(new Map())
+        : codexLiveCatalogsForSpace(deps.prisma, deps.secrets, actor, auth, codexCatalog, {
+            // An expired bearer yields no catalog this round; kick the runtime's
+            // locked refresh so the next read can see the account's real list.
+            onExpiredToken: (secretId) =>
+              refreshExpiredCredential(actor, secretId, CHATGPT_OAUTH_PROVIDER),
+          }),
       providerLiveCatalogsForSpace(
         deps.prisma,
         deps.secrets,
@@ -219,10 +229,10 @@ export function createRouterContext(deps: RouterDeps) {
     );
     return withServingConnections(
       actor,
-      [
+      modelCatalogForPolicy(deps.env, [
         ...catalog,
         ...decisions.map((entry) => ({ ...entry, managed: managedProviders.has(entry.provider) })),
-      ].filter((entry) => modelSupportsRole(entry, role)),
+      ]).filter((entry) => modelSupportsRole(entry, role)),
     );
   };
   /**
@@ -273,6 +283,7 @@ export function createRouterContext(deps: RouterDeps) {
     choices: ModelRoleChoice[],
   ): Promise<void> => {
     if (choices.length === 0) return;
+    for (const choice of choices) assertModelProviderAllowed(deps.env, choice.provider);
     const catalog = await modelRoleCatalog(actor, role);
     for (const choice of choices) {
       const entry = catalog.find(

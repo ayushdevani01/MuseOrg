@@ -50,6 +50,10 @@ import {
   throwIfAborted,
 } from "../model-credentials.js";
 import { assertCompatibleDefaultChange } from "../model-pins.js";
+import {
+  assertModelProviderAllowed,
+  assertSubscriptionSignInAllowed,
+} from "../model-provider-policy.js";
 import { withSerializableRetry } from "../serializable-retry.js";
 import type { RouterContext } from "./context.js";
 
@@ -287,6 +291,7 @@ export function modelsRoutes(ctx: RouterContext) {
         }
       }),
       beginOAuth: authed.models.beginOAuth.handler(async ({ context, input }) => {
+        assertSubscriptionSignInAllowed(deps.env);
         // An older app's sign-in renews the provider's newest connection, bound now so a
         // disconnect of that connection retires it and it never lands on another one.
         const target = await modelConnectionTarget(
@@ -317,9 +322,11 @@ export function modelsRoutes(ctx: RouterContext) {
           });
       }),
       submitOAuthCode: authed.models.submitOAuthCode.handler(async ({ context, input }) => {
+        assertSubscriptionSignInAllowed(deps.env);
         return deps.oauthLogins.submit(input.loginId, context.actor, input.code);
       }),
       completeOAuth: authed.models.completeOAuth.handler(async ({ context, input }) => {
+        assertSubscriptionSignInAllowed(deps.env);
         const result = await deps.oauthLogins.complete(input.loginId, {
           userId: context.actor.userId,
           spaceId: context.actor.spaceId,
@@ -332,6 +339,7 @@ export function modelsRoutes(ctx: RouterContext) {
         return result.status === "connected" ? { status: "ready" as const } : result;
       }),
       finishOAuth: authed.models.finishOAuth.handler(async ({ context, input }) => {
+        assertSubscriptionSignInAllowed(deps.env);
         throwIfAborted(context.signal);
         let provider: string | undefined;
         const record = await firstModelConnectAnalytics(deps, context.actor, "oauth");
@@ -384,6 +392,7 @@ export function modelsRoutes(ctx: RouterContext) {
         return { ok: true as const };
       }),
       setDefault: authed.models.setDefault.handler(async ({ context, input }) => {
+        assertModelProviderAllowed(deps.env, input.provider);
         const modelId = usableModelId(input.modelId);
         if (!modelId) throw new ORPCError("BAD_REQUEST", { message: "Choose a model" });
         // An omitted level keeps the one this model already has in the main list: on the
