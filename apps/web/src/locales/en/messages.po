@@ -374,6 +374,10 @@ msgstr "A bit of everything"
 msgid "A command's output"
 msgstr "A command's output"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "A coworker's model is unavailable. Try again later."
+msgstr "A coworker's model is unavailable. Try again later."
+
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -412,6 +416,10 @@ msgstr "Account label"
 #: src/components/SidebarFooter.tsx
 msgid "Account menu for {name}"
 msgstr "Account menu for {name}"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Account sign-in"
+msgstr "Account sign-in"
 
 #. placeholder {0}: bot.name
 #. placeholder {0}: group.spaceName
@@ -484,6 +492,10 @@ msgid "Add a trigger to run this routine."
 msgstr "Add a trigger to run this routine."
 
 #: src/pages/McpServersOverlay.tsx
+msgid "Add an API token"
+msgstr "Add an API token"
+
+#: src/pages/McpServersOverlay.tsx
 msgid "Add an HTTPS server URL."
 msgstr "Add an HTTPS server URL."
 
@@ -518,6 +530,10 @@ msgstr "Add GraphQL endpoint"
 #: src/components/ModelHeadersEditor.tsx
 msgid "Add header"
 msgstr "Add header"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Add integration"
+msgstr "Add integration"
 
 #: src/pages/ScratchpadSection.tsx
 msgid "Add item"
@@ -745,6 +761,11 @@ msgstr "API keys"
 #: src/pages/shell/agent-import-undo.tsx
 msgid "API keys stay connected."
 msgstr "API keys stay connected."
+
+#: src/pages/McpServersOverlay.tsx
+#: src/pages/PluginsOverlay.tsx
+msgid "API token"
+msgstr "API token"
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Appearance"
@@ -997,6 +1018,10 @@ msgstr "Brain label"
 msgid "Browse MCP servers"
 msgstr "Browse MCP servers"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Build, investigate and maintain software."
+msgstr "Build, investigate and maintain software."
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
@@ -1186,6 +1211,10 @@ msgstr "Checking connection…"
 #: src/pages/HostComputerPrompt.tsx
 msgid "Checking…"
 msgstr "Checking…"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Chief of Staff"
+msgstr "Chief of Staff"
 
 #: src/pages/shell/agent-import.tsx
 msgid "Choose a bot"
@@ -1424,8 +1453,8 @@ msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TO
 msgstr "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TOKEN, or set SANDBOX_PROVIDER to e2b, daytona, or boat with its API key. Recreate the stack after changing .env."
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Configure a plugin catalog on the server to connect apps."
-msgstr "Configure a plugin catalog on the server to connect apps."
+#~ msgid "Configure a plugin catalog on the server to connect apps."
+#~ msgstr "Configure a plugin catalog on the server to connect apps."
 
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
@@ -1450,6 +1479,7 @@ msgstr "Confirm the URL is reachable from this browser session, then test again.
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Connect"
@@ -1493,6 +1523,10 @@ msgstr "Connect MCP server “{name}”"
 msgid "Connect memory provider"
 msgstr "Connect memory provider"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Connect Meta"
+msgstr "Connect Meta"
+
 #: src/components/ModelCredits.tsx
 msgid "Connect my own"
 msgstr "Connect my own"
@@ -1526,6 +1560,10 @@ msgstr "Connected"
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Connected {0}."
 msgstr "Connected {0}."
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Connecting"
+msgstr "Connecting"
 
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
@@ -1587,6 +1625,10 @@ msgstr "Continue with credits"
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Conversations"
 msgstr "Conversations"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Coordinate priorities, projects and the team."
+msgstr "Coordinate priorities, projects and the team."
 
 #: src/components/ComputersUnavailableHint.tsx
 #: src/components/markdown-copy.tsx
@@ -1687,6 +1729,10 @@ msgstr "Could not connect this provider"
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Could not connect this voice provider"
 msgstr "Could not connect this voice provider"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not connect to Meta. Check your key and try again."
+msgstr "Could not connect to Meta. Check your key and try again."
 
 #: src/pages/shell/use-computer.tsx
 msgid "Could not connect to the computer screen"
@@ -1789,6 +1835,10 @@ msgstr "Could not download {0}. Try again."
 msgid "Could not download {name}. Try again."
 msgstr "Could not download {name}. Try again."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not hire your coworkers. Try again."
+msgstr "Could not hire your coworkers. Try again."
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not install connector"
 msgstr "Could not install connector"
@@ -1839,6 +1889,10 @@ msgstr "Could not load model settings"
 #: src/pages/RoutineRunHistory.tsx
 msgid "Could not load run history"
 msgstr "Could not load run history"
+
+#: src/components/OnboardingUnavailable.tsx
+msgid "Could not load setup."
+msgstr "Could not load setup."
 
 #: src/lib/account-security.ts
 #: src/pages/Auth.tsx
@@ -2115,8 +2169,12 @@ msgid "Create space"
 msgstr "Create space"
 
 #: src/pages/Auth.tsx
-msgid "Create your Rakazo"
-msgstr "Create your Rakazo"
+msgid "Create your MuseOrg"
+msgstr "Create your MuseOrg"
+
+#: src/pages/Auth.tsx
+#~ msgid "Create your Rakazo"
+#~ msgstr "Create your Rakazo"
 
 #: src/components/AskCard.tsx
 msgid "Created"
@@ -2127,6 +2185,10 @@ msgstr "Created"
 #: src/pages/shell/dialogs.tsx
 msgid "Creating…"
 msgstr "Creating…"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Creative Director"
+msgstr "Creative Director"
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Credential"
@@ -2885,6 +2947,18 @@ msgstr "High"
 msgid "High"
 msgstr "High"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire coworkers"
+msgstr "Hire coworkers"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire your coworkers"
+msgstr "Hire your coworkers"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hiring"
+msgstr "Hiring"
+
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk"
 msgstr "Hold to talk"
@@ -3278,6 +3352,7 @@ msgid "Main model"
 msgstr "Main model"
 
 #: src/pages/BillingSettingsPanel.tsx
+#: src/pages/PluginsOverlay.tsx
 #: src/pages/SettingsOverlay.tsx
 msgid "Manage"
 msgstr "Manage"
@@ -3456,6 +3531,18 @@ msgstr "Messaged {peer}"
 #: src/pages/SettingsOverlay.tsx
 msgid "Messaging"
 msgstr "Messaging"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta API key"
+msgstr "Meta API key"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta Growth Operator"
+msgstr "Meta Growth Operator"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta is unavailable. Try again later."
+msgstr "Meta is unavailable. Try again later."
 
 #: src/lib/call-session.ts
 msgid "Microphone failed"
@@ -3718,6 +3805,11 @@ msgstr "Next page"
 msgid "Next settings sections"
 msgstr "Next settings sections"
 
+#: src/pages/McpServersOverlay.tsx
+#: src/pages/PluginsOverlay.tsx
+msgid "No account needed"
+msgstr "No account needed"
+
 #: src/pages/PluginsOverlay.tsx
 msgid "No apps match your search."
 msgstr "No apps match your search."
@@ -3748,8 +3840,8 @@ msgid "No longer active"
 msgstr "No longer active"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "No managed app catalog is configured on this deployment."
-msgstr "No managed app catalog is configured on this deployment."
+#~ msgid "No managed app catalog is configured on this deployment."
+#~ msgstr "No managed app catalog is configured on this deployment."
 
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
@@ -3844,8 +3936,8 @@ msgid "Not in Rakazo's catalog"
 msgstr "Not in Rakazo's catalog"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Not in the plugin catalog"
-msgstr "Not in the plugin catalog"
+#~ msgid "Not in the plugin catalog"
+#~ msgstr "Not in the plugin catalog"
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4158,6 +4250,10 @@ msgstr "Pin"
 #: src/pages/Shell.tsx
 msgid "Pinned"
 msgstr "Pinned"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Plan distribution, outreach and follow-up."
+msgstr "Plan distribution, outreach and follow-up."
 
 #: src/components/ArtifactFileCard.tsx
 msgid "Play {name}"
@@ -4707,6 +4803,10 @@ msgstr "Save new value"
 msgid "Save the workspace and install current software."
 msgstr "Save the workspace and install current software."
 
+#: src/pages/McpServersOverlay.tsx
+msgid "Save, then connect OAuth"
+msgstr "Save, then connect OAuth"
+
 #: src/components/AskCard.tsx
 #: src/components/teach/SkillDraftCard.tsx
 #: src/pages/ExternalConversationSettings.tsx
@@ -4915,6 +5015,10 @@ msgstr "Settings: Usage"
 msgid "Setup complete"
 msgstr "Setup complete"
 
+#: src/pages/McpServersOverlay.tsx
+msgid "Setup guide"
+msgstr "Setup guide"
+
 #: src/pages/model-settings/compatible-model-fields.tsx
 msgid "Setup help"
 msgstr "Setup help"
@@ -4927,6 +5031,10 @@ msgstr "Shape"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Shape {0}"
 msgstr "Shape {0}"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Shape ideas, design and creative work."
+msgstr "Shape ideas, design and creative work."
 
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
@@ -5005,8 +5113,12 @@ msgid "Sign in at <0>{0}</0>, then paste the code here."
 msgstr "Sign in at <0>{0}</0>, then paste the code here."
 
 #: src/pages/Auth.tsx
-msgid "Sign in to Rakazo"
-msgstr "Sign in to Rakazo"
+msgid "Sign in to MuseOrg"
+msgstr "Sign in to MuseOrg"
+
+#: src/pages/Auth.tsx
+#~ msgid "Sign in to Rakazo"
+#~ msgstr "Sign in to Rakazo"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5141,6 +5253,10 @@ msgstr "Speech model"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO is temporarily unavailable. Try again."
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Staff Engineer"
+msgstr "Staff Engineer"
 
 #: src/pages/shell/computer-overlay.tsx
 msgid "Start"
@@ -5616,7 +5732,9 @@ msgstr "Trial"
 msgid "Trial ends {day}"
 msgstr "Trial ends {day}"
 
+#: src/components/OnboardingUnavailable.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/Onboarding.tsx
 msgid "Try again"
 msgstr "Try again"
@@ -6055,6 +6173,10 @@ msgstr "Your first bot already existed, so the agent was not imported."
 #: src/lib/agent-import-errors.ts
 msgid "Your first bot already exists."
 msgstr "Your first bot already exists."
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Your Meta connection is not ready. Try again."
+msgstr "Your Meta connection is not ready. Try again."
 
 #. js-lingui-explicit-id
 #: src/lib/run-error.ts
