@@ -50,6 +50,7 @@ jobs are opt-in repository variables:
 | --- | --- |
 | `SERVER_IMAGE_PUBLISH_ENABLED` | Container image publication |
 | `MOBILE_UPDATE_ENABLED` | Mobile over-the-air publication |
+| `NATIVE_RELEASES_ENABLED` | Desktop and Android release builds/publication |
 | `DEPENDENCY_AUTOMATION_ENABLED` | Scheduled dependency and model-catalog updates |
 | `VISUAL_REPORT_PUBLISH_ENABLED` | Scheduled/external visual report publication |
 | `PRODUCTION_DEPLOY_ENABLED` | Existing production deployment job |
