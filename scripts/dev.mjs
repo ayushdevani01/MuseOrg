@@ -44,6 +44,11 @@ const MANAGED = {
   database: "rakazo",
 };
 const SERVICES = ["@rakazo/api", "@rakazo/worker", "@rakazo/web", "@rakazo/sandbox-supervisor"];
+// Use the invoking package-manager script through Node. Windows cannot execute a .cmd shim
+// with execFile/spawn without a shell, and paths with spaces must remain separate arguments.
+const packageManagerCommand = process.env.npm_execpath ? process.execPath : "pnpm";
+const packageManagerArgs = (args) =>
+  process.env.npm_execpath ? [process.env.npm_execpath, ...args] : args;
 
 const fileEnv = existsSync(path.join(root, ".env"))
   ? dotenv.parse(readFileSync(path.join(root, ".env")))
@@ -180,12 +185,14 @@ function migrationNames(ref) {
 }
 
 function mainMigrations() {
-  try {
-    return migrationNames("origin/main");
-  } catch {
-    // Without main to compare against, any migration may be unmerged.
-    throw new Error("Could not read origin/main. Run `git fetch origin main` and try again.");
+  for (const ref of ["origin/main", "upstream/main", "main"]) {
+    try {
+      return migrationNames(ref);
+    } catch {
+      // A fork may retain upstream without configuring its own origin yet.
+    }
   }
+  throw new Error("Could not read a main branch. Fetch the base branch and try again.");
 }
 
 /** Migration folders in a checkout's working tree, committed or not. */
@@ -355,7 +362,7 @@ function generateClientIfStale(env) {
   const schema = path.join(dbPackage, "prisma/schema.prisma");
   if (existsSync(client) && statSync(client).mtimeMs >= statSync(schema).mtimeMs) return;
   log("Generating the Prisma client");
-  execFileSync("pnpm", ["--filter", "@rakazo/db", "generate"], {
+  execFileSync(packageManagerCommand, packageManagerArgs(["--filter", "@rakazo/db", "generate"]), {
     cwd: root,
     env,
     stdio: "inherit",
@@ -397,15 +404,25 @@ const migrationLock = new Client({ connectionString: shared.migrationUrl });
 await migrationLock.connect();
 try {
   await migrationLock.query("SELECT pg_advisory_lock(hashtext('rakazo dev migrate'))");
-  execFileSync("pnpm", ["db:migrate"], { cwd: root, env, stdio: "inherit" });
+  execFileSync(packageManagerCommand, packageManagerArgs(["db:migrate"]), {
+    cwd: root,
+    env,
+    stdio: "inherit",
+  });
 } finally {
   await migrationLock.end();
 }
 
 if (ports) log(`Open http://127.0.0.1:${ports.web}`);
 const turbo = spawn(
-  "pnpm",
-  ["exec", "turbo", "dev", "--env-mode=loose", ...SERVICES.map((name) => `--filter=${name}`)],
+  packageManagerCommand,
+  packageManagerArgs([
+    "exec",
+    "turbo",
+    "dev",
+    "--env-mode=loose",
+    ...SERVICES.map((name) => `--filter=${name}`),
+  ]),
   { cwd: root, env, stdio: "inherit" },
 );
 for (const signal of ["SIGINT", "SIGTERM"]) process.on(signal, () => turbo.kill(signal));

@@ -13,10 +13,16 @@ import {
 
 loadRootEnv();
 const urls = databaseUrls(process.env);
-execFileSync("pnpm", ["--filter", "@rakazo/db", "exec", "prisma", "migrate", "deploy"], {
-  stdio: "inherit",
-  env: { ...process.env, DATABASE_MIGRATION_URL: urls.migrationUrl },
-});
+const migrationArgs = ["--filter", "@rakazo/db", "exec", "prisma", "migrate", "deploy"];
+// Invoke pnpm through Node when run as a package script, including on Windows.
+execFileSync(
+  process.env.npm_execpath ? process.execPath : "pnpm",
+  process.env.npm_execpath ? [process.env.npm_execpath, ...migrationArgs] : migrationArgs,
+  {
+    stdio: "inherit",
+    env: { ...process.env, DATABASE_MIGRATION_URL: urls.migrationUrl },
+  },
+);
 await migrateJobQueue(urls.migrationUrl);
 
 if (!urls.separate) {
