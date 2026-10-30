@@ -6,6 +6,7 @@ import type { createApp } from "@rakazo/api/app";
 import { loadRootEnv } from "@rakazo/core/node/load-root-env";
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { createModelConnectionFixtureFetch } from "../model-connection-fixture.js";
+import { clearProviderTestCredentials } from "../provider-test-env.js";
 import { runProcess } from "./process.js";
 
 loadRootEnv();
@@ -22,6 +23,13 @@ const e2eSpec = specArg?.slice("--spec=".length);
 const e2eGrep = grepArg?.slice("--grep=".length);
 const e2eShard = shardArg?.slice("--shard=".length);
 const agentRuntime = runtimeArg?.slice("--runtime=".length) ?? "scripted";
+
+if (sandboxProvider === "fake" && agentRuntime === "scripted") {
+  clearProviderTestCredentials(process.env);
+  // The general UI fixtures use generic onboarding. Provider-policy suites opt
+  // into their policy explicitly, rather than inheriting a developer's .env.
+  process.env.REQUIRED_PERSONAL_MODEL_PROVIDER = "";
+}
 
 if (Number(integration) + Number(e2e) !== 1) {
   throw new Error("Pass exactly one of --integration or --e2e");
@@ -191,7 +199,7 @@ async function main() {
         ThirdPartyConnectorEmulator,
       },
       { createApp },
-      { drainUnscopedDatabaseAccess },
+      { drainUnscopedDatabaseAccess, runAsSystem },
     ] = await Promise.all([
       import("@rakazo/adapters"),
       import("@rakazo/api/app"),
@@ -270,10 +278,12 @@ async function main() {
           },
         );
       } catch (error) {
-        const failedRuns = await handles.prisma.run.findMany({
-          where: { status: "failed" },
-          select: { id: true, error: true },
-        });
+        const failedRuns = await runAsSystem("inspect failed isolated test runs", () =>
+          handles.prisma.run.findMany({
+            where: { status: "failed" },
+            select: { id: true, error: true },
+          }),
+        );
         if (failedRuns.length) console.error("Failed agent runs:", failedRuns);
         throw error;
       }

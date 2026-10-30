@@ -5,6 +5,36 @@ export function createModelConnectionFixtureFetch(
   return async (input, init) => {
     const request = new Request(input, init);
     request.signal.throwIfAborted();
+    if (request.url === "https://api.meta.ai/v1/responses") {
+      if (request.headers.get("authorization") !== "Bearer fake-accepted-meta-key") {
+        return Response.json(
+          { error: { code: "invalid_api_key", message: "Invalid fixture key" } },
+          { status: 401 },
+        );
+      }
+      const body = (await request.json()) as { model?: string };
+      if (!catalog.some((model) => model.provider === "meta" && model.id === body.model)) {
+        return Response.json(
+          { error: { code: "model_not_found", message: "Unknown fixture model" } },
+          { status: 404 },
+        );
+      }
+      const events = [
+        { type: "response.created", response: { id: "resp_fixture", status: "in_progress" } },
+        {
+          type: "response.completed",
+          response: {
+            id: "resp_fixture",
+            status: "completed",
+            output: [],
+            usage: { input_tokens: 1, output_tokens: 0, total_tokens: 1 },
+          },
+        },
+      ];
+      return new Response(events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(""), {
+        headers: { "content-type": "text/event-stream" },
+      });
+    }
     if (
       request.url === "https://openrouter.ai/api/v1/key" ||
       request.url === "https://ollama.com/api/balance"

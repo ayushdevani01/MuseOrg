@@ -1,4 +1,5 @@
 import { afterAll } from "vitest";
+import { clearProviderTestCredentials } from "./provider-test-env.js";
 
 const dom = (
   globalThis as typeof globalThis & {
@@ -25,6 +26,7 @@ if (dom) {
  * Pi, Docker, Graphile, or live Composio. Opt-in canaries set VERIFY_PROVIDERS.
  */
 if (!process.env.VERIFY_PROVIDERS) {
+  clearProviderTestCredentials(process.env);
   process.env.RAKAZO_LIVE_MODEL_CATALOG = "off";
   process.env.AGENT_RUNTIME = "scripted";
   process.env.SANDBOX_PROVIDER = "fake";
