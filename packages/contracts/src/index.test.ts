@@ -253,6 +253,15 @@ describe("contracts", () => {
     expect(parsed.avatarFamily).toBeUndefined();
   });
 
+  it("accepts a complete model choice at creation and rejects partial choices", () => {
+    expect(
+      CreateBotInput.parse({ name: "Engineer", modelProvider: "meta", modelId: "muse-wonder-1.0" }),
+    ).toMatchObject({ modelProvider: "meta", modelId: "muse-wonder-1.0" });
+    for (const model of [{ modelProvider: "meta" }, { modelId: "muse-wonder-1.0" }]) {
+      expect(CreateBotInput.safeParse({ name: "Engineer", ...model }).success).toBe(false);
+    }
+  });
+
   it("accepts an organic avatar family from 0 to 9 when creating a bot", () => {
     expect(CreateBotInput.parse({ name: "Chief", avatarFamily: 0 }).avatarFamily).toBe(0);
     expect(CreateBotInput.parse({ name: "Chief", avatarFamily: 9 }).avatarFamily).toBe(9);

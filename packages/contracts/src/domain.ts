@@ -369,20 +369,27 @@ export const BOT_TITLE_MAX_LENGTH = 500;
 export const BOT_DESCRIPTION_MAX_LENGTH = 4000;
 export const BOT_INSTRUCTIONS_MAX_LENGTH = 20000;
 
-export const CreateBotInput = z.object({
-  name: z.string().trim().min(1).max(BOT_NAME_MAX_LENGTH),
-  title: z.string().max(BOT_TITLE_MAX_LENGTH).default(""),
-  description: z.string().max(BOT_DESCRIPTION_MAX_LENGTH).default(""),
-  instructions: z.string().max(BOT_INSTRUCTIONS_MAX_LENGTH).default(""),
-  notifyOnFinish: z.boolean().default(true),
-  fleetManagement: z.boolean().optional(),
-  color: BotAvatarValueSchema.optional(),
-  /** Organic body family (0-9) to draw the new bot with; the server picks an id that hashes to it. */
-  avatarFamily: z.number().int().min(0).max(9).optional(),
-  computerMode: ComputerModeSchema.default("team"),
-  /** Idempotency key within a space (unique with spaceId). */
-  spawnKey: z.string().trim().min(1).max(120).optional(),
-});
+export const CreateBotInput = z
+  .object({
+    name: z.string().trim().min(1).max(BOT_NAME_MAX_LENGTH),
+    title: z.string().max(BOT_TITLE_MAX_LENGTH).default(""),
+    description: z.string().max(BOT_DESCRIPTION_MAX_LENGTH).default(""),
+    instructions: z.string().max(BOT_INSTRUCTIONS_MAX_LENGTH).default(""),
+    notifyOnFinish: z.boolean().default(true),
+    fleetManagement: z.boolean().optional(),
+    color: BotAvatarValueSchema.optional(),
+    /** Organic body family (0-9) to draw the new bot with; the server picks an id that hashes to it. */
+    avatarFamily: z.number().int().min(0).max(9).optional(),
+    computerMode: ComputerModeSchema.default("team"),
+    /** Idempotency key within a space (unique with spaceId). */
+    spawnKey: z.string().trim().min(1).max(120).optional(),
+    modelProvider: z.string().trim().min(1).max(80).optional(),
+    modelId: z.string().trim().min(1).max(200).optional(),
+  })
+  .refine((value) => Boolean(value.modelProvider) === Boolean(value.modelId), {
+    message: "Model provider and model id must both be set",
+    path: ["modelId"],
+  });
 export type CreateBotInput = z.infer<typeof CreateBotInput>;
 
 export function normalizeCreateBotProfile(
@@ -1603,6 +1610,8 @@ export const MeSchema = z.object({
   /** Deprecated: app accounts never have server administrator privileges. Always false. */
   isDeploymentOwner: z.boolean(),
   needsModel: z.boolean(),
+  /** Provider the user must connect personally; absent from older servers. */
+  requiredPersonalModelProvider: z.string().nullable().optional(),
   defaultProvider: z.string().nullable(),
   defaultModel: z.string().nullable(),
   /** Provider the active default runs on with the server's own credentials, without a key. */
