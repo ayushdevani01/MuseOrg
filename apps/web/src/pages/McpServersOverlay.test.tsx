@@ -63,11 +63,13 @@ vi.mock("@rakazo/ui-web", async () => {
         children,
         onClick,
         disabled,
+        "aria-pressed": pressed,
       }: {
         children: ReactNode;
         onClick: () => void;
         disabled: boolean;
-      }) => createElement("button", { onClick, disabled }, children),
+        "aria-pressed"?: boolean;
+      }) => createElement("button", { onClick, disabled, "aria-pressed": pressed }, children),
     ],
     ["Input", () => null],
     ["Textarea", () => null],
@@ -83,11 +85,12 @@ beforeEach(() => {
   access.bots.mockReset().mockResolvedValue([]);
 });
 
-function overlay(editServerId?: string, stdioEnabled = true) {
+function overlay(editServerId?: string, stdioEnabled = true, activeBotId?: string) {
   return (
     <QueryClientProvider client={client}>
       <McpServersOverlay
         editServerId={editServerId}
+        activeBotId={activeBotId}
         stdioEnabled={stdioEnabled}
         onClose={() => {}}
       />
@@ -95,16 +98,77 @@ function overlay(editServerId?: string, stdioEnabled = true) {
   );
 }
 
-function server(id: string, status = "unknown") {
+function server(id: string, status: McpServer["health"]["status"] = "unknown"): McpServer {
   return {
     id,
+    spaceId: "space-test",
+    slug: id,
     name: id,
+    description: "",
     transport: "stdio",
+    endpoint: null,
+    command: "echo",
     oauthStatus: "none",
-    health: { status },
+    health: { status, message: null, toolCount: null, checkedAt: null },
+    hasSecret: false,
+    oauthClientId: null,
     enabled: true,
-  } as McpServer;
+    args: [],
+    envKeys: [],
+    fileKeys: [],
+    headerKeys: [],
+    revision: 1,
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z",
+  };
 }
+
+it("preselects only the current coworker for a new server and lets the owner opt out", async () => {
+  mocks.list.mockReset().mockResolvedValue([]);
+  access.bots.mockResolvedValue([
+    { id: "bot_1", name: "Ada" },
+    { id: "bot_2", name: "Bea" },
+  ]);
+  const host = document.createElement("div");
+  const root = createRoot(host);
+  try {
+    await act(async () => root.render(overlay(undefined, true, "bot_1")));
+    const button = (name: string) =>
+      Array.from(host.querySelectorAll("button")).find((item) => item.textContent === name)!;
+    await vi.waitFor(() => expect(button("Ada")?.getAttribute("aria-pressed")).toBe("true"));
+    expect(button("Bea").getAttribute("aria-pressed")).toBe("false");
+    await act(async () => button("Ada").click());
+    expect(button("Ada").getAttribute("aria-pressed")).toBe("false");
+    expect(access.replace).not.toHaveBeenCalled();
+  } finally {
+    await act(async () => root.unmount());
+  }
+});
+
+it("does not preselect an unavailable coworker or change an edited server's assignments", async () => {
+  mocks.list.mockReset().mockResolvedValue([server("docs")]);
+  access.bots.mockResolvedValue([{ id: "bot_1", name: "Ada" }]);
+  const host = document.createElement("div");
+  const root = createRoot(host);
+  try {
+    await act(async () => root.render(overlay(undefined, true, "missing-bot")));
+    await vi.waitFor(() => expect(host.textContent).toContain("Ada"));
+    for (const button of Array.from(host.querySelectorAll("button")).filter(
+      (item) => item.textContent === "Ada",
+    ))
+      expect(button.getAttribute("aria-pressed")).toBe("false");
+    await act(async () => root.render(overlay("docs", true, "bot_1")));
+    await vi.waitFor(() => expect(host.textContent).toContain("Cancel"));
+    const agents = Array.from(host.querySelectorAll("button")).filter(
+      (item) => item.textContent === "Ada",
+    );
+    expect(agents).toHaveLength(1);
+    expect(agents[0]?.getAttribute("aria-pressed")).toBe("false");
+    expect(access.replace).not.toHaveBeenCalled();
+  } finally {
+    await act(async () => root.unmount());
+  }
+});
 
 it("offers stdio only where the deployment runs it, and still shows existing stdio servers", async () => {
   mocks.list

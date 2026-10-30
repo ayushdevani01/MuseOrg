@@ -1,7 +1,7 @@
 import { t } from "@lingui/core/macro";
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { BotMcpServer, McpServer, McpTransport } from "@rakazo/contracts";
-import { deriveMcpSlug, isRetryableError } from "@rakazo/core";
+import { deriveMcpSlug, isRetryableError, MCP_PRESETS, mcpPresetForEndpoint } from "@rakazo/core";
 import { fetchFresh, writeSaved } from "@rakazo/core/query";
 import {
   Badge,
@@ -76,21 +76,33 @@ function oauthActionLabel(server: McpServer, pending: boolean): string {
 export function McpServersOverlay({
   onClose,
   editServerId,
+  presetId,
+  activeBotId,
   stdioEnabled,
+  onCreated,
 }: {
   onClose: () => void;
   /** Opens with this server's form, as an import's setup checklist does. */
   editServerId?: string;
+  /** A reviewed catalog entry fills the normal form without saving anything. */
+  presetId?: string;
+  /** The current coworker is a visible, editable default for a new server. */
+  activeBotId?: string;
   /** Whether this deployment runs stdio servers. */
   stdioEnabled: boolean;
+  onCreated?: () => void;
 }) {
   const { t } = useLingui();
+  const initialPreset = !editServerId
+    ? MCP_PRESETS.find((preset) => preset.id === presetId)
+    : undefined;
   const [editing, setEditing] = useState<McpServer | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
   const [selectedBotIds, setSelectedBotIds] = useState<string[]>([]);
+  const initialBotSelection = useRef(false);
   const [transport, setTransport] = useState<McpTransport>("streamable_http");
-  const [name, setName] = useState("");
-  const [endpoint, setEndpoint] = useState("");
+  const [name, setName] = useState(initialPreset?.name ?? "");
+  const [endpoint, setEndpoint] = useState(initialPreset?.endpoint ?? "");
   const [secret, setSecret] = useState("");
   const [headerName, setHeaderName] = useState("Authorization");
   const [headerValue, setHeaderValue] = useState("");
@@ -106,6 +118,7 @@ export function McpServersOverlay({
   const [saving, setSaving] = useState(false);
   const [oauthPending, setOauthPending] = useState<string | null>(null);
   const [testingIds, setTestingIds] = useState<Set<string>>(() => new Set());
+  const preset = transport !== "stdio" ? mcpPresetForEndpoint(endpoint) : undefined;
   const queries = useSpaceQueries();
   const queryClient = useQueryClient();
   const serversOptions = queries.mcp.servers.list.queryOptions();
@@ -131,6 +144,13 @@ export function McpServersOverlay({
     () => (botsQuery.data ?? []).filter((bot) => !bot.archivedAt),
     [botsQuery.data],
   );
+  useEffect(() => {
+    if (initialBotSelection.current || editServerId || !botsQuery.isSuccess) return;
+    initialBotSelection.current = true;
+    setSelectedBotIds(
+      activeBotId && bots.some((bot) => bot.id === activeBotId) ? [activeBotId] : [],
+    );
+  }, [activeBotId, bots, botsQuery.isSuccess, editServerId]);
   const botAssignments = useMemo(() => {
     const assignments = assignmentsQuery.data ?? [];
     return Object.fromEntries(
@@ -208,7 +228,9 @@ export function McpServersOverlay({
     setCommand("");
     setArgs("");
     setEnvRows([emptyEnvRow()]);
-    setSelectedBotIds([]);
+    setSelectedBotIds(
+      activeBotId && bots.some((bot) => bot.id === activeBotId) ? [activeBotId] : [],
+    );
   }
 
   /** Stored values are never sent back to the client, so a blank one keeps what is stored. */
@@ -239,6 +261,10 @@ export function McpServersOverlay({
     }
     if (transport !== "stdio" && !endpoint.trim()) {
       setError(t`Add an HTTPS server URL.`);
+      return;
+    }
+    if (preset?.auth === "bearer" && !secret.trim() && !editing?.hasSecret) {
+      setError(t`Add an API token`);
       return;
     }
     if (transport === "stdio" && !command.trim()) {
@@ -333,6 +359,7 @@ export function McpServersOverlay({
       );
       await refresh();
       resetForm();
+      onCreated?.();
     } catch (err) {
       setError(errorText(err, editing ? t`Could not save` : t`Could not add MCP server`));
     } finally {
@@ -442,6 +469,26 @@ export function McpServersOverlay({
     }
   }
 
+  const tokenField = (
+    <Field>
+      <FieldLabel htmlFor="mcp-secret">
+        {preset?.auth === "bearer" ? (
+          <Trans>API token</Trans>
+        ) : (
+          <Trans>Access token (optional)</Trans>
+        )}
+      </FieldLabel>
+      <Input
+        id="mcp-secret"
+        type="password"
+        autoComplete="new-password"
+        value={secret}
+        onChange={(e) => setSecret(e.target.value)}
+        placeholder={t`Stored encrypted`}
+      />
+    </Field>
+  );
+
   return (
     <Dialog
       open
@@ -478,6 +525,30 @@ export function McpServersOverlay({
             </CardHeader>
             <CardContent>
               <FieldGroup className="gap-4">
+                {preset ? (
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      className="size-5 shrink-0 text-foreground"
+                      fill="currentColor"
+                    >
+                      <path d={preset.iconPath} />
+                    </svg>
+                    <span className="flex-1">
+                      {preset.auth === "none" ? (
+                        <Trans>No account needed</Trans>
+                      ) : preset.auth === "bearer" ? (
+                        <Trans>Add an API token</Trans>
+                      ) : (
+                        <Trans>Save, then connect OAuth</Trans>
+                      )}
+                    </span>
+                    <a href={preset.docsUrl} target="_blank" rel="noreferrer" className="underline">
+                      <Trans>Setup guide</Trans>
+                    </a>
+                  </div>
+                ) : null}
                 <Field>
                   <FieldLabel htmlFor="mcp-name">
                     <Trans>Server name</Trans>
@@ -541,25 +612,14 @@ export function McpServersOverlay({
                     />
                   </Field>
                 )}
+                {preset?.auth === "bearer" ? tokenField : null}
                 <Disclosure
                   className="group rounded-xl border border-border"
                   summary={<Trans>Advanced</Trans>}
                   summaryClassName="w-full flex items-center justify-between px-3 py-2.5 text-sm text-foreground"
                 >
                   <div className="space-y-4 border-t border-border p-3">
-                    <Field>
-                      <FieldLabel htmlFor="mcp-secret">
-                        <Trans>Access token (optional)</Trans>
-                      </FieldLabel>
-                      <Input
-                        id="mcp-secret"
-                        type="password"
-                        autoComplete="new-password"
-                        value={secret}
-                        onChange={(e) => setSecret(e.target.value)}
-                        placeholder={t`Stored encrypted`}
-                      />
-                    </Field>
+                    {preset?.auth !== "bearer" ? tokenField : null}
                     {transport === "stdio" ? (
                       <Field>
                         <FieldTitle>
@@ -834,6 +894,7 @@ export function McpServersOverlay({
               ) : (
                 servers.map((server) => {
                   const statusText = oauthStatusText(server);
+                  const serverPreset = mcpPresetForEndpoint(server.endpoint);
                   return (
                     <Card key={server.id} size="sm">
                       <CardContent>
@@ -882,7 +943,10 @@ export function McpServersOverlay({
                           })}
                         </div>
                         <div className="mt-3 flex flex-wrap gap-2">
-                          {server.transport !== "stdio" || server.oauthClientId ? (
+                          {server.oauthStatus !== "none" ||
+                          server.oauthClientId ||
+                          (server.transport !== "stdio" &&
+                            (!serverPreset || serverPreset.auth === "oauth")) ? (
                             <>
                               <Button
                                 type="button"

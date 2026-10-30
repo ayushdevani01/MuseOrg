@@ -18,10 +18,17 @@ export type SettingsSection = (typeof SETTINGS_SECTIONS)[number];
 export type ShellOverlay =
   | { kind: "settings"; section: SettingsSection; spaceId: string | null }
   | { kind: "integrations" }
-  | { kind: "mcp"; serverId?: string }
+  | { kind: "mcp"; serverId?: string; presetId?: string }
   | null;
 
-const OVERLAY_KEYS = ["settings", "space", "integrations", "mcp", "messaging"] as const;
+const OVERLAY_KEYS = [
+  "settings",
+  "space",
+  "integrations",
+  "mcp",
+  "mcpPreset",
+  "messaging",
+] as const;
 
 function isSettingsSection(value: string): value is SettingsSection {
   return (SETTINGS_SECTIONS as readonly string[]).includes(value);
@@ -39,7 +46,9 @@ export function readShellOverlay(params: URLSearchParams): ShellOverlay {
   if (params.has("integrations")) return { kind: "integrations" };
   if (params.has("mcp")) {
     const serverId = params.get("mcp");
-    return serverId ? { kind: "mcp", serverId } : { kind: "mcp" };
+    if (serverId) return { kind: "mcp", serverId };
+    const presetId = params.get("mcpPreset");
+    return presetId ? { kind: "mcp", presetId } : { kind: "mcp" };
   }
   // Links from before Messaging moved into settings.
   if (params.has("messaging")) return { kind: "settings", section: "messaging", spaceId: null };
@@ -55,6 +64,7 @@ export function withShellOverlay(params: URLSearchParams, overlay: ShellOverlay)
     if (overlay.spaceId) next.set("space", overlay.spaceId);
   } else if (overlay?.kind === "mcp") {
     next.set("mcp", overlay.serverId ?? "");
+    if (!overlay.serverId && overlay.presetId) next.set("mcpPreset", overlay.presetId);
   } else if (overlay) {
     next.set(overlay.kind, "");
   }

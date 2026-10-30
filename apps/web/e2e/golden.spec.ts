@@ -18,6 +18,11 @@ function sidebarBotButton(page: Page, name: RegExp | string) {
   });
 }
 
+async function addIntegration(page: Page, name: string) {
+  await page.getByRole("button", { name: "Add integration", exact: true }).click();
+  await page.getByRole("menuitem", { name, exact: true }).click();
+}
+
 test.describe.configure({ mode: "serial" });
 
 test("two users are isolated and a bot completes durable work", async ({ browser }, testInfo) => {
@@ -165,6 +170,7 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
   try {
     await expect(catalogSpinner).toBeVisible();
     await expect(featured).toBeHidden();
+    await expect(page.getByTestId("mcp-presets")).toBeVisible();
     await expect(page.getByPlaceholder("Search apps")).toBeDisabled();
     await expect(page.getByText("Not in the plugin catalog", { exact: true })).toBeHidden();
     await captureScreenshot(page, testInfo, "11-plugins-loading");
@@ -176,12 +182,13 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
   await expect(featured).toContainText(
     /Gmail[\s\S]*Google Calendar[\s\S]*Google Drive[\s\S]*Slack[\s\S]*Notion/,
   );
-  await expect(page.getByText("GitHub", { exact: true })).toBeVisible();
+  await expect(page.getByTestId("mcp-presets").getByText("GitHub", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add Executor", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Add Treg", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Add MCP server", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Add OpenAPI", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Add GraphQL", exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Add integration", exact: true })).toBeVisible();
   await expect(page.getByText("Tool sources", { exact: true })).toBeHidden();
   await captureScreenshot(page, testInfo, "11-plugins-catalog");
 
@@ -244,6 +251,7 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
   await captureScreenshot(page, testInfo, "11b-connected-plugins-empty");
 
   const linearRow = page
+    .getByTestId("managed-connector-catalog")
     .getByText("Linear", { exact: true })
     .locator("xpath=ancestor::*[.//button][1]");
   const connectPopup = page.waitForEvent("popup");
@@ -267,22 +275,21 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
     advanced.getByRole("button", { name: "Browse MCP servers", exact: true }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Manage MCP servers", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add MCP server", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add OpenAPI", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add GraphQL", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Add integration", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: "Add MCP server", exact: true })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Add OpenAPI", exact: true })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Add GraphQL", exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: "Add Executor", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add Treg", exact: true })).toBeVisible();
   await expect(page.getByText("Tool sources", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "MCP servers", exact: true })).toBeHidden();
   await expect(page.getByTestId("integrations-catalog-feed")).toBeVisible();
-  // Catalog Search is optional chrome; add buttons stay MCP → OpenAPI → GraphQL → Executor → Treg.
+  // Provider-specific presets stay under Advanced; common integrations have one main menu.
   const advancedActions = advanced.getByTestId("integrations-advanced-add").locator("button");
-  await expect(advancedActions).toHaveCount(5);
-  await expect(advancedActions.nth(0)).toHaveText("Add MCP server");
-  await expect(advancedActions.nth(1)).toHaveText("Add OpenAPI");
-  await expect(advancedActions.nth(2)).toHaveText("Add GraphQL");
-  await expect(advancedActions.nth(3)).toHaveText("Add Executor");
-  await expect(advancedActions.nth(4)).toHaveText("Add Treg");
+  await expect(advancedActions).toHaveCount(2);
+  await expect(advancedActions.nth(0)).toHaveText("Add Executor");
+  await expect(advancedActions.nth(1)).toHaveText("Add Treg");
   await captureScreenshot(page, testInfo, "01-graphql-advanced-order");
 
   const feed = page.getByTestId("integrations-catalog-feed");
@@ -314,13 +321,14 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
   await page.getByRole("button", { name: "Verify and add", exact: true }).click();
   await expect(page.getByText(/MCP\s*https:\/\/treg\.to\/mcp\/\s*Credential saved/)).toBeVisible();
 
-  await page.getByRole("button", { name: "Add MCP server", exact: true }).click();
+  await feed.getByRole("button", { name: "MCP Add", exact: true }).click();
   await page.getByPlaceholder("Display name").fill("Browser MCP");
   await page.getByPlaceholder("https://example.com/mcp").fill("https://mcp.example.test/mcp");
+  await page.locator("select").selectOption("none");
   await page.getByRole("button", { name: "Verify and add", exact: true }).click();
   await expect(page.getByText(/MCP\s*https:\/\/mcp\.example\.test\/mcp\s*No auth/)).toBeVisible();
 
-  await page.getByRole("button", { name: "Add OpenAPI", exact: true }).click();
+  await addIntegration(page, "Add OpenAPI");
   await page.getByPlaceholder("Display name").fill("Browser API");
   await page
     .getByPlaceholder("https://example.com/openapi.json")
@@ -344,7 +352,7 @@ test("takeover, routine, plugins, and export are reachable", async ({ page }, te
   ).toBeVisible();
   await captureScreenshot(page, testInfo, "11d-provider-emulators");
 
-  await page.getByRole("button", { name: "Add GraphQL", exact: true }).click();
+  await addIntegration(page, "Add GraphQL");
   await page.getByPlaceholder("Display name").fill("Browser GraphQL");
   await page
     .getByPlaceholder("https://example.com/graphql")

@@ -38,6 +38,8 @@ describe("readShellOverlay", () => {
     expect(read("?integrations")).toEqual({ kind: "integrations" });
     expect(read("?mcp=")).toEqual({ kind: "mcp" });
     expect(read("?mcp=srv_1")).toEqual({ kind: "mcp", serverId: "srv_1" });
+    expect(read("?mcp&mcpPreset=github")).toEqual({ kind: "mcp", presetId: "github" });
+    expect(read("?mcp=srv_1&mcpPreset=github")).toEqual({ kind: "mcp", serverId: "srv_1" });
   });
 
   it("opens Messaging settings from the old messaging link", () => {
@@ -56,6 +58,8 @@ describe("withShellOverlay", () => {
   it("replaces the open overlay instead of stacking another", () => {
     expect(write("?integrations&routine=r_1", { kind: "mcp" })).toBe("?routine=r_1&mcp");
     expect(write("", { kind: "mcp", serverId: "srv_1" })).toBe("?mcp=srv_1");
+    expect(write("", { kind: "mcp", presetId: "github" })).toBe("?mcp&mcpPreset=github");
+    expect(write("?mcp&mcpPreset=github", null)).toBe("");
     expect(write("?settings=models&space=sp_1", { kind: "integrations" })).toBe("?integrations");
   });
 

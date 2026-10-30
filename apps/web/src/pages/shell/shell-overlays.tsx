@@ -56,13 +56,17 @@ export function AppOverlays({
           onConnectedAppsChange={onConnectedAppsChange}
           activeBotId={activeBotId}
           onClose={() => setOverlay(null)}
-          onOpenMcp={() => setOverlay({ kind: "mcp" })}
+          onOpenMcp={(options) => setOverlay({ kind: "mcp", ...options })}
         />
       ) : null}
       {overlay?.kind === "mcp" ? (
         <McpServersOverlay
+          key={overlay.serverId ?? overlay.presetId ?? "mcp"}
           editServerId={overlay.serverId}
+          presetId={overlay.presetId}
+          activeBotId={activeBotId}
           stdioEnabled={stdioEnabled}
+          onCreated={() => setOverlay({ kind: "mcp" })}
           onClose={() => setOverlay(null)}
         />
       ) : null}
