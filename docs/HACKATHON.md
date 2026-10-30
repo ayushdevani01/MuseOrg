@@ -16,7 +16,8 @@ before submitting; this checklist does not replace the organizers' rules.
 - Keep the repository public and accessible to judges.
 - Preserve the upstream license and notices. [UPSTREAM.md](../UPSTREAM.md)
   identifies the exact starting revision and separates inherited capabilities
-  from MuseOrg changes. Git history retains the original foundation.
+  from MuseOrg changes. Git history starts with an attributed source snapshot;
+  the full earlier history remains available in the upstream repository.
 - Make focused commits with actual dates; do not disguise inherited work as
   work created during the event.
 - Include reproducible setup, completed verification and known limitations.

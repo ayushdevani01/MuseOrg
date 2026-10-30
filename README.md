@@ -74,8 +74,9 @@ under a virtual display.
 MuseOrg adapts Apache-2.0 [Rakazo](https://github.com/elie222/rakazo) at the
 [pinned starting revision](https://github.com/elie222/rakazo/tree/c5574e2c66b644bbe82af55af4a816b89b34d29a)
 and its Pi runtime. Existing auth, conversations, queues, computers, memory and
-connector infrastructure are inherited capabilities. The original Git history,
-[license](LICENSE), notices and [upstream README](README.upstream.md) are retained.
+connector infrastructure are inherited capabilities. Git history starts with a
+clearly attributed source import followed by MuseOrg changes. The upstream
+[license](LICENSE), notices and [README](README.upstream.md) are retained.
 Workspace package names remain `@rakazo/*`.
 
 [UPSTREAM.md](UPSTREAM.md) records the boundary between reused components and

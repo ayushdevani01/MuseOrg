@@ -5,6 +5,11 @@ MuseOrg adapts [Rakazo](https://github.com/elie222/rakazo), pinned at
 The upstream Apache-2.0 license and existing notices are retained. The original
 workspace package names remain in place while the product is adapted.
 
+Git history begins with a clearly attributed import of that source snapshot,
+followed by the MuseOrg changes. Earlier Rakazo history remains available in
+the upstream repository. The imported foundation is pre-existing work and is
+not presented as original MuseOrg hackathon work.
+
 The lockfile pins Pi 1.3.0. Its native `meta` provider implements the Responses
 transport; MuseOrg reuses that implementation rather than maintaining a second
 Meta agent loop. Provider support in source is distinct from live account access.
