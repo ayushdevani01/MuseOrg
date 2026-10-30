@@ -63,6 +63,7 @@ async function assertWritableEntry(
   uid: number,
   gid: number,
   isRoot = false,
+  windows = false,
 ): Promise<void> {
   let stat: Stats;
   try {
@@ -82,9 +83,14 @@ async function assertWritableEntry(
     throw new Error(`computer home ${root} must be a directory`);
   }
 
+  // Windows stat uid/gid are placeholders, not the Linux IDs Docker runs as.
+  // Its owner mode bits reflect the read-only attribute, with no directory
+  // execute bits. The guest's actual access is determined by the bind mount.
+  const entryUid = windows ? stat.uid : uid;
+  const entryGid = windows ? stat.gid : gid;
   const usable = stat.isDirectory()
-    ? hasPermissions(stat, uid, gid, 0b111)
-    : regularFileIsUsable(stat, uid, gid);
+    ? hasPermissions(stat, entryUid, entryGid, windows ? 0b110 : 0b111)
+    : regularFileIsUsable(stat, entryUid, entryGid);
   if (!usable) {
     throw writabilityError(target, root, uid, gid);
   }
@@ -92,7 +98,7 @@ async function assertWritableEntry(
 
   const directory = await opendir(target);
   for await (const entry of directory) {
-    await assertWritableEntry(path.join(target, entry.name), root, uid, gid);
+    await assertWritableEntry(path.join(target, entry.name), root, uid, gid, false, windows);
   }
 }
 
@@ -189,12 +195,13 @@ export async function assertComputerHomeWritable(
   root: string,
   uid: number,
   gid: number,
+  platform: NodeJS.Platform = process.platform,
 ): Promise<void> {
-  if (process.platform === "linux") {
+  if (platform === "linux") {
     await assertWritableLinux(root, uid, gid);
     return;
   }
-  await assertWritableEntry(root, root, uid, gid, true);
+  await assertWritableEntry(root, root, uid, gid, true, platform === "win32");
 }
 
 /** Exported for regression coverage of the moved-directory escape check. */
