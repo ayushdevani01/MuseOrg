@@ -144,6 +144,34 @@ describe("connect-time model check", () => {
     ).rejects.toThrow("can't run this model");
   });
 
+  it.each([429, 503])(
+    "keeps required personal setup incomplete on an inconclusive response (%i)",
+    async (status) => {
+      await expect(
+        verifyModelServesAgents(
+          { provider: "groq", id: "openai/gpt-oss-120b", apiKey },
+          {
+            fetch: rejection(status, {
+              error: { message: "Temporarily unavailable", code: status },
+            }),
+            requireAcceptance: true,
+          },
+        ),
+      ).rejects.toThrow("Could not verify the model connection. Try again.");
+    },
+  );
+
+  it("requires a resolvable model when setup promises a verified connection", async () => {
+    const fetchImpl = vi.fn<typeof fetch>();
+    await expect(
+      verifyModelServesAgents(
+        { provider: "anthropic", id: "fixture-unknown-model", apiKey },
+        { fetch: fetchImpl, requireAcceptance: true },
+      ),
+    ).rejects.toThrow("Could not verify the model connection. Try again.");
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("skips a model the catalog cannot resolve", async () => {
     const fetchImpl = vi.fn<typeof fetch>();
     await verifyModelServesAgents(

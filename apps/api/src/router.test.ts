@@ -4547,6 +4547,207 @@ describe("model credential persistence", () => {
     expect(deps.secrets.put).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { modelId: undefined, expected: "muse-spark-1.3" },
+    { modelId: "muse-wonder-1.0", expected: "muse-wonder-1.0" },
+  ])("checks Meta $expected before storing the member's key", async ({ modelId, expected }) => {
+    const { deps, handler } = persistDeps();
+    deps.env.requiredPersonalModelProvider = "meta";
+    const apiKey = "fake-meta-fixture-key";
+    const transport = vi.fn<typeof fetch>(
+      async () =>
+        new Response(
+          `data: ${JSON.stringify({
+            type: "response.completed",
+            response: {
+              id: "resp_fixture",
+              status: "completed",
+              output: [],
+              usage: { input_tokens: 1, output_tokens: 0, total_tokens: 1 },
+            },
+          })}\n\ndata: [DONE]\n\n`,
+          { headers: { "content-type": "text/event-stream" } },
+        ),
+    );
+    const check = vi.fn(adapters.verifyModelServesAgents);
+    Object.assign(deps, {
+      modelConnectionFetch: transport,
+      modelConnectionCheck: check,
+    });
+
+    const response = await call(handler, "models/connect", { provider: "meta", apiKey, modelId });
+
+    expect(response.status).toBe(200);
+    expect(check).toHaveBeenCalledWith(
+      expect.objectContaining({ provider: "meta", id: expected, apiKey }),
+      expect.objectContaining({ requireAcceptance: true, fetch: transport }),
+    );
+    expect(transport).toHaveBeenCalledOnce();
+    expect(String(transport.mock.calls[0]?.[0])).toBe("https://api.meta.ai/v1/responses");
+    expect(JSON.parse(String(transport.mock.calls[0]?.[1]?.body))).toMatchObject({
+      model: expected,
+      max_output_tokens: 1024,
+      tools: [expect.objectContaining({ type: "function", name: "noop" })],
+    });
+    expect(deps.secrets.put).toHaveBeenCalledWith(
+      apiKey,
+      expect.objectContaining({ userId: actor.userId }),
+    );
+    expect(transport.mock.invocationCallOrder[0]).toBeLessThan(
+      vi.mocked(deps.secrets.put).mock.invocationCallOrder[0]!,
+    );
+    expect(JSON.stringify(await response.json())).not.toContain(apiKey);
+  });
+
+  it.each([undefined, "meta", "openai"])(
+    "requires accepted preflight only for the configured personal provider (%s)",
+    async (requiredProvider) => {
+      const { deps, handler } = persistDeps();
+      deps.env.requiredPersonalModelProvider = requiredProvider;
+      const check = vi.fn(async () => undefined);
+      Object.assign(deps, { modelConnectionCheck: check });
+
+      const response = await call(handler, "models/connect", {
+        provider: "meta",
+        apiKey: "fake-meta-fixture-key",
+        modelId: "muse-spark-1.3",
+      });
+
+      expect(response.status).toBe(200);
+      expect(check).toHaveBeenCalledOnce();
+      const options = (check.mock.calls[0] as unknown[])[1] as Record<string, unknown>;
+      if (requiredProvider === "meta") expect(options.requireAcceptance).toBe(true);
+      else expect(options).not.toHaveProperty("requireAcceptance");
+    },
+  );
+
+  it.each([429, 503])(
+    "does not save a required personal key when model preflight is inconclusive (%i)",
+    async (status) => {
+      const { deps, handler } = persistDeps();
+      deps.env.requiredPersonalModelProvider = "meta";
+      const apiKey = "fake-meta-fixture-key";
+      const transport = vi.fn<typeof fetch>(async () =>
+        Response.json(
+          { error: { message: status === 429 ? "Too many requests" : "Service unavailable" } },
+          { status },
+        ),
+      );
+      Object.assign(deps, {
+        modelConnectionFetch: transport,
+        modelConnectionCheck: adapters.verifyModelServesAgents,
+      });
+
+      const response = await call(handler, "models/connect", {
+        provider: "meta",
+        apiKey,
+        modelId: "muse-spark-1.3",
+      });
+
+      expect(response.status).toBe(400);
+      const body = await response.json();
+      expect(body).toMatchObject({
+        json: {
+          code: "BAD_REQUEST",
+          message: "Could not verify the model connection. Try again.",
+        },
+      });
+      expect(JSON.stringify(body)).not.toContain(apiKey);
+      expect(transport).toHaveBeenCalledOnce();
+      expect(deps.secrets.put).not.toHaveBeenCalled();
+      expect(deps.prisma.userModelCredential.create).not.toHaveBeenCalled();
+      expect(deps.prisma.$transaction).not.toHaveBeenCalled();
+    },
+  );
+
+  it("does not save a required personal key when model preflight is unavailable", async () => {
+    const { deps, handler } = persistDeps();
+    deps.env.requiredPersonalModelProvider = "meta";
+
+    const response = await call(handler, "models/connect", {
+      provider: "meta",
+      apiKey: "fake-meta-fixture-key",
+      modelId: "muse-spark-1.3",
+    });
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      json: { message: "Could not verify the model connection. Try again." },
+    });
+    expect(deps.secrets.put).not.toHaveBeenCalled();
+    expect(deps.prisma.$transaction).not.toHaveBeenCalled();
+  });
+
+  it("does not save a required personal key without a model to verify", async () => {
+    const { deps, handler } = persistDeps();
+    deps.env.requiredPersonalModelProvider = "meta";
+    const check = vi.fn(async () => undefined);
+    Object.assign(deps, { modelConnectionCheck: check });
+    const defaultModel = vi.spyOn(adapters, "defaultCatalogModelId").mockReturnValue(null);
+    try {
+      const response = await call(handler, "models/connect", {
+        provider: "meta",
+        apiKey: "fake-meta-fixture-key",
+      });
+
+      expect(response.status).toBe(400);
+      expect(check).not.toHaveBeenCalled();
+      expect(deps.secrets.put).not.toHaveBeenCalled();
+      expect(deps.prisma.$transaction).not.toHaveBeenCalled();
+    } finally {
+      defaultModel.mockRestore();
+    }
+  });
+
+  it("keeps credential-free scripted fixtures exempt from required personal preflight", async () => {
+    const { deps, handler } = persistDeps();
+    deps.env.requiredPersonalModelProvider = "meta";
+    deps.env.agentRuntime = "scripted";
+
+    const response = await call(handler, "models/connect", {
+      provider: "meta",
+      apiKey: "fake-meta-fixture-key",
+      modelId: "muse-spark-1.3",
+    });
+
+    expect(response.status).toBe(200);
+    expect(deps.secrets.put).toHaveBeenCalled();
+  });
+
+  it.each([401, 403])("refuses a rejected Meta key (%i) before saving it", async (status) => {
+    const { deps, handler } = persistDeps();
+    const apiKey = "fake-meta-fixture-key";
+    const transport = vi.fn<typeof fetch>(async () =>
+      Response.json(
+        {
+          error: {
+            message: `Invalid API key ${apiKey}`,
+            type: "invalid_request_error",
+            code: "invalid_api_key",
+          },
+        },
+        { status },
+      ),
+    );
+    Object.assign(deps, {
+      modelConnectionFetch: transport,
+      modelConnectionCheck: adapters.verifyModelServesAgents,
+    });
+
+    const response = await call(handler, "models/connect", {
+      provider: "meta",
+      apiKey,
+      modelId: "muse-spark-1.3",
+    });
+
+    expect(response.status).toBe(400);
+    const failure = JSON.stringify(await response.json());
+    expect(failure).not.toContain(apiKey);
+    expect(failure).toMatch(/key|access/i);
+    expect(deps.secrets.put).not.toHaveBeenCalled();
+    expect(deps.prisma.$transaction).not.toHaveBeenCalled();
+  });
+
   it("refuses a pasted key that is not a header-safe token before checking it", async () => {
     const { deps, handler } = persistDeps();
     const check = vi.fn(async () => undefined);

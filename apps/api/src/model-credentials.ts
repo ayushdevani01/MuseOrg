@@ -33,6 +33,10 @@ import {
 } from "@rakazo/db";
 import { mayUsePrivateEndpoint } from "./mcp-servers.js";
 import { assertNoDanglingModelPins } from "./model-pins.js";
+import {
+  assertModelProviderAllowed,
+  assertSubscriptionSignInAllowed,
+} from "./model-provider-policy.js";
 import type { RouterDeps } from "./router.js";
 import { withSerializableRetry } from "./serializable-retry.js";
 
@@ -116,6 +120,10 @@ export async function prepareModelCredential(
   codexCatalog: CodexLiveCatalog,
 ) {
   throwIfAborted(input.signal);
+  if (input.makeDefault !== false) assertModelProviderAllowed(deps.env, input.provider);
+  if (parseModelSecret(input.plaintext).kind === "oauth") {
+    assertSubscriptionSignInAllowed(deps.env);
+  }
   const requestedModelId = usableModelId(input.modelId);
   const authError = requestedModelId
     ? validateModelAuthAvailability(input.provider, requestedModelId, input.plaintext)
@@ -302,6 +310,13 @@ export function createModelConnector(deps: RouterDeps, codexCatalog: CodexLiveCa
     input: ModelConnectInput,
     signal: AbortSignal | undefined,
   ) => {
+    if (input.makeDefault !== false) assertModelProviderAllowed(deps.env, input.provider);
+    const requireAcceptance = Boolean(
+      deps.env.agentRuntime !== "scripted" &&
+        deps.env.requiredPersonalModelProvider &&
+        canonicalPiProviderId(input.provider) ===
+          canonicalPiProviderId(deps.env.requiredPersonalModelProvider),
+    );
     const credential = await modelConnectionTarget(deps, actor, input.provider, input.credentialId);
     let plaintext: string;
     try {
@@ -338,15 +353,23 @@ export function createModelConnector(deps: RouterDeps, codexCatalog: CodexLiveCa
           await verifyOpenAiCompatibleApiKey(saved, deps.modelConnectionFetch, signal);
         }
       }
-      if (input.apiKey?.trim()) {
-        await verifyCatalogProviderApiKey(
-          { provider: input.provider, apiKey: input.apiKey },
-          deps.modelConnectionFetch,
-          signal,
-        );
+      if (input.apiKey?.trim() || requireAcceptance) {
+        if (input.apiKey?.trim()) {
+          await verifyCatalogProviderApiKey(
+            { provider: input.provider, apiKey: input.apiKey },
+            deps.modelConnectionFetch,
+            signal,
+          );
+        }
         const saved = parseModelSecret(plaintext);
         const modelId =
           usableModelId(input.modelId) ?? defaultCatalogModelId(input.provider, plaintext);
+        if (
+          requireAcceptance &&
+          (saved.kind !== "api_key" || !modelId || !deps.modelConnectionCheck)
+        ) {
+          throw new Error("Could not verify the model connection. Try again.");
+        }
         if (saved.kind === "api_key" && modelId && deps.modelConnectionCheck) {
           await deps.modelConnectionCheck(
             {
@@ -357,7 +380,11 @@ export function createModelConnector(deps: RouterDeps, codexCatalog: CodexLiveCa
               gatewayId: saved.gatewayId,
               maxTokens: saved.maxTokens,
             },
-            { fetch: deps.modelConnectionFetch, signal },
+            {
+              fetch: deps.modelConnectionFetch,
+              signal,
+              ...(requireAcceptance ? { requireAcceptance: true } : {}),
+            },
           );
         }
       }

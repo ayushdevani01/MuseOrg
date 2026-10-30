@@ -39,10 +39,18 @@ export async function verifyModelServesAgents(
     AgentRunModel,
     "provider" | "id" | "apiKey" | "accountId" | "gatewayId" | "maxTokens"
   >,
-  options: { fetch?: typeof globalThis.fetch; signal?: AbortSignal } = {},
+  options: {
+    fetch?: typeof globalThis.fetch;
+    signal?: AbortSignal;
+    requireAcceptance?: boolean;
+  } = {},
 ): Promise<void> {
   const { models, model, apiKey } = resolveRuntimeModel(config);
-  if (!model || !apiKey) return;
+  if (!model || !apiKey) {
+    if (options.requireAcceptance)
+      throw new Error("Could not verify the model connection. Try again.");
+    return;
+  }
   const accepted = new AbortController();
   const signal = AbortSignal.any([
     accepted.signal,
@@ -75,7 +83,13 @@ export async function verifyModelServesAgents(
   if (accepted.signal.aborted) return;
   options.signal?.throwIfAborted();
   const result = await stream.result();
-  if (result.stopReason !== "error" || !result.errorMessage) return;
+  if (result.stopReason !== "error" || !result.errorMessage) {
+    if (options.requireAcceptance)
+      throw new Error("Could not verify the model connection. Try again.");
+    return;
+  }
   const failure = normalizeRunError(result.errorMessage);
   if (failure.kind && BLOCKING_KINDS.has(failure.kind)) throw new Error(failure.summary);
+  if (options.requireAcceptance)
+    throw new Error("Could not verify the model connection. Try again.");
 }
