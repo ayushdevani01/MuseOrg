@@ -4611,6 +4611,7 @@ describe("model credential persistence", () => {
         provider: "meta",
         apiKey: "fake-meta-fixture-key",
         modelId: "muse-spark-1.3",
+        makeDefault: false,
       });
 
       expect(response.status).toBe(200);
