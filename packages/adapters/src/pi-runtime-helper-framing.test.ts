@@ -33,6 +33,7 @@ vi.mock("@earendil-works/pi-agent-core", () => ({
         seen.resultForParent = await delegate.execute("call-1", {
           name: "scout",
           task: "count the files",
+          context: '{"artifact":"shared/fixture/source.json"}',
         });
         return;
       }
@@ -84,7 +85,8 @@ describe("helpers know who they are talking to", () => {
         runId: "r",
         prompt: "hello",
         instructions: "",
-        history: [],
+        delegationContext: '{"currency":"EUR"}',
+        history: [{ role: "user", content: "parent-only-conversation-fixture" }],
         tools: builtinAgentTools,
         model: { provider: "test", id: "plain-model" },
         executeTool: vi.fn(async (name: string, _args: unknown, executionId: string) => {
@@ -120,6 +122,12 @@ describe("helpers know who they are talking to", () => {
   it("never lets the helper inherit any bot management tool", () => {
     expect(seen.helperToolNames.length).toBeGreaterThan(0);
     for (const name of FLEET_TOOL_NAMES) expect(seen.helperToolNames).not.toContain(name);
+  });
+
+  it("passes saved facts and selected context without copying the parent chat", () => {
+    expect(seen.helperSystemPrompt).toContain('{"currency":"EUR"}');
+    expect(seen.helperSystemPrompt).toContain('{"artifact":"shared/fixture/source.json"}');
+    expect(seen.helperSystemPrompt).not.toContain("parent-only-conversation-fixture");
   });
 
   it("marks helper calls so the executor refuses update_bot's bot management form from them", () => {

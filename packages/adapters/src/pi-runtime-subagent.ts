@@ -3,6 +3,7 @@ import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { withAutomatedLabels } from "./automated-messages.js";
 import { DELEGATION_TOOL_NAMES } from "./builtin-tools.js";
 import { withCloudflareAuth } from "./cloudflare-ai-gateway.js";
+import { delegationContext } from "./delegation-context.js";
 import { estimatePiImageTokens } from "./pi-image-context.js";
 import {
   assistantText,
@@ -239,6 +240,7 @@ export async function executeSubagent(
         "Complete the task and return a concise result. Do not spawn bots or further subagents.",
         "Your task comes from the parent bot, not from the human user, and you cannot talk to the user: report your result back to the parent bot.",
         "Messages marked as automated come from Rakazo, not from the user.",
+        delegationContext(host.request.delegationContext, args.context),
         extra,
       ]
         .filter(Boolean)

@@ -1173,6 +1173,12 @@ export const builtinAgentTools: ConnectorTool[] = [
           description: "Short label shown in the thread, e.g. scout or reviewer.",
         },
         task: { type: "string", description: "The work the helper should complete." },
+        context: {
+          type: "string",
+          maxLength: 12000,
+          description:
+            "Relevant decisions, preferences and authorized artifact paths for this task. The helper does not receive the parent conversation. Shared files remain on the same computer; use separate output paths for parallel work.",
+        },
         instructions: {
           type: "string",
           description: "Optional extra system instructions for the helper.",

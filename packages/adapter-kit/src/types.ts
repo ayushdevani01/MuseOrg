@@ -506,6 +506,8 @@ export interface AgentRunRequest {
   sourceMessageId?: string | null;
   prompt: string;
   instructions: string;
+  /** Redacted, scope-checked background facts for temporary workers; never full DM history. */
+  delegationContext?: string;
   history: Array<{
     id?: string;
     createdAt?: string;
