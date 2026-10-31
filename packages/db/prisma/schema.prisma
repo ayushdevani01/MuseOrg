@@ -275,6 +275,7 @@ model Space {
   threads                     Thread[]
   events                      Event[]
   tasks                       Task[]
+  workProjects                WorkProject[]
   runs                        Run[]
   routines                    Routine[]
   scratchpadItems             ScratchpadItem[]
@@ -699,6 +700,108 @@ model Event {
   @@map("events")
 }
 
+model WorkProject {
+  id        String   @id @default(cuid())
+  spaceId   String
+  space     Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  userId    String
+  name      String
+  goal      String
+  facts     Json     @default("{}")
+  revision  Int      @default(1)
+  botIds    String[] @default([])
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  revisions WorkProjectRevision[]
+  outputs   WorkProjectOutput[]
+  grants    WorkScopeGrant[]
+  work      WorkProjectRun[]
+
+  @@unique([id, spaceId, userId])
+  @@index([spaceId, userId])
+  @@map("work_projects")
+}
+
+model WorkProjectRevision {
+  id              String      @id @default(cuid())
+  projectId       String
+  spaceId         String
+  userId          String
+  project         WorkProject @relation(fields: [projectId, spaceId, userId], references: [id, spaceId, userId], onDelete: Cascade)
+  revision        Int
+  spec            Json
+  changedKeys     String[]
+  sourceMessageId String?
+  sourceRunId     String?
+  createdAt       DateTime    @default(now())
+
+  @@unique([projectId, revision])
+  @@index([spaceId, userId])
+  @@map("work_project_revisions")
+}
+
+model WorkProjectOutput {
+  id        String      @id @default(cuid())
+  projectId String
+  spaceId   String
+  userId    String
+  project   WorkProject @relation(fields: [projectId, spaceId, userId], references: [id, spaceId, userId], onDelete: Cascade)
+  botId     String
+  key       String
+  revision  Int
+  inputKeys String[]    @default([])
+  reference String
+  sha256    String
+  status    String      @default("current")
+  createdAt DateTime    @default(now())
+
+  @@unique([projectId, key, revision])
+  @@index([spaceId, userId])
+  @@map("work_project_outputs")
+}
+
+model WorkScopeGrant {
+  id               String      @id @default(cuid())
+  projectId        String
+  spaceId          String
+  userId           String
+  project          WorkProject @relation(fields: [projectId, spaceId, userId], references: [id, spaceId, userId], onDelete: Cascade)
+  provider         String
+  account          String
+  resource         String
+  operations       String[]
+  botIds           String[]
+  allowedPaths     String[]    @default([])
+  budgetLimitCents  Int         @default(0)
+  reservedCents    Int         @default(0)
+  spentCents       Int         @default(0)
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  createdAt        DateTime    @default(now())
+
+  @@index([spaceId, userId])
+  @@index([projectId, revokedAt])
+  @@map("work_scope_grants")
+}
+
+model WorkProjectRun {
+  id        String      @id @default(cuid())
+  projectId String
+  spaceId   String
+  userId    String
+  project   WorkProject @relation(fields: [projectId, spaceId, userId], references: [id, spaceId, userId], onDelete: Cascade)
+  runId     String
+  run       Run         @relation(fields: [runId], references: [id], onDelete: Cascade)
+  revision  Int
+  inputKeys String[]    @default([])
+  createdAt DateTime    @default(now())
+
+  @@unique([projectId, runId])
+  @@index([spaceId, userId])
+  @@map("work_project_runs")
+}
+
 model Task {
   id        String   @id @default(cuid())
   spaceId   String
@@ -719,6 +822,7 @@ model Task {
 }
 
 model Run {
+  projectWork          WorkProjectRun[]
   id                   String            @id @default(cuid())
   spaceId              String
   space                Space             @relation(fields: [spaceId], references: [id], onDelete: Cascade)
