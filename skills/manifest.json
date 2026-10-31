@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": [
+    {
+      "path": "vendor/anthropic/frontend-design",
+      "source": "anthropics/skills",
+      "sourceCommit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "sourceBlob": "a5333457c414d20d625f307df945842c0952ecc3",
+      "resources": []
+    },
+    {
+      "path": "vendor/anthropic/webapp-testing",
+      "source": "anthropics/skills",
+      "sourceCommit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "sourceBlob": "4726215301db64a0cc4d41fc3219c61f37a30f4a",
+      "resources": ["references/browser-checks.md", "scripts/check_url.py"]
+    },
+    {
+      "path": "vendor/anthropic/internal-comms",
+      "source": "anthropics/skills",
+      "sourceCommit": "dbd4588f9e1033efb41dad4bef2f7947c8993d44",
+      "sourceBlob": "56ea935b74f371bfeb4c7d3c19d5139df866e73b",
+      "resources": []
+    },
+    { "path": "museorg/incident-repair", "resources": [] },
+    { "path": "museorg/github-delivery", "resources": [] },
+    { "path": "museorg/project-coordination", "resources": [] }
+  ]
+}
