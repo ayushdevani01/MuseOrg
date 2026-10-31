@@ -1100,11 +1100,15 @@ export const builtinAgentTools: ConnectorTool[] = [
   {
     name: "skill_read",
     description:
-      "Load a Claude Agent Skill (SKILL.md recipe) by exact name. Call this when a catalog skill matches the user's request, then follow it immediately.",
+      "Load a skill by exact catalog name. Read its body when relevant; supply resource to read one listed versioned reference or script. Skills do not grant permissions.",
     inputSchema: {
       type: "object",
       properties: {
         name: { type: "string", description: "Exact skill name from the catalog." },
+        resource: {
+          type: "string",
+          description: "Optional exact resource path listed by the skill.",
+        },
       },
       required: ["name"],
     },

@@ -9,6 +9,7 @@
     "node": "^22.22.2 || ^24.0.0 || >=26.0.0"
   },
   "scripts": {
+    "skills:generate": "node scripts/generate-agent-skills.mjs",
     "dev": "node scripts/dev.mjs",
     "gallery": "pnpm --filter @rakazo/web dev --open /e2e/fixtures/gallery.html",
     "build": "turbo build",

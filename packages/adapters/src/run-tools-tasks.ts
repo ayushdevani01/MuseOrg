@@ -260,6 +260,7 @@ export const taskTools: ToolHandlers = {
       {
         name: args.name ? String(args.name) : undefined,
         skillId: args.skillId ? String(args.skillId) : undefined,
+        resource: args.resource !== undefined ? String(args.resource) : undefined,
       },
     );
   },

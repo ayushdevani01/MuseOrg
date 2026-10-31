@@ -8,6 +8,7 @@ import {
 } from "@rakazo/core";
 import type { PrismaClient } from "@rakazo/db";
 import { BUILTIN_AGENT_SKILLS } from "./builtin-skills.js";
+import { productSkill, productSkillResource } from "./product-skills.js";
 
 export const SKILL_TOOL_NAMES = new Set([
   "skill_read",
@@ -108,16 +109,30 @@ async function findOwnedSkill(
 export async function skillReadFromTool(
   prisma: PrismaClient,
   owner: SkillOwner,
-  input: { name?: string; skillId?: string },
+  input: { name?: string; skillId?: string; resource?: string },
 ): Promise<Record<string, unknown>> {
   const skill = await findOwnedSkill(prisma, owner, input);
   if (!skill) return { error: "Skill not found." };
+  const bundled = skill.source === "builtin" ? productSkill(skill.name) : undefined;
+  if (input.resource !== undefined) {
+    const resource = bundled ? productSkillResource(skill.name, input.resource) : undefined;
+    if (!resource) return { error: "Skill resource not found." };
+    return {
+      name: skill.name,
+      source: "builtin",
+      readOnly: true,
+      version: bundled!.version,
+      resource: input.resource,
+      ...resource,
+    };
+  }
   return {
     name: skill.name,
     description: skill.description,
     source: skill.source,
     readOnly: skill.readOnly,
     content: skill.content,
+    ...(bundled ? { version: bundled.version, resources: Object.keys(bundled.resources) } : {}),
   };
 }
 

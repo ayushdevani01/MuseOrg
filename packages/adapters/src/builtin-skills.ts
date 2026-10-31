@@ -1,4 +1,5 @@
 import { buildSkillMd } from "@rakazo/core";
+import { PRODUCT_SKILLS } from "./product-skills.generated.js";
 
 /**
  * Built-in Agent Skills (SKILL.md recipes) available to every user.
@@ -27,8 +28,11 @@ export const BUILTIN_AGENT_SKILLS: Array<{
   name: string;
   description: string;
   content: string;
-}> = SKILLS.map(({ name, description, body }) => ({
-  name,
-  description,
-  content: buildSkillMd({ name, description, body }),
-}));
+}> = [
+  ...SKILLS.map(({ name, description, body }) => ({
+    name,
+    description,
+    content: buildSkillMd({ name, description, body }),
+  })),
+  ...PRODUCT_SKILLS,
+];
