@@ -131,6 +131,15 @@ import {
 } from "./integration-settings.js";
 import { ModelHeadersSchema } from "./model-headers.js";
 import { ModelRoleSchema, ModelRoleUpdateSchema, ModelRoleViewSchema } from "./model-roles.js";
+import {
+  ProjectOutputSchema,
+  ProjectPatchSchema,
+  ProjectSpecSchema,
+  WorkConnectionSchema,
+  WorkGrantInputSchema,
+  WorkGrantSchema,
+  WorkProjectSchema,
+} from "./project-work.js";
 import { MessageReactionSchema } from "./reactions.js";
 import { RoutineWatchSchema } from "./routine-watch.js";
 import { RoutineHistorySchema, RoutineRunCursorSchema, RunsListOutputSchema } from "./runs.js";
@@ -201,6 +210,37 @@ const threadSendInput = threadTarget
 const spaceName = z.string().trim().min(1).max(60);
 
 export const appContract = {
+  projects: {
+    connections: oc.output(z.array(WorkConnectionSchema)),
+    list: oc.input(z.object({ botId: z.string().optional() })).output(z.array(WorkProjectSchema)),
+    create: oc
+      .input(
+        z.object({
+          name: z.string().min(1).max(120),
+          spec: ProjectSpecSchema,
+          botIds: z.array(z.string()).min(1).max(40),
+        }),
+      )
+      .output(WorkProjectSchema),
+    get: oc.input(z.object({ projectId: z.string() })).output(
+      z.object({
+        project: WorkProjectSchema,
+        outputs: z.array(ProjectOutputSchema),
+        grants: z.array(WorkGrantSchema),
+      }),
+    ),
+    revise: oc
+      .input(
+        z.object({
+          projectId: z.string(),
+          expectedRevision: z.number().int().positive(),
+          patch: ProjectPatchSchema,
+        }),
+      )
+      .output(WorkProjectSchema),
+    grant: oc.input(WorkGrantInputSchema).output(WorkGrantSchema),
+    revoke: oc.input(z.object({ grantId: z.string() })).output(z.object({ ok: z.literal(true) })),
+  },
   analytics: { screen: oc.input(AnalyticsScreenInput).output(z.object({ ok: z.literal(true) })) },
   aiConsent: {
     status: oc.input(AiConsentQuerySchema).output(AiConsentStatusSchema),

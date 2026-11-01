@@ -6,6 +6,7 @@ import type {
   ProductAnalytics,
   SandboxProvider,
   SecretStore,
+  WorkDeliveryProvider,
 } from "@rakazo/adapter-kit";
 import type {
   CloudAgentConnection,
@@ -40,6 +41,7 @@ import { mcpRoutes } from "./routes/mcp.js";
 import { memoryRoutes } from "./routes/memory.js";
 import { messagingRoutes } from "./routes/messaging.js";
 import { modelsRoutes } from "./routes/models.js";
+import { projectsRoutes } from "./routes/projects.js";
 import { routinesRoutes } from "./routes/routines.js";
 import { spacesRoutes } from "./routes/spaces.js";
 import { threadsRoutes } from "./routes/threads.js";
@@ -99,6 +101,7 @@ export interface RouterDeps {
   remoteConnectors?: RemoteConnectorDependencies;
   artifacts: ArtifactStore;
   dataDir: string;
+  workDelivery?: WorkDeliveryProvider;
   /** Present when the external messaging surface is enabled. */
   messagingInstallations?: MessagingInstallations;
   messaging?: {
@@ -152,6 +155,7 @@ export function createRouter(deps: RouterDeps) {
     ...computerRoutes(ctx),
     ...memoryRoutes(ctx),
     ...routinesRoutes(ctx),
+    ...projectsRoutes(ctx),
     ...boardsRoutes(ctx),
     ...mcpRoutes(ctx),
     ...connectionsRoutes(ctx),

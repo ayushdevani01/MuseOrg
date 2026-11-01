@@ -48,6 +48,7 @@ import {
   createSecretStore,
   createTicketChangeNotifier,
   createWebProvider,
+  createWorkDeliveryProvider,
   deploymentModelUsageLookup,
   EmailEmulator,
   ExpoPushProvider,
@@ -535,7 +536,9 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
   // One cache serves models.list, selection validation, and run-time model
   // resolution alike, so a list call warms the run path in this process.
   const codexCatalog = new CodexCatalogCache();
+  const workDelivery = await createWorkDeliveryProvider(env.dataDir);
   const executor = createRunExecutor({
+    workDelivery,
     billingEnabled: modelCreditsEnabled,
     maxUploadSizeBytes: env.maxUploadSizeBytes,
     contextStrategy,
@@ -631,6 +634,7 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
   reconciler?.start();
 
   const router = createRouter({
+    workDelivery,
     speechSummary:
       env.voiceSummaryMinChars === undefined
         ? undefined

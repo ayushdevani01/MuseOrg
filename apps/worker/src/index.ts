@@ -30,6 +30,7 @@ import {
   createRunSecretWriter,
   createTicketChangeNotifier,
   createWebProvider,
+  createWorkDeliveryProvider,
   databaseCapacityBackoffMs,
   deploymentModelUsageLookup,
   ExpoPushProvider,
@@ -238,6 +239,7 @@ async function main() {
     accessToken: process.env.EXPO_ACCESS_TOKEN,
   });
   const executor = createRunExecutor({
+    workDelivery: await createWorkDeliveryProvider(dataDir),
     maxUploadSizeBytes: uploadSizeFromEnv(process.env),
     prisma,
     runtime,
