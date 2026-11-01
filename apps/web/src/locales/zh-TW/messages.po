@@ -414,6 +414,10 @@ msgstr "帳號標籤"
 msgid "Account menu for {name}"
 msgstr "{name} 的帳號選單"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Action scopes"
+msgstr ""
+
 #. placeholder {0}: bot.name
 #. placeholder {0}: group.spaceName
 #. placeholder {0}: section.name
@@ -425,6 +429,10 @@ msgstr "{0} 的操作"
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Actions for space"
 msgstr "空間操作"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Activate ads"
+msgstr ""
 
 #: src/pages/BillingSettingsPanel.tsx
 #: src/pages/RoutineEditor.tsx
@@ -636,13 +644,25 @@ msgstr "允許跨空間機器人通訊"
 msgid "Allow once"
 msgstr "允許一次"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allow scope"
+msgstr ""
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Allow writing"
 msgstr "允許寫入"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed actions"
+msgstr ""
+
 #: src/components/AskCard.tsx
 msgid "Allowed once"
 msgstr "已允許一次"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed paths, one per line"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Already connected"
@@ -997,6 +1017,13 @@ msgstr "大腦標籤"
 #: src/pages/PluginsOverlay.tsx
 msgid "Browse MCP servers"
 msgstr "瀏覽 MCP 伺服器"
+
+#. placeholder {0}: g.spentCents
+#. placeholder {1}: g.reservedCents
+#. placeholder {2}: g.budgetLimitCents
+#: src/pages/ProjectSettings.tsx
+msgid "Budget: {0} spent, {1} reserved, {2} total cents"
+msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
@@ -1473,6 +1500,10 @@ msgstr "連線模型"
 #: src/lib/run-error.ts
 msgid "Connect a model in Settings before running bots."
 msgstr "執行機器人前，請先在設定中連接模型。"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Connect an integration first."
+msgstr ""
 
 #: src/pages/model-settings/connection-controls.tsx
 msgid "Connect API key"
@@ -2085,6 +2116,11 @@ msgstr "無法更新訊息設定"
 msgid "Couldn't update your timezone"
 msgstr "無法更新你的時區"
 
+#: src/pages/ProjectScopeForm.tsx
+#: src/pages/ProjectSettings.tsx
+msgid "Coworkers"
+msgstr ""
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/create-bot-dialog.tsx
@@ -2644,6 +2680,10 @@ msgstr "展開表格"
 msgid "expired"
 msgstr "已過期"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Expires"
+msgstr ""
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Export"
 msgstr "匯出"
@@ -2807,6 +2847,10 @@ msgstr "正在準備"
 #: src/pages/RoutineEditor.tsx
 msgid "Git event"
 msgstr "Git 事件"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Goal"
+msgstr ""
 
 #: src/lib/identity-display.ts
 #: src/pages/MessagingSettingsPanel.tsx
@@ -3416,6 +3460,10 @@ msgstr "提及 OpenClaw 功能"
 msgid "Mentions: {mentions}"
 msgstr "提及：{mentions}"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Merge passing pull requests"
+msgstr ""
+
 #: src/pages/shell/chat-shared.ts
 #: src/pages/shell/composer.tsx
 msgid "Message"
@@ -3693,6 +3741,10 @@ msgstr "新密碼"
 #: src/pages/shell/bot-picker.tsx
 msgid "New private space"
 msgstr "新增私人空間"
+
+#: src/pages/ProjectSettings.tsx
+msgid "New project"
+msgstr ""
 
 #: src/pages/BotContextMenu.tsx
 #: src/pages/shell/dialogs.tsx
@@ -3981,6 +4033,10 @@ msgstr "在完整視窗中開啟"
 msgid "Open navigation"
 msgstr "開啟導覽"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Open pull requests"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Open work"
 msgstr "待辦"
@@ -4030,6 +4086,10 @@ msgstr "其他模型…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Output"
 msgstr "輸出"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Outputs"
+msgstr ""
 
 #: src/lib/identity-display.ts
 #: src/pages/Board.tsx
@@ -4217,6 +4277,18 @@ msgstr "擁有專屬機器人與群組的私人工作空間。"
 msgid "Program: {name}"
 msgstr "程式：{name}"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts"
+msgstr ""
+
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts JSON"
+msgstr ""
+
+#: src/pages/SpaceSettingsPanel.tsx
+msgid "Projects"
+msgstr ""
+
 #: src/components/teach/TeachRecordingChrome.tsx
 msgid "Protected input"
 msgstr "受保護的輸入"
@@ -4230,6 +4302,10 @@ msgstr "供應商"
 #: src/pages/model-settings/providers-section.tsx
 msgid "Providers"
 msgstr "供應商"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Publish"
+msgstr ""
 
 #: src/components/CloudAgentCard.tsx
 msgid "Pull request"
@@ -4608,9 +4684,19 @@ msgstr "返回 Rakazo"
 msgid "Review provider settings and test again."
 msgstr "請檢查供應商設定並重新測試。"
 
+#. placeholder {0}: o.revision
+#. placeholder {0}: selected?.revision
+#: src/pages/ProjectSettings.tsx
+msgid "Revision {0}"
+msgstr ""
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Revoke"
 msgstr "撤銷授權"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/pages/ExternalConversationSettings.tsx
 msgid "Room guidance"
@@ -4855,6 +4941,10 @@ msgstr "傳送刪除驗證碼"
 #: src/components/AskCard.tsx
 msgid "Send it"
 msgstr "傳送"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Send messages"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Send recording"
@@ -5142,6 +5232,10 @@ msgstr "語音模型"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO 暫時不可用，請重試。"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Stage ads"
+msgstr ""
 
 #: src/pages/shell/computer-overlay.tsx
 msgid "Start"
@@ -5588,6 +5682,10 @@ msgstr "工具"
 #: src/components/ModelCredits.tsx
 msgid "Top up anytime"
 msgstr "隨時加值"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Total budget in cents"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Transcribing…"

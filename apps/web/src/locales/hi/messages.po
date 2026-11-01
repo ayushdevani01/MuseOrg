@@ -413,6 +413,10 @@ msgstr ""
 msgid "Account menu for {name}"
 msgstr "{name} का खाता मेन्यू"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Action scopes"
+msgstr ""
+
 #. placeholder {0}: bot.name
 #. placeholder {0}: group.spaceName
 #. placeholder {0}: section.name
@@ -423,6 +427,10 @@ msgstr "{0} के लिए कार्रवाइयां"
 
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Actions for space"
+msgstr ""
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Activate ads"
 msgstr ""
 
 #: src/pages/BillingSettingsPanel.tsx
@@ -635,13 +643,25 @@ msgstr ""
 msgid "Allow once"
 msgstr "एक बार अनुमति दें"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allow scope"
+msgstr ""
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Allow writing"
+msgstr ""
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed actions"
 msgstr ""
 
 #: src/components/AskCard.tsx
 msgid "Allowed once"
 msgstr "एक बार अनुमति दी गई"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed paths, one per line"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Already connected"
@@ -995,6 +1015,13 @@ msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Browse MCP servers"
+msgstr ""
+
+#. placeholder {0}: g.spentCents
+#. placeholder {1}: g.reservedCents
+#. placeholder {2}: g.budgetLimitCents
+#: src/pages/ProjectSettings.tsx
+msgid "Budget: {0} spent, {1} reserved, {2} total cents"
 msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
@@ -1472,6 +1499,10 @@ msgstr "एक मॉडल कनेक्ट करें"
 #: src/lib/run-error.ts
 msgid "Connect a model in Settings before running bots."
 msgstr "बॉट चलाने से पहले सेटिंग्स में एक मॉडल कनेक्ट करें।"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Connect an integration first."
+msgstr ""
 
 #: src/pages/model-settings/connection-controls.tsx
 msgid "Connect API key"
@@ -2084,6 +2115,11 @@ msgstr ""
 msgid "Couldn't update your timezone"
 msgstr ""
 
+#: src/pages/ProjectScopeForm.tsx
+#: src/pages/ProjectSettings.tsx
+msgid "Coworkers"
+msgstr ""
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/create-bot-dialog.tsx
@@ -2643,6 +2679,10 @@ msgstr "तालिका बड़ी करें"
 msgid "expired"
 msgstr "समाप्त"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Expires"
+msgstr ""
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Export"
 msgstr "एक्सपोर्ट करें"
@@ -2805,6 +2845,10 @@ msgstr ""
 
 #: src/pages/RoutineEditor.tsx
 msgid "Git event"
+msgstr ""
+
+#: src/pages/ProjectSettings.tsx
+msgid "Goal"
 msgstr ""
 
 #: src/lib/identity-display.ts
@@ -3415,6 +3459,10 @@ msgstr "OpenClaw की सुविधाओं का ज़िक्र ह�
 msgid "Mentions: {mentions}"
 msgstr "ज़िक्र: {mentions}"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Merge passing pull requests"
+msgstr ""
+
 #: src/pages/shell/chat-shared.ts
 #: src/pages/shell/composer.tsx
 msgid "Message"
@@ -3692,6 +3740,10 @@ msgstr "नया पासवर्ड"
 #: src/pages/shell/bot-picker.tsx
 msgid "New private space"
 msgstr "नया निजी स्पेस"
+
+#: src/pages/ProjectSettings.tsx
+msgid "New project"
+msgstr ""
 
 #: src/pages/BotContextMenu.tsx
 #: src/pages/shell/dialogs.tsx
@@ -3980,6 +4032,10 @@ msgstr "पूरी विंडो में खोलें"
 msgid "Open navigation"
 msgstr "नेविगेशन खोलें"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Open pull requests"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Open work"
 msgstr "खुला कार्य"
@@ -4029,6 +4085,10 @@ msgstr "अन्य मॉडल…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Output"
 msgstr "आउटपुट"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Outputs"
+msgstr ""
 
 #: src/lib/identity-display.ts
 #: src/pages/Board.tsx
@@ -4216,6 +4276,18 @@ msgstr ""
 msgid "Program: {name}"
 msgstr "प्रोग्राम: {name}"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts"
+msgstr ""
+
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts JSON"
+msgstr ""
+
+#: src/pages/SpaceSettingsPanel.tsx
+msgid "Projects"
+msgstr ""
+
 #: src/components/teach/TeachRecordingChrome.tsx
 msgid "Protected input"
 msgstr ""
@@ -4229,6 +4301,10 @@ msgstr "प्रोवाइडर"
 #: src/pages/model-settings/providers-section.tsx
 msgid "Providers"
 msgstr "प्रोवाइडर"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Publish"
+msgstr ""
 
 #: src/components/CloudAgentCard.tsx
 msgid "Pull request"
@@ -4607,8 +4683,18 @@ msgstr "Rakazo पर लौटें"
 msgid "Review provider settings and test again."
 msgstr "प्रोवाइडर सेटिंग्स की समीक्षा करें और फिर से परीक्षण करें।"
 
+#. placeholder {0}: o.revision
+#. placeholder {0}: selected?.revision
+#: src/pages/ProjectSettings.tsx
+msgid "Revision {0}"
+msgstr ""
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Revoke"
+msgstr ""
+
+#: src/pages/ProjectSettings.tsx
+msgid "Revoked"
 msgstr ""
 
 #: src/pages/ExternalConversationSettings.tsx
@@ -4854,6 +4940,10 @@ msgstr "हटाने का कोड भेजें"
 #: src/components/AskCard.tsx
 msgid "Send it"
 msgstr "इसे भेजें"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Send messages"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Send recording"
@@ -5141,6 +5231,10 @@ msgstr "वाक् मॉडल"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO अस्थायी रूप से उपलब्ध नहीं है। फिर कोशिश करें।"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Stage ads"
+msgstr ""
 
 #: src/pages/shell/computer-overlay.tsx
 msgid "Start"
@@ -5586,6 +5680,10 @@ msgstr ""
 
 #: src/components/ModelCredits.tsx
 msgid "Top up anytime"
+msgstr ""
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Total budget in cents"
 msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx

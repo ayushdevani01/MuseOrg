@@ -421,6 +421,10 @@ msgstr "Account menu for {name}"
 msgid "Account sign-in"
 msgstr "Account sign-in"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Action scopes"
+msgstr "Action scopes"
+
 #. placeholder {0}: bot.name
 #. placeholder {0}: group.spaceName
 #. placeholder {0}: section.name
@@ -432,6 +436,10 @@ msgstr "Actions for {0}"
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Actions for space"
 msgstr "Actions for space"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Activate ads"
+msgstr "Activate ads"
 
 #: src/pages/BillingSettingsPanel.tsx
 #: src/pages/RoutineEditor.tsx
@@ -651,13 +659,25 @@ msgstr "Allow cross-space bot communication"
 msgid "Allow once"
 msgstr "Allow once"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allow scope"
+msgstr "Allow scope"
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Allow writing"
 msgstr "Allow writing"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed actions"
+msgstr "Allowed actions"
+
 #: src/components/AskCard.tsx
 msgid "Allowed once"
 msgstr "Allowed once"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed paths, one per line"
+msgstr "Allowed paths, one per line"
 
 #: src/pages/shell/agent-import.tsx
 msgid "Already connected"
@@ -1017,6 +1037,13 @@ msgstr "Brain label"
 #: src/pages/PluginsOverlay.tsx
 msgid "Browse MCP servers"
 msgstr "Browse MCP servers"
+
+#. placeholder {0}: g.spentCents
+#. placeholder {1}: g.reservedCents
+#. placeholder {2}: g.budgetLimitCents
+#: src/pages/ProjectSettings.tsx
+msgid "Budget: {0} spent, {1} reserved, {2} total cents"
+msgstr "Budget: {0} spent, {1} reserved, {2} total cents"
 
 #: src/pages/MetaOnboarding.tsx
 msgid "Build, investigate and maintain software."
@@ -1502,6 +1529,10 @@ msgstr "Connect a model"
 #: src/lib/run-error.ts
 msgid "Connect a model in Settings before running bots."
 msgstr "Connect a model in Settings before running bots."
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Connect an integration first."
+msgstr "Connect an integration first."
 
 #: src/pages/model-settings/connection-controls.tsx
 msgid "Connect API key"
@@ -2138,6 +2169,11 @@ msgstr "Couldn't update messaging settings"
 msgid "Couldn't update your timezone"
 msgstr "Couldn't update your timezone"
 
+#: src/pages/ProjectScopeForm.tsx
+#: src/pages/ProjectSettings.tsx
+msgid "Coworkers"
+msgstr "Coworkers"
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/create-bot-dialog.tsx
@@ -2705,6 +2741,10 @@ msgstr "Expand table"
 msgid "expired"
 msgstr "expired"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Expires"
+msgstr "Expires"
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Export"
 msgstr "Export"
@@ -2868,6 +2908,10 @@ msgstr "Getting ready"
 #: src/pages/RoutineEditor.tsx
 msgid "Git event"
 msgstr "Git event"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Goal"
+msgstr "Goal"
 
 #: src/lib/identity-display.ts
 #: src/pages/MessagingSettingsPanel.tsx
@@ -3490,6 +3534,10 @@ msgstr "Mentions OpenClaw features"
 msgid "Mentions: {mentions}"
 msgstr "Mentions: {mentions}"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Merge passing pull requests"
+msgstr "Merge passing pull requests"
+
 #: src/pages/shell/chat-shared.ts
 #: src/pages/shell/composer.tsx
 msgid "Message"
@@ -3779,6 +3827,10 @@ msgstr "New password"
 #: src/pages/shell/bot-picker.tsx
 msgid "New private space"
 msgstr "New private space"
+
+#: src/pages/ProjectSettings.tsx
+msgid "New project"
+msgstr "New project"
 
 #: src/pages/BotContextMenu.tsx
 #: src/pages/shell/dialogs.tsx
@@ -4072,6 +4124,10 @@ msgstr "Open in full window"
 msgid "Open navigation"
 msgstr "Open navigation"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Open pull requests"
+msgstr "Open pull requests"
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Open work"
 msgstr "Open work"
@@ -4121,6 +4177,10 @@ msgstr "Other model…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Output"
 msgstr "Output"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Outputs"
+msgstr "Outputs"
 
 #: src/lib/identity-display.ts
 #: src/pages/Board.tsx
@@ -4312,6 +4372,18 @@ msgstr "Private workspace with its own bots and groups."
 msgid "Program: {name}"
 msgstr "Program: {name}"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts"
+msgstr "Project facts"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts JSON"
+msgstr "Project facts JSON"
+
+#: src/pages/SpaceSettingsPanel.tsx
+msgid "Projects"
+msgstr "Projects"
+
 #: src/components/teach/TeachRecordingChrome.tsx
 msgid "Protected input"
 msgstr "Protected input"
@@ -4325,6 +4397,10 @@ msgstr "Provider"
 #: src/pages/model-settings/providers-section.tsx
 msgid "Providers"
 msgstr "Providers"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Publish"
+msgstr "Publish"
 
 #: src/components/CloudAgentCard.tsx
 msgid "Pull request"
@@ -4703,9 +4779,19 @@ msgstr "Return to Rakazo"
 msgid "Review provider settings and test again."
 msgstr "Review provider settings and test again."
 
+#. placeholder {0}: o.revision
+#. placeholder {0}: selected?.revision
+#: src/pages/ProjectSettings.tsx
+msgid "Revision {0}"
+msgstr "Revision {0}"
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Revoke"
 msgstr "Revoke"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Revoked"
+msgstr "Revoked"
 
 #: src/pages/ExternalConversationSettings.tsx
 msgid "Room guidance"
@@ -4954,6 +5040,10 @@ msgstr "Send deletion code"
 #: src/components/AskCard.tsx
 msgid "Send it"
 msgstr "Send it"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Send messages"
+msgstr "Send messages"
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Send recording"
@@ -5257,6 +5347,10 @@ msgstr "SSO is temporarily unavailable. Try again."
 #: src/pages/MetaOnboarding.tsx
 msgid "Staff Engineer"
 msgstr "Staff Engineer"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Stage ads"
+msgstr "Stage ads"
 
 #: src/pages/shell/computer-overlay.tsx
 msgid "Start"
@@ -5703,6 +5797,10 @@ msgstr "Tools"
 #: src/components/ModelCredits.tsx
 msgid "Top up anytime"
 msgstr "Top up anytime"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Total budget in cents"
+msgstr "Total budget in cents"
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Transcribing…"

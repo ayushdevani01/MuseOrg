@@ -413,6 +413,10 @@ msgstr "Accountlabel"
 msgid "Account menu for {name}"
 msgstr "Accountmenu voor {name}"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Action scopes"
+msgstr ""
+
 #. placeholder {0}: bot.name
 #. placeholder {0}: group.spaceName
 #. placeholder {0}: section.name
@@ -424,6 +428,10 @@ msgstr "Acties voor {0}"
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Actions for space"
 msgstr "Acties voor space"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Activate ads"
+msgstr ""
 
 #: src/pages/BillingSettingsPanel.tsx
 #: src/pages/RoutineEditor.tsx
@@ -635,13 +643,25 @@ msgstr "Communicatie tussen bots in verschillende ruimtes toestaan"
 msgid "Allow once"
 msgstr "Een keer toestaan"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allow scope"
+msgstr ""
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Allow writing"
 msgstr "Schrijven toestaan"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed actions"
+msgstr ""
+
 #: src/components/AskCard.tsx
 msgid "Allowed once"
 msgstr "Een keer toegestaan"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Allowed paths, one per line"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Already connected"
@@ -996,6 +1016,13 @@ msgstr "Breinlabel"
 #: src/pages/PluginsOverlay.tsx
 msgid "Browse MCP servers"
 msgstr "MCP-servers doorzoeken"
+
+#. placeholder {0}: g.spentCents
+#. placeholder {1}: g.reservedCents
+#. placeholder {2}: g.budgetLimitCents
+#: src/pages/ProjectSettings.tsx
+msgid "Budget: {0} spent, {1} reserved, {2} total cents"
+msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
@@ -1472,6 +1499,10 @@ msgstr "Een model koppelen"
 #: src/lib/run-error.ts
 msgid "Connect a model in Settings before running bots."
 msgstr "Verbind een model in Instellingen voordat je bots uitvoert."
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Connect an integration first."
+msgstr ""
 
 #: src/pages/model-settings/connection-controls.tsx
 msgid "Connect API key"
@@ -2084,6 +2115,11 @@ msgstr "Berichtinstellingen bijwerken mislukt"
 msgid "Couldn't update your timezone"
 msgstr "Je tijdzone bijwerken mislukt"
 
+#: src/pages/ProjectScopeForm.tsx
+#: src/pages/ProjectSettings.tsx
+msgid "Coworkers"
+msgstr ""
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/create-bot-dialog.tsx
@@ -2643,6 +2679,10 @@ msgstr "Tabel uitvouwen"
 msgid "expired"
 msgstr "verlopen"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Expires"
+msgstr ""
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Export"
 msgstr "Exporteren"
@@ -2806,6 +2846,10 @@ msgstr "Aan het voorbereiden"
 #: src/pages/RoutineEditor.tsx
 msgid "Git event"
 msgstr "Git-gebeurtenis"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Goal"
+msgstr ""
 
 #: src/lib/identity-display.ts
 #: src/pages/MessagingSettingsPanel.tsx
@@ -3415,6 +3459,10 @@ msgstr "Noemt OpenClaw-functies"
 msgid "Mentions: {mentions}"
 msgstr "Noemt: {mentions}"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Merge passing pull requests"
+msgstr ""
+
 #: src/pages/shell/chat-shared.ts
 #: src/pages/shell/composer.tsx
 msgid "Message"
@@ -3692,6 +3740,10 @@ msgstr "Nieuw wachtwoord"
 #: src/pages/shell/bot-picker.tsx
 msgid "New private space"
 msgstr "Nieuwe privéruimte"
+
+#: src/pages/ProjectSettings.tsx
+msgid "New project"
+msgstr ""
 
 #: src/pages/BotContextMenu.tsx
 #: src/pages/shell/dialogs.tsx
@@ -3980,6 +4032,10 @@ msgstr "In volledig venster openen"
 msgid "Open navigation"
 msgstr "Navigatie openen"
 
+#: src/pages/ProjectScopeForm.tsx
+msgid "Open pull requests"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Open work"
 msgstr "Openstaand werk"
@@ -4029,6 +4085,10 @@ msgstr "Ander model…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Output"
 msgstr "Uitvoer"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Outputs"
+msgstr ""
 
 #: src/lib/identity-display.ts
 #: src/pages/Board.tsx
@@ -4216,6 +4276,18 @@ msgstr "Privéwerkruimte met eigen bots en groepen."
 msgid "Program: {name}"
 msgstr "Programma: {name}"
 
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts"
+msgstr ""
+
+#: src/pages/ProjectSettings.tsx
+msgid "Project facts JSON"
+msgstr ""
+
+#: src/pages/SpaceSettingsPanel.tsx
+msgid "Projects"
+msgstr ""
+
 #: src/components/teach/TeachRecordingChrome.tsx
 msgid "Protected input"
 msgstr "Beveiligde invoer"
@@ -4229,6 +4301,10 @@ msgstr "Aanbieder"
 #: src/pages/model-settings/providers-section.tsx
 msgid "Providers"
 msgstr "Aanbieders"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Publish"
+msgstr ""
 
 #: src/components/CloudAgentCard.tsx
 msgid "Pull request"
@@ -4607,9 +4683,19 @@ msgstr "Terug naar Rakazo"
 msgid "Review provider settings and test again."
 msgstr "Controleer de aanbiedersinstellingen en test daarna opnieuw."
 
+#. placeholder {0}: o.revision
+#. placeholder {0}: selected?.revision
+#: src/pages/ProjectSettings.tsx
+msgid "Revision {0}"
+msgstr ""
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Revoke"
 msgstr "Intrekken"
+
+#: src/pages/ProjectSettings.tsx
+msgid "Revoked"
+msgstr ""
 
 #: src/pages/ExternalConversationSettings.tsx
 msgid "Room guidance"
@@ -4854,6 +4940,10 @@ msgstr "Verwijderingscode verzenden"
 #: src/components/AskCard.tsx
 msgid "Send it"
 msgstr "Verzenden"
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Send messages"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Send recording"
@@ -5141,6 +5231,10 @@ msgstr "Spraakmodel"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO is tijdelijk niet beschikbaar. Probeer het opnieuw."
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Stage ads"
+msgstr ""
 
 #: src/pages/shell/computer-overlay.tsx
 msgid "Start"
@@ -5586,6 +5680,10 @@ msgstr "Tools"
 
 #: src/components/ModelCredits.tsx
 msgid "Top up anytime"
+msgstr ""
+
+#: src/pages/ProjectScopeForm.tsx
+msgid "Total budget in cents"
 msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
