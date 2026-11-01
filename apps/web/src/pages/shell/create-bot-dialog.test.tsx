@@ -8,6 +8,10 @@ import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { CreateBotDialogInput } from "./create-bot-dialog";
 
+vi.mock("../../components/SkillCatalogPicker", () => ({
+  SkillCatalogPicker: () => <div>Skill picker</div>,
+}));
+
 vi.mock("@lingui/react/macro", () => {
   const t = (parts: TemplateStringsArray, ...values: unknown[]) =>
     parts.reduce((text, part, index) => `${text}${index > 0 ? values[index - 1] : ""}${part}`, "");
@@ -65,15 +69,22 @@ async function click(element: HTMLElement) {
   });
 }
 
+async function continueHiring() {
+  await click(document.querySelector<HTMLInputElement>('input[value="engineer"]')!);
+  await click(button("Continue"));
+}
+
 describe("CreateBotDialog", () => {
   it("creates only once the name is not blank", async () => {
     const onCreate = vi.fn(async () => undefined);
     await render(onCreate);
-    expect(button("Create").disabled).toBe(true);
+    expect(button("Continue").disabled).toBe(true);
     await typeName("   ");
-    expect(button("Create").disabled).toBe(true);
+    expect(button("Continue").disabled).toBe(true);
     await typeName("  Scout  ");
-    expect(button("Create").disabled).toBe(false);
+    expect(button("Continue").disabled).toBe(true);
+    await click(document.querySelector<HTMLInputElement>('input[value="engineer"]')!);
+    expect(button("Continue").disabled).toBe(false);
   });
 
   it("sends the organic family the preview draws", async () => {
@@ -84,12 +95,17 @@ describe("CreateBotDialog", () => {
     const preview = document.querySelector(".rakazo-organic-avatar");
     const family = Number(preview?.getAttribute("data-shape-family"));
     await typeName("Scout");
+    await continueHiring();
     await click(button("Create"));
-    expect(onCreate).toHaveBeenCalledWith({
-      name: "Scout",
-      color: "#10B981",
-      avatarFamily: family,
-    });
+    expect(onCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "Scout",
+        color: "#10B981",
+        avatarFamily: family,
+        title: "Staff Engineer",
+        skillImports: [],
+      }),
+    );
     expect(family).toBe(ORGANIC_AVATAR_LOOKS[1]);
   });
 
@@ -99,8 +115,12 @@ describe("CreateBotDialog", () => {
     await click(button("Color #F97316"));
     await click(button("wedge"));
     await typeName("Scout");
+    await continueHiring();
     await click(button("Create"));
-    expect(onCreate).toHaveBeenCalledWith({ name: "Scout", color: "#F97316::shape_1" });
+    expect(onCreate).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Scout", color: "#F97316::shape_1" }),
+    );
+    expect(onCreate.mock.calls[0]?.[0].avatarFamily).toBeUndefined();
   });
 
   it("shows the error and stays open when creating fails", async () => {
@@ -108,6 +128,7 @@ describe("CreateBotDialog", () => {
       throw new Error("Bot limit reached");
     });
     await typeName("Scout");
+    await continueHiring();
     await click(button("Create"));
     expect(document.querySelector('[data-testid="create-bot-error"]')?.textContent).toBe(
       "Bot limit reached",
