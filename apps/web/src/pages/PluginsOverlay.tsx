@@ -41,9 +41,12 @@ import {
   NativeSelect,
   NativeSelectOption,
   Spinner,
+  Tabs,
+  TabsList,
+  TabsTrigger,
 } from "@rakazo/ui-web";
 import { queryOptions, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, Plus, X } from "lucide-react";
+import { ChevronLeft, LoaderCircle, MoreHorizontal, Plus, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IntegrationSetup } from "../components/integrations/IntegrationSetup";
 import { McpServerHealthLine } from "../components/McpServerHealthLine";
@@ -64,7 +67,13 @@ function ConnectorIcon({
 }) {
   return iconPath ? (
     <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-foreground">
-      <svg aria-hidden="true" viewBox="0 0 24 24" className="size-6" fill="currentColor">
+      <svg
+        aria-hidden="true"
+        data-testid="connector-logo"
+        viewBox="0 0 24 24"
+        className="size-6"
+        fill="currentColor"
+      >
         <path d={iconPath} />
       </svg>
     </div>
@@ -123,6 +132,7 @@ export function PluginsOverlay({
   const { t } = useLingui();
   const [setupOpen, setSetupOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [catalogView, setCatalogView] = useState("discover");
   const [visibleCount, setVisibleCount] = useState(CONNECTION_CATALOG_PAGE_SIZE);
   // Only accounts whose label is being edited; the rest follow the saved name.
   const [labelDrafts, setLabelDrafts] = useState<Record<string, string>>({});
@@ -250,10 +260,25 @@ export function PluginsOverlay({
   }, [catalog, detailKey]);
 
   const featuredTiles = useMemo(() => buildFeaturedConnectorTiles(catalog), [catalog]);
-  const showFeatured = !query.trim();
+  const showFeatured = !query.trim() && catalogView === "discover";
 
-  const visible = useMemo(() => filterConnectionCatalogItems(catalog, query), [catalog, query]);
-  const rendered = visible.slice(0, visibleCount);
+  const visible = useMemo(
+    () =>
+      filterConnectionCatalogItems(catalog, query).filter(
+        (item) => catalogView === "discover" || isCatalogItemConnected(connections, item),
+      ),
+    [catalog, query, catalogView, connections],
+  );
+  const unfeatured = showFeatured
+    ? visible.filter(
+        (item) =>
+          !featuredTiles.some(
+            (tile) =>
+              tile.item && !tile.missing && catalogItemKey(tile.item) === catalogItemKey(item),
+          ),
+      )
+    : visible;
+  const rendered = unfeatured.slice(0, visibleCount);
 
   function openDetail(item: ConnectionCatalogItem) {
     setCatalogError(null);
@@ -507,30 +532,36 @@ export function PluginsOverlay({
       return (
         <Button
           type="button"
-          variant="secondary"
-          size="sm"
+          variant="ghost"
+          size="icon-sm"
+          aria-label={t`Manage ${item.name}`}
           disabled={connecting}
           onClick={(event) => {
             event.stopPropagation();
             openDetail(item);
           }}
         >
-          {connecting ? <Trans>Adding…</Trans> : <Trans>Added</Trans>}
+          <MoreHorizontal aria-hidden="true" />
         </Button>
       );
     }
     return (
       <Button
         type="button"
-        variant="secondary"
-        size="sm"
+        variant="ghost"
+        size="icon-sm"
+        aria-label={t`Add ${item.name}`}
         disabled={connecting}
         onClick={(event) => {
           event.stopPropagation();
           void connect(item);
         }}
       >
-        {connecting ? <Trans>Adding…</Trans> : <Trans>Add</Trans>}
+        {connecting ? (
+          <LoaderCircle aria-hidden="true" className="animate-spin" />
+        ) : (
+          <Plus aria-hidden="true" />
+        )}
       </Button>
     );
   }
@@ -547,13 +578,29 @@ export function PluginsOverlay({
     const title = (
       <div className="min-w-0 flex-1 text-start">
         <div className="truncate text-[15px] font-medium text-foreground">{label}</div>
+        <p className="line-clamp-1 text-sm text-muted-foreground">
+          {item.description ??
+            (item.slug.toLowerCase() === "gmail"
+              ? t`Email and inbox`
+              : item.slug.toLowerCase() === "googlecalendar"
+                ? t`Calendar and events`
+                : item.slug.toLowerCase() === "googledrive"
+                  ? t`Files and documents`
+                  : item.slug.toLowerCase() === "slack"
+                    ? t`Channels and conversations`
+                    : item.slug.toLowerCase() === "github"
+                      ? t`Code, issues and pull requests`
+                      : item.slug.toLowerCase() === "notion"
+                        ? t`Pages, documents and projects`
+                        : null)}
+        </p>
       </div>
     );
     return (
       <div
         key={catalogItemKey(item)}
         data-testid={tileTestId ? `connection-tile-${item.slug.toLowerCase()}` : undefined}
-        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-2"
+        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-3 hover:bg-muted/50"
       >
         {connected ? (
           <button
@@ -742,6 +789,23 @@ export function PluginsOverlay({
 
         {!detailItem ? (
           <div className="px-8 pt-4">
+            <Tabs
+              value={catalogView}
+              onValueChange={(value) => {
+                setCatalogView(value);
+                setVisibleCount(CONNECTION_CATALOG_PAGE_SIZE);
+              }}
+              className="mb-4"
+            >
+              <TabsList>
+                <TabsTrigger value="discover">
+                  <Trans>Discover</Trans>
+                </TabsTrigger>
+                <TabsTrigger value="added">
+                  <Trans>Added</Trans>
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
             <Input
               disabled={loading}
               value={query}
@@ -894,7 +958,7 @@ export function PluginsOverlay({
             </div>
           ) : null}
 
-          {!detailItem && (mcpServers.length > 0 || mcpError) ? (
+          {!detailItem && catalogView === "added" && (mcpServers.length > 0 || mcpError) ? (
             <section data-testid="registered-mcp-servers" className="mb-6">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <h2 className="text-sm font-medium">
@@ -914,41 +978,55 @@ export function PluginsOverlay({
                   </Button>
                 </div>
               ) : null}
-              {mcpServers
-                .filter((server) =>
-                  `${server.name} ${server.description}`
-                    .toLowerCase()
-                    .includes(query.trim().toLowerCase()),
-                )
-                .map((server) => (
-                  <div
-                    key={server.id}
-                    data-testid="registered-mcp-server"
-                    className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-2"
-                  >
-                    <ConnectorIcon
-                      name={server.name}
-                      iconPath={mcpPresetForEndpoint(server.endpoint)?.iconPath}
-                    />
-                    <div className="min-w-0 flex-1">
-                      <span className="block truncate text-[15px] font-medium">{server.name}</span>
-                      <McpServerHealthLine health={server.health} />
+              <div className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
+                {mcpServers
+                  .filter((server) =>
+                    `${server.name} ${server.description}`
+                      .toLowerCase()
+                      .includes(query.trim().toLowerCase()),
+                  )
+                  .map((server) => (
+                    <div
+                      key={server.id}
+                      data-testid="registered-mcp-server"
+                      className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-2"
+                    >
+                      <ConnectorIcon
+                        name={server.name}
+                        iconPath={mcpPresetForEndpoint(server.endpoint)?.iconPath}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <span className="block truncate text-[15px] font-medium">
+                          {server.name}
+                        </span>
+                        <McpServerHealthLine health={server.health} />
+                      </div>
+                      <span className="shrink-0 text-[12.5px] text-muted-foreground">
+                        {!server.enabled ? (
+                          <Trans>Disabled</Trans>
+                        ) : server.oauthStatus === "reconnect" ? (
+                          <Trans>OAuth expired</Trans>
+                        ) : server.oauthStatus === "connected" ? (
+                          <Trans>OAuth connected</Trans>
+                        ) : server.hasSecret ? (
+                          <Trans>Credential saved</Trans>
+                        ) : (
+                          <Trans>No auth</Trans>
+                        )}
+                      </span>
+                      {onOpenMcp ? (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={t`Manage ${server.name}`}
+                          onClick={() => onOpenMcp({ serverId: server.id })}
+                        >
+                          <MoreHorizontal aria-hidden="true" />
+                        </Button>
+                      ) : null}
                     </div>
-                    <span className="shrink-0 text-[12.5px] text-muted-foreground">
-                      {!server.enabled ? (
-                        <Trans>Disabled</Trans>
-                      ) : server.oauthStatus === "reconnect" ? (
-                        <Trans>OAuth expired</Trans>
-                      ) : server.oauthStatus === "connected" ? (
-                        <Trans>OAuth connected</Trans>
-                      ) : server.hasSecret ? (
-                        <Trans>Credential saved</Trans>
-                      ) : (
-                        <Trans>No auth</Trans>
-                      )}
-                    </span>
-                  </div>
-                ))}
+                  ))}
+              </div>
             </section>
           ) : null}
 
@@ -956,10 +1034,20 @@ export function PluginsOverlay({
             renderDetail(detailItem)
           ) : (
             <>
-              {onOpenMcp ? (
+              {catalogView === "added" &&
+              !visible.length &&
+              !mcpServers.length &&
+              !loading &&
+              !loadError &&
+              !mcpError ? (
+                <p className="text-sm text-muted-foreground">
+                  <Trans>No integrations added.</Trans>
+                </p>
+              ) : null}
+              {onOpenMcp && catalogView === "discover" ? (
                 <section
                   data-testid="mcp-presets"
-                  className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-2"
+                  className="mb-6 grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
                 >
                   {MCP_PRESETS.filter((preset) =>
                     preset.name.toLowerCase().includes(query.trim().toLowerCase()),
@@ -971,31 +1059,40 @@ export function PluginsOverlay({
                       <div
                         key={preset.id}
                         data-testid="mcp-preset"
-                        className="flex min-w-0 items-center gap-3 rounded-xl border border-border p-3"
+                        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-3 hover:bg-muted/50"
                       >
                         <ConnectorIcon name={preset.name} iconPath={preset.iconPath} />
                         <div className="min-w-0 flex-1">
                           <div className="truncate text-sm font-medium">{preset.name}</div>
                           <div className="text-xs text-muted-foreground">
-                            {preset.auth === "none" ? (
-                              <Trans>No account needed</Trans>
-                            ) : preset.auth === "bearer" ? (
-                              <Trans>API token</Trans>
-                            ) : (
-                              <Trans>Account sign-in</Trans>
-                            )}
+                            {preset.id === "github"
+                              ? t`Code, issues and pull requests`
+                              : preset.id === "notion"
+                                ? t`Pages, documents and projects`
+                                : preset.id === "linear"
+                                  ? t`Issues and project tracking`
+                                  : preset.id === "stripe"
+                                    ? t`Payments and subscriptions`
+                                    : preset.id === "cloudflare-docs"
+                                      ? t`Search Cloudflare documentation`
+                                      : t`Search OpenAI documentation`}
                           </div>
                         </div>
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={installed ? t`Manage ${preset.name}` : t`Add ${preset.name}`}
                           onClick={() =>
                             onOpenMcp(
                               installed ? { serverId: installed.id } : { presetId: preset.id },
                             )
                           }
                         >
-                          {installed ? <Trans>Manage</Trans> : <Trans>Add</Trans>}
+                          {installed ? (
+                            <MoreHorizontal aria-hidden="true" />
+                          ) : (
+                            <Plus aria-hidden="true" />
+                          )}
                         </Button>
                       </div>
                     );
@@ -1003,7 +1100,10 @@ export function PluginsOverlay({
                 </section>
               ) : null}
               {catalogLoaded && catalog.length > 0 && showFeatured ? (
-                <div className="mb-6 grid grid-cols-2 gap-2" data-testid="featured-connectors">
+                <div
+                  className="mb-6 grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
+                  data-testid="featured-connectors"
+                >
                   {featuredTiles.flatMap((tile) =>
                     tile.item && !tile.missing
                       ? [
@@ -1022,7 +1122,10 @@ export function PluginsOverlay({
                 </p>
               ) : null}
               {visible.length > 0 ? (
-                <div data-testid="managed-connector-catalog" className="grid grid-cols-2 gap-2">
+                <div
+                  data-testid="managed-connector-catalog"
+                  className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
+                >
                   {rendered.map((item) =>
                     renderCatalogTile(item, item.name, item.logo, {
                       // Avoid duplicate connection-tile-* ids while featured is also shown.
@@ -1031,7 +1134,7 @@ export function PluginsOverlay({
                   )}
                 </div>
               ) : null}
-              {rendered.length < visible.length ? (
+              {rendered.length < unfeatured.length ? (
                 <div className="mt-4 flex justify-center">
                   <Button
                     type="button"

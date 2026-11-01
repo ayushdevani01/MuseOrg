@@ -34,6 +34,7 @@ test("shows directly registered MCP servers in Integrations without catalog conn
   expect(await rpc(page, "connections/list", undefined)).toEqual([]);
   await page.getByRole("button", { name: "Connect apps", exact: true }).click();
   const servers = page.getByTestId("registered-mcp-servers");
+  await page.getByRole("tab", { name: "Added", exact: true }).click();
   await expect(servers.getByText("Dropbox", { exact: true })).toBeVisible();
   await expect(servers.getByText("GitHub", { exact: true })).toBeVisible();
   await expect(servers.getByTestId("registered-mcp-server")).toHaveCount(2);
@@ -119,13 +120,15 @@ test("official MCP presets show logos and fill the reviewed setup without granti
   await page.getByRole("button", { name: "Connect apps", exact: true }).click();
   const presets = page.getByTestId("mcp-presets");
   await expect(presets.getByTestId("mcp-preset")).toHaveCount(MCP_PRESETS.length);
-  await expect(presets.locator("svg path")).toHaveCount(MCP_PRESETS.length);
+  await expect(presets.getByTestId("connector-logo").locator("path")).toHaveCount(
+    MCP_PRESETS.length,
+  );
   await captureScreenshot(page, testInfo, "integrations-official-mcp-presets");
   for (const preset of MCP_PRESETS) {
     const row = presets
       .getByTestId("mcp-preset")
       .filter({ has: page.getByText(preset.name, { exact: true }) });
-    await row.getByRole("button", { name: "Add", exact: true }).click();
+    await row.getByRole("button", { name: `Add ${preset.name}`, exact: true }).click();
     await expect(page.getByRole("textbox", { name: "Server name", exact: true })).toHaveValue(
       preset.name,
     );

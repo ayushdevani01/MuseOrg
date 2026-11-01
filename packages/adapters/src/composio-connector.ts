@@ -489,6 +489,9 @@ export class ComposioConnector implements ComposioProvider {
     return toolkits.map((toolkit) => ({
       slug: toolkit.slug,
       name: toolkit.name,
+      ...("description" in toolkit && typeof toolkit.description === "string"
+        ? { description: toolkit.description }
+        : {}),
       logo: toolkit.logo ?? null,
       noAuth: Boolean(toolkit.isNoAuth),
     }));
