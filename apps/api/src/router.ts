@@ -6,6 +6,7 @@ import type {
   ProductAnalytics,
   SandboxProvider,
   SecretStore,
+  SkillCatalogProvider,
   WorkDeliveryProvider,
 } from "@rakazo/adapter-kit";
 import type {
@@ -102,6 +103,7 @@ export interface RouterDeps {
   artifacts: ArtifactStore;
   dataDir: string;
   workDelivery?: WorkDeliveryProvider;
+  skillCatalog?: SkillCatalogProvider;
   /** Present when the external messaging surface is enabled. */
   messagingInstallations?: MessagingInstallations;
   messaging?: {

@@ -77,6 +77,7 @@ import {
   removePiUserSessions,
   resolveDeploymentModel,
   ScriptedAgentRuntime,
+  SkillsShCatalog,
   SpaceMemoryProviderResolver,
   StripeBillingProvider,
   sandboxProviderOptionsFromEnv,
@@ -634,6 +635,7 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
   reconciler?.start();
 
   const router = createRouter({
+    skillCatalog: new SkillsShCatalog(),
     workDelivery,
     speechSummary:
       env.voiceSummaryMinChars === undefined

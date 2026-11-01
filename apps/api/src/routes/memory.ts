@@ -3,6 +3,7 @@ import { MEMORY_REVISION_CONFLICT_ERROR } from "@rakazo/adapter-kit";
 import { isScratchpadStatus, listScratchpadItems, mapScratchpadItem } from "@rakazo/adapters";
 import { isDeletableMemoryDocument } from "@rakazo/contracts";
 import { findSpaceMemoryConfig, IsolationError } from "@rakazo/db";
+import { catalogResult } from "../employee-skills.js";
 import {
   disconnectMemoryProvider,
   persistMemoryProviderConfig,
@@ -231,6 +232,20 @@ export function memoryRoutes(ctx: RouterContext) {
       ),
     },
     agentSkills: {
+      searchCatalog: authed.agentSkills.searchCatalog.handler(async ({ context, input }) => {
+        if (!deps.skillCatalog)
+          throw new ORPCError("SERVICE_UNAVAILABLE", {
+            message: "Skill discovery is unavailable.",
+          });
+        return catalogResult(() => deps.skillCatalog!.search(input.query, context.signal));
+      }),
+      previewCatalog: authed.agentSkills.previewCatalog.handler(async ({ context, input }) => {
+        if (!deps.skillCatalog)
+          throw new ORPCError("SERVICE_UNAVAILABLE", {
+            message: "Skill discovery is unavailable.",
+          });
+        return catalogResult(() => deps.skillCatalog!.load(input, context.signal));
+      }),
       list: authed.agentSkills.list.handler(async ({ context }) => agentSkills.list(context.actor)),
       get: authed.agentSkills.get.handler(async ({ context, input }) =>
         agentSkills.get(context.actor, input),
