@@ -1,7 +1,9 @@
 # Initial core implementation
 
-Updated 30 October 2026. This is the first implementation slice of the
-[MuseOrg goal](MUSEORG_GOAL.md), not completion of the two demonstrations.
+Updated 1 November 2026. This describes the initial implementation slice of the
+[MuseOrg goal](MUSEORG_GOAL.md). The subsequent continuing-coworker and delivery
+work is documented in [shared projects](PROJECT_WORK.md) and
+[core verification](CORE_VERIFICATION.md).
 
 ## Foundation and changes
 

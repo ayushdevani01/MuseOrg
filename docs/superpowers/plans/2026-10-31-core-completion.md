@@ -49,5 +49,15 @@ passing fixture is not a live provider result. Keep focused commits by capabilit
 
 ## Progress
 
-- Implemented bounded worker context handoff; initial focused tests pass.
-- Other completion evidence remains outstanding until recorded.
+- Completed bounded helper context, six versioned product skills, shared projects,
+  dependency-based correction notices and scoped delivery authority.
+- Verified continuing memory, overlapping helpers, scheduled and authenticated
+  event work, browser fallback, cancellation and a controlled worker-crash recovery.
+  The recovery run completed after lease reclaim with one command start recorded.
+- Completed the real repair-to-PR-to-merge-to-Pages demonstration with matching-head
+  checks and independent interaction verification.
+- The project-settings browser test passes through the authenticated API and
+  isolated database. Focused runtime, authorization and provider tests pass.
+- Evidence and limits are recorded in [core verification](../../CORE_VERIFICATION.md)
+  and [shared projects](../../PROJECT_WORK.md). Meta/account/media testing remains
+  deferred, along with the unrelated broad CI backlog and native grant form.
