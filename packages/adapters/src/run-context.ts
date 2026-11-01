@@ -121,6 +121,8 @@ export interface EffectState {
   /** Turn snapshots captured before each tool call, by execution id. */
   pendingTurnCheckpoints: Map<string, () => string>;
   storedTurnCheckpoint: boolean;
+  /** Preserve checkpoint order when a model starts independent calls concurrently. */
+  checkpointWrite?: Promise<void>;
 }
 
 export interface ScreenState {
@@ -326,20 +328,24 @@ export function nextMutatingEffectOccurrence(
   return occurrence;
 }
 
-export async function persistTurnCheckpoint(ctx: RunContext, executionId?: string) {
+export function persistTurnCheckpoint(ctx: RunContext, executionId?: string) {
   const { deps, run, workerId, fence } = ctx;
   const effects = ctx.state.effects;
   const capture = executionId ? effects.pendingTurnCheckpoints.get(executionId) : undefined;
-  if (capture) {
-    const saved = JSON.parse(capture());
-    saved.effectOccurrences = effects.occurrences;
-    await saveRunTurnCheckpoint(deps.prisma, run, workerId, fence, JSON.stringify(saved));
-    effects.storedTurnCheckpoint = true;
-  } else if (effects.storedTurnCheckpoint) {
-    // Helper calls have no saved turn. An earlier pause's turn must not resume this one.
-    await dropRunTurnCheckpoint(deps.prisma, run, workerId, fence);
-    effects.storedTurnCheckpoint = false;
-  }
+  const write = (effects.checkpointWrite ?? Promise.resolve()).then(async () => {
+    if (capture) {
+      const saved = JSON.parse(capture());
+      saved.effectOccurrences = effects.occurrences;
+      await saveRunTurnCheckpoint(deps.prisma, run, workerId, fence, JSON.stringify(saved));
+      effects.storedTurnCheckpoint = true;
+    } else if (effects.storedTurnCheckpoint) {
+      // Helper approval pauses have no saved main turn to resume.
+      await dropRunTurnCheckpoint(deps.prisma, run, workerId, fence);
+      effects.storedTurnCheckpoint = false;
+    }
+  });
+  effects.checkpointWrite = write;
+  return write;
 }
 
 /**

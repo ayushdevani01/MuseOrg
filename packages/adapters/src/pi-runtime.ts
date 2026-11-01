@@ -735,15 +735,31 @@ export class PiAgentRuntime implements AgentRuntime {
                     arguments: (tool.prepareArguments?.(call.arguments) ??
                       call.arguments) as typeof call.arguments,
                   });
-                  result = interaction
-                    ? {
-                        ...request.resumeToolResult,
-                        content: request.resumeToolResult?.content ?? [
-                          { type: "text", text: initialPrompt },
-                        ],
-                        details: undefined,
-                      }
-                    : await tool.execute(call.id, args, signal);
+                  result =
+                    call.name === "run_subagent"
+                      ? {
+                          content: [
+                            {
+                              type: "text",
+                              text: JSON.stringify({
+                                interrupted: true,
+                                error:
+                                  "The helper was interrupted by a worker restart. Verify its artifacts and action receipts before delegating more work; it was not started again.",
+                              }),
+                            },
+                          ],
+                          details: { interrupted: true },
+                          isError: true,
+                        }
+                      : interaction
+                        ? {
+                            ...request.resumeToolResult,
+                            content: request.resumeToolResult?.content ?? [
+                              { type: "text", text: initialPrompt },
+                            ],
+                            details: undefined,
+                          }
+                        : await tool.execute(call.id, args, signal);
                 } catch (error) {
                   signal.throwIfAborted();
                   result = {

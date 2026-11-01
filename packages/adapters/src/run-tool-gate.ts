@@ -487,9 +487,15 @@ export async function gateToolCall(
     }
   } else if (needsApproval && applied) {
     return { result: await requestApproval(ctx, call, card) };
-  } else if (call.bypassApproval && applied) {
+  } else if (applied && name !== "request_secret") {
+    // Approval-exempt tools still dispatch effects. Claim before executing them so
+    // a worker crash cannot leave an already-started command looking undispatched.
     const early = await call.claimOrReturn("intended");
     if (early !== undefined) return { result: early };
+  }
+  if (applied && ctx.state.effects.pendingTurnCheckpoints.has(executionId)) {
+    // Include the gate's canonical arguments/occurrence in the durable saved turn.
+    await persistTurnCheckpoint(ctx, executionId);
   }
   // Past the gate: this destination is now one the run was given. A search result's exact
   // URL trusts only that URL, never the rest of its site.

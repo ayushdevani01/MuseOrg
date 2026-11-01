@@ -623,6 +623,23 @@ describe("mutating tool effect idempotency keys", () => {
     );
     expect(f.results[1]).toEqual({ ok: true });
   });
+  it("claims approval-exempt writes before dispatch and does not repeat an interrupted one", async () => {
+    const f = fixture("run-ungated-claim");
+    const args = { path: "MEMORY.md", content: "durable fact" };
+    f.memoryCommit.mockImplementationOnce(async () => {
+      expect(f.effects.find((effect) => effect.kind === "remember")?.status).toBe("executing");
+      return { revision: "rev-1" };
+    });
+    f.setCalls([{ name: "remember", args, executionId: "first-call" }]);
+    await f.run();
+    expect(f.memoryCommit).toHaveBeenCalledOnce();
+    f.effects[0]!.status = "executing";
+    f.effects[0]!.result = undefined;
+    f.setCalls([{ name: "remember", args, executionId: "after-worker-restart" }]);
+    await f.run();
+    expect(f.memoryCommit).toHaveBeenCalledOnce();
+    expect(f.results.at(-1)).toMatchObject({ uncertain: true });
+  });
 
   it("replays the same logical effect when restart assigns a new tool-call id", async () => {
     const f = fixture("run-replay-id");

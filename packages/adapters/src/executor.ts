@@ -111,7 +111,11 @@ import type {
   RunningHelper,
   RunState,
 } from "./run-context.js";
-import { restoreTurnCheckpointEffects, settleRunningHelpers } from "./run-context.js";
+import {
+  persistTurnCheckpoint,
+  restoreTurnCheckpointEffects,
+  settleRunningHelpers,
+} from "./run-context.js";
 import { APPROVED_EFFECT_REPLAY_ORDER, buildApprovalContinuation } from "./run-effects.js";
 import {
   BOT_DIRECTORY_LIMIT,
@@ -1486,6 +1490,9 @@ export function createRunExecutor(deps: ExecutorDeps) {
               turnCheckpoint,
               onCheckpoint: async (capture, executionId) => {
                 effects.pendingTurnCheckpoints.set(executionId, capture);
+                // Persist the exact request before even runtime-local tools can act.
+                // A restarted worker must not ask the model to reconstruct a command.
+                await persistTurnCheckpoint(ctx, executionId);
               },
               resumeToolResult: {
                 content: [{ type: "text", text: takeoverResume?.promptNote ?? taskPrompt }],
