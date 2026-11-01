@@ -22,6 +22,7 @@ import { NavLinkSchema } from "./nav-links.js";
 import { RoutineWatchSchema, RoutineWatchStateSchema } from "./routine-watch.js";
 import { RunTriggerSchema } from "./runs.js";
 import { SettingsScopeSchema } from "./settings-scope.js";
+import { SkillImportSelectionSchema } from "./skill-catalog.js";
 
 export const ComputerModeSchema = z.enum(["team", "dedicated"]);
 export type ComputerMode = z.infer<typeof ComputerModeSchema>;
@@ -383,6 +384,7 @@ export const CreateBotInput = z
     computerMode: ComputerModeSchema.default("team"),
     /** Idempotency key within a space (unique with spaceId). */
     spawnKey: z.string().trim().min(1).max(120).optional(),
+    skillImports: z.array(SkillImportSelectionSchema).max(5).optional(),
     modelProvider: z.string().trim().min(1).max(80).optional(),
     modelId: z.string().trim().min(1).max(200).optional(),
   })
@@ -738,6 +740,7 @@ export const ConnectionSchema = z.object({
 export type Connection = z.infer<typeof ConnectionSchema>;
 
 export const ConnectionCatalogItemSchema = z.object({
+  description: z.string().optional(),
   connectorId: z.string(),
   slug: z.string(),
   name: z.string(),

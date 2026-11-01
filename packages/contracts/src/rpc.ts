@@ -146,6 +146,7 @@ import { RoutineHistorySchema, RoutineRunCursorSchema, RunsListOutputSchema } fr
 import { SearchQueryOutputSchema } from "./search.js";
 import { SecurityEventListInputSchema, SecurityEventSchema } from "./security-events.js";
 import { SettingsScopeSchema, SpaceSettingSchema, settingsScopeInput } from "./settings-scope.js";
+import { SkillBundleSchema, SkillCatalogEntrySchema } from "./skill-catalog.js";
 
 const botId = z.object({ botId: Id });
 const groupId = z.object({ groupId: Id });
@@ -831,6 +832,12 @@ export const appContract = {
   },
   /** Claude Agent Skills (SKILL.md recipes) shared across assistants (not taught/demo skills). Pi already understands this format; we persist and inject them. */
   agentSkills: {
+    searchCatalog: oc
+      .input(z.object({ query: z.string().trim().min(2).max(160) }))
+      .output(z.array(SkillCatalogEntrySchema)),
+    previewCatalog: oc
+      .input(z.object({ source: z.string().min(1).max(160), key: z.string().min(1).max(80) }))
+      .output(SkillBundleSchema),
     list: oc.output(z.array(AgentSkillCatalogEntrySchema)),
     get: oc
       .input(

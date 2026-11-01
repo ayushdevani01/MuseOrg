@@ -11,6 +11,7 @@ export * from "./model-errors.js";
 export * from "./registry.js";
 export * from "./sandbox-errors.js";
 export * from "./secret-errors.js";
+export * from "./skill-catalog.js";
 export * from "./types.js";
 export * from "./voice-errors.js";
 export * from "./work-delivery.js";
