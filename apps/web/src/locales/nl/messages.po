@@ -449,6 +449,12 @@ msgstr "Activiteit"
 msgid "Add"
 msgstr "Toevoegen"
 
+#. placeholder {0}: item.name
+#. placeholder {0}: preset.name
+#: src/pages/PluginsOverlay.tsx
+msgid "Add {0}"
+msgstr ""
+
 #. placeholder {0}: bot.name
 #: src/pages/GroupPanel.tsx
 msgid "Add {0} to the group"
@@ -527,6 +533,10 @@ msgstr "GraphQL-eindpunt toevoegen"
 msgid "Add header"
 msgstr "Header toevoegen"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Add integration"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add item"
 msgstr "Item toevoegen"
@@ -564,6 +574,14 @@ msgstr "Server toevoegen"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Add server URL"
 msgstr "Server-URL toevoegen"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Add skill"
+msgstr ""
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Add skills"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Add to an existing bot"
@@ -1024,10 +1042,18 @@ msgstr "MCP-servers doorzoeken"
 msgid "Budget: {0} spent, {1} reserved, {2} total cents"
 msgstr ""
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Build software"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "Ingebouwd"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Calendar and events"
+msgstr ""
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1133,6 +1159,10 @@ msgstr "Wachtwoord wijzigen"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Changing…"
 msgstr "Bezig met wijzigen…"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Channels and conversations"
+msgstr ""
 
 #: src/pages/shell/message-cards.tsx
 msgid "Chart failed to render: {error}"
@@ -1358,6 +1388,10 @@ msgstr "Code"
 msgctxt "email sign-in"
 msgid "Code"
 msgstr "Code"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Code, issues and pull requests"
+msgstr ""
 
 #. placeholder {0}: headerName(group)
 #: src/pages/shell/sidebar-roster.tsx
@@ -1617,6 +1651,10 @@ msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Conversations"
+msgstr ""
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Coordinate projects"
 msgstr ""
 
 #: src/components/ComputersUnavailableHint.tsx
@@ -2137,6 +2175,10 @@ msgstr "Maak een sectie aan en verplaats {0} erin."
 msgid "Create account"
 msgstr "Account aanmaken"
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Create and design"
+msgstr ""
+
 #: src/pages/GroupPanel.tsx
 msgid "Create group"
 msgstr "Groep aanmaken"
@@ -2402,6 +2444,10 @@ msgstr "{disconnectName} losgekoppeld."
 msgid "Disconnecting…"
 msgstr "Bezig met loskoppelen…"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Discover"
+msgstr ""
+
 #: src/components/AskCard.tsx
 #: src/components/ComputerUpdateProgress.tsx
 #: src/components/PasskeyOffer.tsx
@@ -2526,6 +2572,10 @@ msgstr "Profiel bewerken"
 msgid "Email"
 msgstr "E-mail"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Email and inbox"
+msgstr ""
+
 #: src/lib/user-error.ts
 msgid "Email is not allowed to register"
 msgstr "Dit e-mailadres mag niet worden geregistreerd"
@@ -2533,6 +2583,10 @@ msgstr "Dit e-mailadres mag niet worden geregistreerd"
 #: src/lib/user-error.ts
 msgid "Email verification required"
 msgstr "E-mailverificatie vereist"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Employee responsibilities"
+msgstr ""
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2743,6 +2797,10 @@ msgstr "Te vergelijken velden, bijv. id, modifiedTime (optioneel)"
 #: src/pages/McpServersOverlay.tsx
 msgid "File"
 msgstr "Bestand"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Files and documents"
+msgstr ""
 
 #: src/pages/RoutineEditor.tsx
 msgid "Files or folders on the computer"
@@ -3030,6 +3088,10 @@ msgstr "Postvak IN & e-mail"
 msgid "Include API keys"
 msgstr "API-sleutels meenemen"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Included"
+msgstr ""
+
 #: src/components/call/VoiceChatCard.tsx
 msgid "Incoming call"
 msgstr "Inkomend gesprek"
@@ -3118,6 +3180,10 @@ msgstr "Geïsoleerd"
 #: src/pages/Artifacts.tsx
 msgid "Isolated preview — no access to your account"
 msgstr "Geïsoleerd voorbeeld — geen toegang tot je account"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Issues and project tracking"
+msgstr ""
 
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Its bots and groups are kept and leave the section."
@@ -3271,6 +3337,10 @@ msgstr "Modelcatalogus laden…"
 msgid "Loading preview…"
 msgstr "Voorbeeld laden…"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Loading skills…"
+msgstr ""
+
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Loading voice providers…"
 msgstr "Spraakanbieders laden…"
@@ -3369,6 +3439,10 @@ msgstr "Markeren als ongelezen"
 #: src/components/markdown-copy.tsx
 msgid "Markdown table"
 msgstr "Markdown-tabel"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Marketing and growth"
+msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
@@ -3716,6 +3790,10 @@ msgstr "Nieuw"
 msgid "New bot"
 msgstr "Nieuwe bot"
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "New employee"
+msgstr ""
+
 #: src/pages/GroupPanel.tsx
 msgid "New group"
 msgstr "Nieuwe groep"
@@ -3795,6 +3873,10 @@ msgstr "Geen bots"
 msgid "No bots match"
 msgstr "Geen bots gevonden"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "No integrations added."
+msgstr ""
+
 #: src/components/AskCard.tsx
 msgid "No longer active"
 msgstr "Niet langer actief"
@@ -3862,6 +3944,10 @@ msgstr "Geen runs komen overeen met deze filters."
 #: src/pages/RoutineRunHistory.tsx
 msgid "No runs yet"
 msgstr "Nog geen runs"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "No skills found."
+msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
 msgid "No skills yet"
@@ -4103,6 +4189,10 @@ msgstr "Pagina {page} van {count}"
 msgid "PagerDuty incident"
 msgstr "PagerDuty-incident"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Pages, documents and projects"
+msgstr ""
+
 #: src/components/PasskeySettings.tsx
 msgid "Passkey"
 msgstr "Passkey"
@@ -4169,6 +4259,10 @@ msgstr "Plak je API-sleutel en test daarna opnieuw."
 #: src/pages/shell/import-status.ts
 msgid "Paused"
 msgstr "Gepauzeerd"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Payments and subscriptions"
+msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Pending"
@@ -4242,6 +4336,10 @@ msgstr "POST naar"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "Voorkeuren"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview"
+msgstr ""
 
 #. placeholder {0}: props.name
 #: src/components/ArtifactFileCard.tsx
@@ -4877,6 +4975,10 @@ msgstr "Zoek bots en wissel van gesprek"
 msgid "Search by domain"
 msgstr "Zoeken op domein"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Search Cloudflare documentation"
+msgstr ""
+
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
 msgstr "integrations.sh doorzoeken"
@@ -4887,9 +4989,17 @@ msgstr "integrations.sh doorzoeken"
 msgid "Search models"
 msgstr "Modellen zoeken"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Search OpenAI documentation"
+msgstr ""
+
 #: src/pages/shell/shell-sidebar.tsx
 msgid "Search runs"
 msgstr "Runs zoeken"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Search skills.sh"
+msgstr ""
 
 #. placeholder {0}: filters.query.trim()
 #: src/pages/ActivityList.tsx
@@ -4908,6 +5018,10 @@ msgstr "Beveiliging"
 #: src/pages/shell/chat-header.tsx
 msgid "Select a bot"
 msgstr "Selecteer een bot"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Selected"
+msgstr ""
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
 msgid "Self-hosted"
@@ -5128,6 +5242,10 @@ msgstr "Skill {0}"
 msgid "Skill {position}"
 msgstr "Skill {position}"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Skill instructions"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Skills"
@@ -5165,6 +5283,10 @@ msgstr "Schuif omhoog om te vergrendelen"
 #: src/pages/shell/agent-import.tsx
 msgid "Some settings are not imported"
 msgstr "Sommige instellingen worden niet geïmporteerd"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Something else"
+msgstr ""
 
 #: src/App.tsx
 #: src/lib/user-error.ts
@@ -6048,6 +6170,10 @@ msgstr "Wat teruggeven"
 #: src/pages/RoutineEditor.tsx
 msgid "What to watch"
 msgstr "Wat volgen"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "What will this employee do?"
+msgstr ""
 
 #: src/pages/RoutineEditor.tsx
 msgid "When a webhook fires"

@@ -449,6 +449,12 @@ msgstr "Activité"
 msgid "Add"
 msgstr "Ajouter"
 
+#. placeholder {0}: item.name
+#. placeholder {0}: preset.name
+#: src/pages/PluginsOverlay.tsx
+msgid "Add {0}"
+msgstr ""
+
 #. placeholder {0}: bot.name
 #: src/pages/GroupPanel.tsx
 msgid "Add {0} to the group"
@@ -527,6 +533,10 @@ msgstr "Ajouter un point de terminaison GraphQL"
 msgid "Add header"
 msgstr "Ajouter un en-tête"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Add integration"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add item"
 msgstr "Ajouter un élément"
@@ -564,6 +574,14 @@ msgstr "Ajouter un serveur"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Add server URL"
 msgstr "Ajouter une URL de serveur"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Add skill"
+msgstr ""
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Add skills"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Add to an existing bot"
@@ -1024,10 +1042,18 @@ msgstr "Parcourir les serveurs MCP"
 msgid "Budget: {0} spent, {1} reserved, {2} total cents"
 msgstr ""
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Build software"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "Intégré"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Calendar and events"
+msgstr ""
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1133,6 +1159,10 @@ msgstr "Changer le mot de passe"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Changing…"
 msgstr "Modification en cours…"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Channels and conversations"
+msgstr ""
 
 #: src/pages/shell/message-cards.tsx
 msgid "Chart failed to render: {error}"
@@ -1358,6 +1388,10 @@ msgstr "Code"
 msgctxt "email sign-in"
 msgid "Code"
 msgstr "Code"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Code, issues and pull requests"
+msgstr ""
 
 #. placeholder {0}: headerName(group)
 #: src/pages/shell/sidebar-roster.tsx
@@ -1617,6 +1651,10 @@ msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Conversations"
+msgstr ""
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Coordinate projects"
 msgstr ""
 
 #: src/components/ComputersUnavailableHint.tsx
@@ -2137,6 +2175,10 @@ msgstr "Créez une section et déplacez {0} dedans."
 msgid "Create account"
 msgstr "Créer un compte"
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Create and design"
+msgstr ""
+
 #: src/pages/GroupPanel.tsx
 msgid "Create group"
 msgstr "Créer un groupe"
@@ -2402,6 +2444,10 @@ msgstr "{disconnectName} déconnecté."
 msgid "Disconnecting…"
 msgstr "Déconnexion en cours…"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Discover"
+msgstr ""
+
 #: src/components/AskCard.tsx
 #: src/components/ComputerUpdateProgress.tsx
 #: src/components/PasskeyOffer.tsx
@@ -2526,6 +2572,10 @@ msgstr "Modifier le profil"
 msgid "Email"
 msgstr "E-mail"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Email and inbox"
+msgstr ""
+
 #: src/lib/user-error.ts
 msgid "Email is not allowed to register"
 msgstr "Cette adresse e-mail ne peut pas s’inscrire"
@@ -2533,6 +2583,10 @@ msgstr "Cette adresse e-mail ne peut pas s’inscrire"
 #: src/lib/user-error.ts
 msgid "Email verification required"
 msgstr "Vérification de l’e-mail requise"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Employee responsibilities"
+msgstr ""
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2743,6 +2797,10 @@ msgstr "Champs à comparer, par ex. id, modifiedTime (facultatif)"
 #: src/pages/McpServersOverlay.tsx
 msgid "File"
 msgstr "Fichier"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Files and documents"
+msgstr ""
 
 #: src/pages/RoutineEditor.tsx
 msgid "Files or folders on the computer"
@@ -3030,6 +3088,10 @@ msgstr "Boîte de réception et e-mail"
 msgid "Include API keys"
 msgstr "Inclure les clés API"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Included"
+msgstr ""
+
 #: src/components/call/VoiceChatCard.tsx
 msgid "Incoming call"
 msgstr "Appel entrant"
@@ -3118,6 +3180,10 @@ msgstr "Isolé"
 #: src/pages/Artifacts.tsx
 msgid "Isolated preview — no access to your account"
 msgstr "Aperçu isolé — aucun accès à votre compte"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Issues and project tracking"
+msgstr ""
 
 #: src/pages/shell/shell-dialogs.tsx
 msgid "Its bots and groups are kept and leave the section."
@@ -3271,6 +3337,10 @@ msgstr "Chargement du catalogue de modèles…"
 msgid "Loading preview…"
 msgstr "Chargement de l'aperçu…"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Loading skills…"
+msgstr ""
+
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Loading voice providers…"
 msgstr "Chargement des fournisseurs vocaux…"
@@ -3369,6 +3439,10 @@ msgstr "Marquer comme non lu"
 #: src/components/markdown-copy.tsx
 msgid "Markdown table"
 msgstr "Tableau Markdown"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Marketing and growth"
+msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
@@ -3716,6 +3790,10 @@ msgstr ""
 msgid "New bot"
 msgstr "Nouveau bot"
 
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "New employee"
+msgstr ""
+
 #: src/pages/GroupPanel.tsx
 msgid "New group"
 msgstr "Nouveau groupe"
@@ -3795,6 +3873,10 @@ msgstr "Aucun bot"
 msgid "No bots match"
 msgstr "Aucun bot ne correspond"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "No integrations added."
+msgstr ""
+
 #: src/components/AskCard.tsx
 msgid "No longer active"
 msgstr "Plus actif"
@@ -3862,6 +3944,10 @@ msgstr ""
 #: src/pages/RoutineRunHistory.tsx
 msgid "No runs yet"
 msgstr "Aucune exécution pour le moment"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "No skills found."
+msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
 msgid "No skills yet"
@@ -4103,6 +4189,10 @@ msgstr "Page {page} sur {count}"
 msgid "PagerDuty incident"
 msgstr "Incident PagerDuty"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Pages, documents and projects"
+msgstr ""
+
 #: src/components/PasskeySettings.tsx
 msgid "Passkey"
 msgstr "Clé d’accès"
@@ -4169,6 +4259,10 @@ msgstr "Collez votre clé API, puis testez à nouveau."
 #: src/pages/shell/import-status.ts
 msgid "Paused"
 msgstr "En pause"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Payments and subscriptions"
+msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Pending"
@@ -4242,6 +4336,10 @@ msgstr "POST vers"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "Préférences"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview"
+msgstr ""
 
 #. placeholder {0}: props.name
 #: src/components/ArtifactFileCard.tsx
@@ -4877,6 +4975,10 @@ msgstr "Rechercher des bots et changer de conversation"
 msgid "Search by domain"
 msgstr "Rechercher par domaine"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Search Cloudflare documentation"
+msgstr ""
+
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
 msgstr "Rechercher sur integrations.sh"
@@ -4887,9 +4989,17 @@ msgstr "Rechercher sur integrations.sh"
 msgid "Search models"
 msgstr "Rechercher des modèles"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Search OpenAI documentation"
+msgstr ""
+
 #: src/pages/shell/shell-sidebar.tsx
 msgid "Search runs"
 msgstr "Rechercher des exécutions"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Search skills.sh"
+msgstr ""
 
 #. placeholder {0}: filters.query.trim()
 #: src/pages/ActivityList.tsx
@@ -4908,6 +5018,10 @@ msgstr "Sécurité"
 #: src/pages/shell/chat-header.tsx
 msgid "Select a bot"
 msgstr "Sélectionnez un bot"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Selected"
+msgstr ""
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
 msgid "Self-hosted"
@@ -5128,6 +5242,10 @@ msgstr "Compétence {0}"
 msgid "Skill {position}"
 msgstr "Compétence {position}"
 
+#: src/components/SkillCatalogPicker.tsx
+msgid "Skill instructions"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Skills"
@@ -5165,6 +5283,10 @@ msgstr "Glisser vers le haut pour verrouiller"
 #: src/pages/shell/agent-import.tsx
 msgid "Some settings are not imported"
 msgstr "Certains réglages ne sont pas importés"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "Something else"
+msgstr ""
 
 #: src/App.tsx
 #: src/lib/user-error.ts
@@ -6048,6 +6170,10 @@ msgstr "Que retourner"
 #: src/pages/RoutineEditor.tsx
 msgid "What to watch"
 msgstr "Élément à surveiller"
+
+#: src/pages/shell/create-bot-dialog.tsx
+msgid "What will this employee do?"
+msgstr ""
 
 #: src/pages/RoutineEditor.tsx
 msgid "When a webhook fires"
