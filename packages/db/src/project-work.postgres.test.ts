@@ -318,4 +318,25 @@ describePostgres("project revision and action authority (PostgreSQL)", () => {
     ).rejects.toThrow("project changed");
     expect(await tenant(() => prisma.workProjectRevision.count({ where: { projectId } }))).toBe(2);
   });
+  it("steers a held lease without starting overlapping work", async () => {
+    await tenant(() => prisma.run.update({ where: { id: runId }, data: { status: "leased" } }));
+    const result = await tenant(() =>
+      reviseWorkProject(prisma, owner, {
+        projectId,
+        expectedRevision: 2,
+        patch: { facts: { locale: "fr" } },
+      }),
+    );
+    expect(result.notifications?.map((n) => n.runId)).toEqual([runId]);
+    expect(await tenant(() => prisma.run.count({ where: { botId } }))).toBe(1);
+    expect(
+      await tenant(() =>
+        ownedWorkProject(
+          prisma,
+          { ...owner, ...{ traceId: "ignored-request-metadata" } },
+          projectId,
+        ),
+      ),
+    ).toMatchObject({ revision: 3 });
+  });
 });

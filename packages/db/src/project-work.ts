@@ -6,7 +6,12 @@ import type {
   WorkProject as WorkProjectDto,
 } from "@rakazo/contracts";
 import { ProjectPatchSchema, ProjectSpecSchema, WorkGrantInputSchema } from "@rakazo/contracts";
-import { applyProjectPatch, projectOutputAffected } from "@rakazo/core";
+import {
+  ACTIVE_RUN_STATUSES,
+  applyProjectPatch,
+  projectOutputAffected,
+  QUEUE_HOLDING_RUN_STATUSES,
+} from "@rakazo/core";
 import { cancelRunsInTransaction } from "./cancel-runs.js";
 import type { Prisma, PrismaClient, WorkProject } from "./client.js";
 import { createThreadMessageInTransaction } from "./messages.js";
@@ -202,7 +207,7 @@ export async function reviseWorkProject(
         where: {
           ...owner,
           projectId: project.id,
-          run: { status: { in: ["queued", "running", "waiting_input", "waiting_computer"] } },
+          run: { status: { in: [...ACTIVE_RUN_STATUSES] } },
         },
         include: { run: { select: { botId: true } } },
       });
@@ -275,7 +280,7 @@ async function notifyProjectRevision(
       where: {
         ...owner,
         threadId: thread.id,
-        status: { in: ["queued", "running", "waiting_input", "waiting_computer"] },
+        status: { in: [...QUEUE_HOLDING_RUN_STATUSES] },
       },
       orderBy: { createdAt: "asc" },
     });
