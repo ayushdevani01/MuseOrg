@@ -2,6 +2,7 @@ import type { SkillRecord, SkillSource } from "@rakazo/core";
 import {
   buildSkillMd,
   findSkillByName,
+  importedSkillDetails,
   isSkillReadOnly,
   mergeBuiltinSkills,
   parseSkillMd,
@@ -114,7 +115,17 @@ export async function skillReadFromTool(
   const skill = await findOwnedSkill(prisma, owner, input);
   if (!skill) return { error: "Skill not found." };
   const bundled = skill.source === "builtin" ? productSkill(skill.name) : undefined;
+  const imported = skill.source !== "builtin" ? importedSkillDetails(skill.content) : null;
   if (input.resource !== undefined) {
+    if (imported && Object.hasOwn(imported.resources, input.resource)) {
+      return {
+        name: skill.name,
+        source: skill.source,
+        resource: input.resource,
+        content: imported.resources[input.resource],
+        version: imported.revision,
+      };
+    }
     const resource = bundled ? productSkillResource(skill.name, input.resource) : undefined;
     if (!resource) return { error: "Skill resource not found." };
     return {
@@ -131,7 +142,14 @@ export async function skillReadFromTool(
     description: skill.description,
     source: skill.source,
     readOnly: skill.readOnly,
-    content: skill.content,
+    content: imported?.content ?? skill.content,
+    ...(imported
+      ? {
+          version: imported.revision,
+          resources: Object.keys(imported.resources),
+          provenance: { source: imported.source, url: imported.url, sha256: imported.sha256 },
+        }
+      : {}),
     ...(bundled ? { version: bundled.version, resources: Object.keys(bundled.resources) } : {}),
   };
 }
