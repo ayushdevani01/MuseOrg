@@ -14,9 +14,13 @@ are starter profiles on the same reusable runtime.
   review, durable messages, retained files after restart and downloadable source.
 - MCP, OpenAPI and GraphQL setup is available, with six MCP presets. Public
   documentation MCP discovery and one real worker tool call are verified.
+- Hiring includes role choices and optional skills.sh search, preview and import.
+  Imported instructions and supporting text files are available to the runtime.
+  Integration rows show logos, descriptions and add/manage controls.
 - Meta reasoning has offline protocol coverage. Live Meta inference, Meta media,
-  social account actions, coordinated requirement changes and both complete
-  demonstrations remain unfinished.
+  social account actions and the complete marketing launch demonstration remain
+  unfinished. Shared corrections, worker recovery and the engineering
+  repair-to-PR-to-deployment demonstration are verified.
 
 The live development checks used an isolated temporary Codex connection; they
 do not prove Meta model behavior. Submission configuration requires a personal
