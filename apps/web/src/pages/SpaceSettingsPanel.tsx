@@ -2,6 +2,7 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { Button, Input } from "@rakazo/ui-web";
 import { useEffect, useId, useState } from "react";
 import { SettingsGroup, SettingsRow } from "../components/SettingsRows";
+import { ProjectSettings } from "./ProjectSettings";
 import { SpaceSettingOverrides } from "./SpaceSettingOverrides";
 import type { SettingsSpace } from "./shell/dialogs";
 import { DeleteSpaceDialog } from "./shell/dialogs";
@@ -27,6 +28,7 @@ export function SpaceSettingsPanel({
   const [error, setError] = useState<string | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [overridesBusy, setOverridesBusy] = useState(false);
+  const [projectsOpen, setProjectsOpen] = useState(false);
   // A rename in flight holds the dialog open, so a failure is shown instead of lost on leaving.
   const busy = pending || overridesBusy;
   useEffect(() => {
@@ -101,6 +103,12 @@ export function SpaceSettingsPanel({
         </SettingsGroup>
       ) : null}
       <SpaceSettingOverrides onClose={onClose} onBusyChange={setOverridesBusy} />
+      <details onToggle={(event) => setProjectsOpen(event.currentTarget.open)}>
+        <summary className="cursor-pointer text-sm">
+          <Trans>Projects</Trans>
+        </summary>
+        {projectsOpen ? <ProjectSettings /> : null}
+      </details>
       {space.canDelete ? (
         <Button
           variant="destructive"
