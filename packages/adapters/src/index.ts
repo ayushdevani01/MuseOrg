@@ -68,6 +68,7 @@ export * from "./favicon.js";
 export * from "./fish-audio-voice.js";
 export * from "./fleet-tools.js";
 export * from "./github-webhook-emulator.js";
+export * from "./github-work-delivery.js";
 export * from "./graphql-connectors.js";
 export * from "./group-handoff.js";
 export * from "./home.js";
