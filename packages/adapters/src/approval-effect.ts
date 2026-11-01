@@ -379,6 +379,15 @@ export function resolveDuplicateEffectGate(
   if (effect.status === "completed") {
     return { action: "return", result: effect.result ?? { duplicate: true } };
   }
+  if (effect.status === "superseded") {
+    return {
+      action: "return",
+      result: {
+        error:
+          "This proposal was superseded by a project revision. Read the latest project and prepare a new proposal.",
+      },
+    };
+  }
   if (effect.status === "denied") {
     return {
       action: "return",

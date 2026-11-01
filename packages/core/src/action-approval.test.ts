@@ -160,6 +160,8 @@ describe("unattendedTriggerToolRequiresApproval", () => {
       "request_takeover",
       "run_subagent",
       "list_fleet",
+      "project_read",
+      "project_reconcile",
     ]) {
       expect(unattendedTriggerToolRequiresApproval("webhook", name, false)).toBe(false);
     }
@@ -691,7 +693,14 @@ describe("toolResultTaintsRun", () => {
   });
 
   it("does not taint on the bot's own writes and saved state", () => {
-    for (const tool of ["ask_user", "remember", "recall_memory", "skill_read", "write_file"]) {
+    for (const tool of [
+      "ask_user",
+      "remember",
+      "recall_memory",
+      "skill_read",
+      "write_file",
+      "project_read",
+    ]) {
       expect(toolResultTaintsRun(tool)).toBe(false);
     }
   });

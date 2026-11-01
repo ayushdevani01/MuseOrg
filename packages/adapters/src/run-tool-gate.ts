@@ -60,6 +60,7 @@ import { resolveCompletedSecretLeftover } from "./run-secret.js";
 import type { ToolRequest } from "./run-tool-request.js";
 import { BUILTIN_AGENT_TOOL_NAMES, READ_ONLY_AGENT_TOOLS } from "./run-tool-selection.js";
 import { callMediaTool } from "./run-tools-files.js";
+import { inspectProjectTool, reconcileProjectTool } from "./run-tools-projects.js";
 import { connectorTrustKeys } from "./run-trust.js";
 import { commandWatchFromTool } from "./schedule-tools.js";
 
@@ -123,6 +124,19 @@ export async function gateToolCall(
     request;
   const { replayEffectToolName } = request;
   let { args, effectRequest } = request;
+  let projectNeedsApproval: boolean | undefined;
+  if (name === "project_action") {
+    try {
+      const inspected = await inspectProjectTool(ctx, args);
+      args = inspected.intent;
+      effectRequest = args;
+      projectNeedsApproval = inspected.needsApproval;
+    } catch (error) {
+      return {
+        result: { error: error instanceof Error ? error.message : "Project action refused." },
+      };
+    }
+  } else if (name === "project_revise") projectNeedsApproval = true;
   const viaConnector = !BUILTIN_AGENT_TOOL_NAMES.has(name);
   // Declared effect of the operation this call dispatches (installed API method and
   // flag). Install config is immutable per route resource, so it cannot drift before
@@ -209,7 +223,8 @@ export async function gateToolCall(
       toolRequiresApproval(toolName, viaConnector, declaredReadOnlyFor(toolName)),
     );
   // A gated read still fails closed when its review errors, and keeps its approval key.
-  const gated = requiresApprovalByDefault || connectorReadGated;
+  const gated =
+    projectNeedsApproval !== undefined || requiresApprovalByDefault || connectorReadGated;
   const requiresMandatoryApproval =
     commandWatch ||
     scheduleNamesNewSite ||
@@ -231,7 +246,8 @@ export async function gateToolCall(
       ? { ...resolvedRules, decision: "ask" as const }
       : resolvedRules;
   const mode = approvalModeFromPreference(await ctx.trust.loadAutoReviewPreference());
-  const reviewable = mode === "auto" && !requiresMandatoryApproval;
+  const reviewable =
+    projectNeedsApproval === undefined && mode === "auto" && !requiresMandatoryApproval;
   const injectedReview = reviewable ? deps.autoReview : undefined;
   const reviewSettings = !reviewable || injectedReview ? null : await ctx.trust.loadApprovalModel();
   const memberChecker = reviewSettings?.primarySource === "member";
@@ -263,19 +279,26 @@ export async function gateToolCall(
             ),
           )
         : false));
-  const plan = planActionGate({
-    resolved: approvalResolved,
-    mode,
-    mandatory: requiresMandatoryApproval,
-    steerable:
-      requiresMandatoryApproval && mode === "never"
-        ? !ctx.source.ownerStartedRun || (await isRunTainted(ctx))
-        : undefined,
-    consequential: requiresApprovalByDefault,
-    reviewOnly: connectorReadGated,
-    checkerConfigured,
-    newDestination: siteGate === "new",
-  });
+  const plan =
+    projectNeedsApproval !== undefined
+      ? approvalResolved.decision === "deny"
+        ? "deny"
+        : projectNeedsApproval
+          ? "ask"
+          : "allow"
+      : planActionGate({
+          resolved: approvalResolved,
+          mode,
+          mandatory: requiresMandatoryApproval,
+          steerable:
+            requiresMandatoryApproval && mode === "never"
+              ? !ctx.source.ownerStartedRun || (await isRunTainted(ctx))
+              : undefined,
+          consequential: requiresApprovalByDefault,
+          reviewOnly: connectorReadGated,
+          checkerConfigured,
+          newDestination: siteGate === "new",
+        });
   if (plan === "deny") {
     return {
       result: {
@@ -526,6 +549,14 @@ async function settleToolUncertainty(
   effectId: string,
   toolName: string,
 ) {
+  if (call.name === "project_action") {
+    const receipt = await reconcileProjectTool(ctx, call, effectId);
+    if (receipt !== undefined) return receipt;
+    return {
+      uncertain: true,
+      error: "This delivery has no verified receipt yet. It was not replayed.",
+    };
+  }
   if (call.name === "generate_image" || call.name === "generate_video") {
     const recovered = await callMediaTool(ctx, call, true);
     if (

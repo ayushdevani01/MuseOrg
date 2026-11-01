@@ -11,6 +11,8 @@ import { filterImageReturningComputerTools } from "./model-vision.js";
 import { filterBuiltinToolsForRun, filterBuiltinToolsForThread } from "./schedule-tools.js";
 
 export const READ_ONLY_AGENT_TOOLS = new Set([
+  "project_read",
+  "project_reconcile",
   "computer_observe",
   "list_files",
   "list_fleet",

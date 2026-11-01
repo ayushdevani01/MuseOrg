@@ -14,6 +14,7 @@ import type {
   SandboxProvider,
   SecretStore,
   WebProvider,
+  WorkDeliveryProvider,
 } from "@rakazo/adapter-kit";
 import type { PrismaClient, ThreadEvents } from "@rakazo/db";
 import type { CloudAgentConnection } from "./cloud-agent-factory.js";
@@ -61,6 +62,7 @@ export interface ExecutorDeps {
   listConnectedPluginSlugs?: (userId: string) => Promise<string[]>;
   /** Builtin web_search / web_fetch. Defaults to keyless HTTP when omitted. */
   web?: WebProvider;
+  workDelivery?: WorkDeliveryProvider;
   mediaGeneration?: MediaGenerationProvider;
   /** Page browser (DOM refs) on the bot computer. Defaults to the sandbox live browser when supported. */
   browser?: BrowserProvider;
