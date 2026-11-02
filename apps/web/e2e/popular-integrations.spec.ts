@@ -30,6 +30,7 @@ test("browses popular apps without a hosted catalog and opens honest setup flows
   await expect(setup.getByRole("textbox", { name: "Search apps", exact: true })).toHaveValue(
     "Gmail",
   );
+  await setup.getByRole("button", { name: "Add server URL", exact: true }).click();
   await expect(setup.getByRole("textbox", { name: "Server URL", exact: true })).toHaveValue("");
   await expect(setup.getByRole("button", { name: "Connect", exact: true })).toBeDisabled();
   expect(await rpc(page, "mcp/servers/list", {})).toEqual([]);

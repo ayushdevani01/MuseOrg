@@ -51,6 +51,7 @@ import {
 import { queryOptions, skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, LoaderCircle, MoreHorizontal, Plus, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ConnectorIcon } from "../components/integrations/ConnectorIcon";
 import { IntegrationSetup } from "../components/integrations/IntegrationSetup";
 import { McpServerHealthLine } from "../components/McpServerHealthLine";
 import { connectedAppMarks } from "../lib/connected-apps";
@@ -58,45 +59,6 @@ import { optionalCatalogFeedProbe } from "../lib/optional-catalog-feed";
 import { useSpaceQueries } from "../lib/query";
 import { rpc } from "../lib/rpc";
 import { errorText } from "../lib/user-error";
-
-function ConnectorIcon({
-  name,
-  logo,
-  iconPath,
-}: {
-  name: string;
-  logo?: string | null;
-  iconPath?: string;
-}) {
-  const [failedLogo, setFailedLogo] = useState<string | null>(null);
-  return logo && failedLogo !== logo ? (
-    <img
-      src={logo}
-      alt=""
-      data-testid="connector-logo"
-      loading="lazy"
-      decoding="async"
-      onError={() => setFailedLogo(logo)}
-      className="h-9 w-9 shrink-0 rounded-xl bg-accent object-contain"
-    />
-  ) : iconPath ? (
-    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-foreground">
-      <svg
-        aria-hidden="true"
-        data-testid="connector-logo"
-        viewBox="0 0 24 24"
-        className="size-6"
-        fill="currentColor"
-      >
-        <path d={iconPath} />
-      </svg>
-    </div>
-  ) : (
-    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-sm font-semibold text-foreground">
-      {name[0]}
-    </div>
-  );
-}
 
 type SourceKind = "treg" | "executor" | "mcp" | "api" | "graphql";
 
@@ -523,8 +485,9 @@ export function PluginsOverlay({
     result: IntegrationCatalogResult,
     surface: IntegrationCatalogSurface,
   ) {
-    if (!surface.source || (surface.kind !== "mcp" && surface.kind !== "openapi")) return;
-    setSourceKind(surface.kind === "mcp" ? "mcp" : "api");
+    if (!surface.source || !["mcp", "openapi", "graphql"].includes(surface.kind)) return;
+    setSetupApp(null);
+    setSourceKind(surface.kind === "mcp" ? "mcp" : surface.kind === "graphql" ? "graphql" : "api");
     setSourceName(result.name);
     setSourceUrl(surface.source);
     setCredential("");
@@ -1098,15 +1061,12 @@ export function PluginsOverlay({
                 <ConnectorIcon name={setupApp.name} iconPath={setupApp.iconPath} />
                 <h2 className="text-lg font-medium">{setupApp.name}</h2>
               </div>
-              <p className="text-sm text-muted-foreground">
-                <Trans>
-                  Connect through an MCP server. Account access is granted during setup.
-                </Trans>
-              </p>
               <IntegrationSetup
                 key={setupApp.id}
                 botId={activeBotId}
                 appName={setupApp.name}
+                onChooseSurface={beginCatalogSurface}
+                onConnected={() => void refresh().catch(() => undefined)}
                 onDone={() => {
                   setSetupApp(null);
                   void refresh().catch(() => undefined);
@@ -1220,6 +1180,20 @@ export function PluginsOverlay({
                     <Trans>Show more</Trans>
                   </Button>
                 </div>
+              ) : null}
+
+              {catalogView === "discover" && query.trim().length >= 2 ? (
+                <section className="mt-6 space-y-3">
+                  <h2 className="text-sm font-medium">
+                    <Trans>More connections</Trans>
+                  </h2>
+                  <IntegrationSetup
+                    searchQuery={query}
+                    botId={activeBotId}
+                    onChooseSurface={beginCatalogSurface}
+                    onConnected={() => void refresh().catch(() => undefined)}
+                  />
+                </section>
               ) : null}
 
               <Disclosure
