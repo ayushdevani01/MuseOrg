@@ -6314,3 +6314,27 @@ msgstr "לספק הקול שלך נגמר הקרדיט."
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "ספק הקול שלך דחה את המפתח."
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Connect through an MCP server. Account access is granted during setup."
+msgstr ""

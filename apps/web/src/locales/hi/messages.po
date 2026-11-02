@@ -6314,3 +6314,27 @@ msgstr "आपके आवाज़ प्रोवाइडर का क्�
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "आपके आवाज़ प्रोवाइडर ने कुंजी अस्वीकार कर दी।"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Connect through an MCP server. Account access is granted during setup."
+msgstr ""

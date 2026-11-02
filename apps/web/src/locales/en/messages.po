@@ -6432,3 +6432,27 @@ msgstr "Your voice provider is out of credit."
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "Your voice provider key was rejected."
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr "Business messages"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr "Campaigns and ads"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr "Databases and projects"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr "Posts, comments and messages"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr "Popular"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Connect through an MCP server. Account access is granted during setup."
+msgstr "Connect through an MCP server. Account access is granted during setup."

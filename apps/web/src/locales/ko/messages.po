@@ -6314,3 +6314,27 @@ msgstr "음성 서비스 크레딧이 모두 소진되었습니다."
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "음성 서비스에서 키를 거부했습니다."
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Connect through an MCP server. Account access is granted during setup."
+msgstr ""
