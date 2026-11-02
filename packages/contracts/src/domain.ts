@@ -804,6 +804,7 @@ export const IntegrationCatalogResultSchema = z.object({
   name: z.string(),
   description: z.string(),
   pageUrl: z.string().nullable(),
+  logo: z.string().nullable().optional(),
   surfaces: z.array(IntegrationCatalogSurfaceSchema),
 });
 export type IntegrationCatalogResult = z.infer<typeof IntegrationCatalogResultSchema>;

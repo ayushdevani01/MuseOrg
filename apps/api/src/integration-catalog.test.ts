@@ -2,10 +2,95 @@ import { describe, expect, it, vi } from "vitest";
 import { searchIntegrationCatalog } from "./integration-catalog.js";
 
 describe("searchIntegrationCatalog", () => {
+  it("searches the full cached index and preserves every method and related match", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async () =>
+      Response.json({
+        data: Array.from({ length: 30 }, (_, index) => [
+          {
+            domain: `mail${index}.example.test`,
+            name: `Mail ${index}`,
+            description: "Related mail service",
+            kind: "mcp",
+            slug: `mail-${index}`,
+            connectUrl: `https://mail${index}.example.test/mcp`,
+          },
+          {
+            domain: `mail${index}.example.test`,
+            name: `Mail ${index}`,
+            kind: "openapi",
+            slug: `mail-${index}-api`,
+            url: `https://mail${index}.example.test/openapi.json`,
+          },
+          {
+            domain: `mail${index}.example.test`,
+            name: `Mail ${index}`,
+            kind: "cli",
+            slug: `mail-${index}-cli`,
+          },
+        ]).flat(),
+      }),
+    );
+    const input = {
+      baseUrl: "https://integrations.sh",
+      query: "mail",
+      signal: new AbortController().signal,
+      fetch,
+    };
+    const results = await searchIntegrationCatalog(input);
+    expect(results).toHaveLength(30);
+    expect(results.every((result) => result.surfaces.length === 3)).toBe(true);
+    expect(results[0]?.surfaces[0]?.source).toBe("https://mail0.example.test/mcp");
+    const related = await searchIntegrationCatalog({ ...input, query: "mail 29" });
+    expect(related.map((result) => result.name)).toEqual(["Mail 29"]);
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(fetch.mock.calls[0]?.[0]).toBe("https://integrations.sh/api.json");
+  });
+  it("does not mistake an MCP documentation URL for a connection endpoint", async () => {
+    const results = await searchIntegrationCatalog({
+      baseUrl: "https://integrations.sh",
+      query: "fixture",
+      signal: new AbortController().signal,
+      fetch: async () =>
+        Response.json({
+          data: [
+            {
+              domain: "fixture.example.test",
+              name: "Fixture",
+              kind: "mcp",
+              slug: "fixture",
+              url: "https://fixture.example.test/docs",
+            },
+          ],
+        }),
+    });
+    expect(results[0]?.surfaces[0]?.source).toBeNull();
+  });
+  it("matches metadata on later methods in the same service", async () => {
+    const results = await searchIntegrationCatalog({
+      baseUrl: "https://integrations.sh",
+      query: "analytics",
+      signal: new AbortController().signal,
+      fetch: async () =>
+        Response.json({
+          data: [
+            { domain: "fixture.example.test", name: "Fixture", kind: "mcp", slug: "fixture" },
+            {
+              domain: "fixture.example.test",
+              name: "Fixture",
+              kind: "openapi",
+              slug: "fixture-api",
+              description: "Read analytics",
+            },
+          ],
+        }),
+    });
+    expect(results).toHaveLength(1);
+    expect(results[0]?.surfaces).toHaveLength(2);
+  });
   it("normalizes an integrations.sh-compatible feed and keeps unsupported surfaces visible", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async (input, init) => {
       const url = new URL(input instanceof Request ? input.url : input.toString());
-      expect(url.href).toBe("https://mirror.example/catalog/api/search?q=github.com&limit=8");
+      expect(url.href).toBe("https://mirror.example/catalog/api/search?q=github.com&limit=100");
       expect(init?.redirect).toBe("manual");
       return Response.json({
         results: [
@@ -144,7 +229,7 @@ describe("searchIntegrationCatalog", () => {
   it("allows an admin-configured private catalog base", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async (input, init) => {
       const url = new URL(input instanceof Request ? input.url : input.toString());
-      expect(url.href).toBe("http://10.0.0.5:8080/catalog/api/search?q=github.com&limit=8");
+      expect(url.href).toBe("http://10.0.0.5:8080/catalog/api/search?q=github.com&limit=100");
       expect(init?.redirect).toBe("manual");
       return Response.json({
         results: [

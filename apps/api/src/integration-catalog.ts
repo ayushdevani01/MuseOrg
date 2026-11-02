@@ -1,8 +1,13 @@
 import type { IntegrationCatalogResult, IntegrationCatalogSurface } from "@rakazo/contracts";
 
 const RESPONSE_LIMIT = 1_000_000;
-const SEARCH_LIMIT = 8;
-const SURFACE_LIMIT = 24;
+const SEARCH_LIMIT = 100;
+const PUBLIC_INDEX_LIMIT = 12_000_000;
+type IndexedIntegration = { result: IntegrationCatalogResult; text: string };
+const publicIndexes = new WeakMap<
+  typeof globalThis.fetch,
+  { expiresAt: number; value: Promise<IndexedIntegration[]> }
+>();
 
 export async function searchIntegrationCatalog(input: {
   baseUrl: string;
@@ -16,6 +21,27 @@ export async function searchIntegrationCatalog(input: {
   const baseUrl = new URL(input.baseUrl);
   if (baseUrl.protocol !== "http:" && baseUrl.protocol !== "https:") {
     throw new Error("Integration catalog URL must use HTTP or HTTPS");
+  }
+  if (baseUrl.href.replace(/\/$/, "") === "https://integrations.sh") {
+    const request = input.fetch ?? globalThis.fetch;
+    let cached = publicIndexes.get(request);
+    if (!cached || cached.expiresAt <= Date.now()) {
+      const value = loadPublicIndex(request);
+      cached = { expiresAt: Date.now() + 5 * 60_000, value };
+      publicIndexes.set(request, cached);
+      value.catch(() => {
+        if (publicIndexes.get(request)?.value === value) publicIndexes.delete(request);
+      });
+    }
+    const terms = query.toLowerCase().split(/\s+/);
+    return (await cached.value)
+      .filter((item) => terms.every((term) => item.text.includes(term)))
+      .map((item) => item.result)
+      .sort(
+        (left, right) =>
+          Number(right.name.toLowerCase() === query.toLowerCase()) -
+          Number(left.name.toLowerCase() === query.toLowerCase()),
+      );
   }
   if (!baseUrl.pathname.endsWith("/")) baseUrl.pathname += "/";
   const searchUrl = new URL("api/search", baseUrl);
@@ -40,12 +66,73 @@ export async function searchIntegrationCatalog(input: {
   if (!isRecord(payload) || !Array.isArray(payload.results)) {
     throw new Error("Integration catalog returned an invalid response");
   }
-  return payload.results.slice(0, SEARCH_LIMIT).flatMap(normalizeResult);
+  return payload.results.flatMap(normalizeResult);
 }
 
-async function readBoundedResponse(response: Response): Promise<string> {
+/** Download the published metadata index once, then search every record locally. */
+async function loadPublicIndex(request: typeof globalThis.fetch): Promise<IndexedIntegration[]> {
+  const response = await request("https://integrations.sh/api.json", {
+    headers: { accept: "application/json" },
+    redirect: "error",
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) throw new Error("Could not load the integration directory");
+  const payload: unknown = JSON.parse(await readBoundedResponse(response, PUBLIC_INDEX_LIMIT));
+  if (!isRecord(payload) || !Array.isArray(payload.data))
+    throw new Error("Integration catalog returned an invalid response");
+  const domains = new Map<string, IndexedIntegration>();
+  for (const record of payload.data) {
+    if (!isRecord(record)) continue;
+    const domain = shortString(record.domain, 253);
+    if (!domain) continue;
+    const surfaces = normalizeSurface({
+      ...record,
+      url: record.kind === "mcp" ? record.connectUrl : record.url,
+    });
+    if (!surfaces.length) continue;
+    let entry = domains.get(domain);
+    if (!entry) {
+      entry = {
+        result: {
+          domain,
+          name: shortString(record.name, 120) ?? domain,
+          description: shortString(record.description, 500) ?? "",
+          pageUrl: null,
+          logo: httpUrl(record.icon),
+          surfaces: [],
+        },
+        text: "",
+      };
+      domains.set(domain, entry);
+    }
+    entry.text += ` ${[
+      record.domain,
+      record.name,
+      record.description,
+      record.slug,
+      ...(Array.isArray(record.categories) ? record.categories : []),
+    ]
+      .filter((value) => typeof value === "string")
+      .join(" ")
+      .toLowerCase()}`;
+    for (const surface of surfaces) {
+      if (
+        !entry.result.surfaces.some(
+          (existing) =>
+            existing.kind === surface.kind &&
+            existing.slug === surface.slug &&
+            existing.source === surface.source,
+        )
+      )
+        entry.result.surfaces.push(surface);
+    }
+  }
+  return [...domains.values()];
+}
+
+async function readBoundedResponse(response: Response, limit = RESPONSE_LIMIT): Promise<string> {
   const declaredLength = Number(response.headers.get("content-length"));
-  if (Number.isFinite(declaredLength) && declaredLength > RESPONSE_LIMIT) {
+  if (Number.isFinite(declaredLength) && declaredLength > limit) {
     throw new Error("Integration catalog response is too large");
   }
   if (!response.body) return "";
@@ -59,7 +146,7 @@ async function readBoundedResponse(response: Response): Promise<string> {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > RESPONSE_LIMIT) {
+      if (size > limit) {
         await reader.cancel();
         throw new Error("Integration catalog response is too large");
       }
@@ -75,9 +162,7 @@ function normalizeResult(value: unknown): IntegrationCatalogResult[] {
   if (!isRecord(value)) return [];
   const domain = shortString(value.domain, 253);
   if (!domain) return [];
-  const surfaces = Array.isArray(value.surfaces)
-    ? value.surfaces.slice(0, SURFACE_LIMIT).flatMap(normalizeSurface)
-    : [];
+  const surfaces = Array.isArray(value.surfaces) ? value.surfaces.flatMap(normalizeSurface) : [];
   return [
     {
       domain,
