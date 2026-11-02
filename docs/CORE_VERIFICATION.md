@@ -24,6 +24,11 @@ the submission's personal-provider policy. They do not establish live Meta model
 media or workplace-account compatibility. Fixtures contained synthetic data.
 Private runtime logs, cookies, connection bindings and transcripts are not tracked.
 
+On 2 November, a separate [live Meta verification](verification/2026-11-02-meta-and-integrations.md)
+completed a tool loop and in-app memory/file/report tasks with `muse-spark-1.3`.
+That establishes Meta Spark model compatibility for those flows. It does not
+establish Meta media, social publishing, advertising or messaging operations.
+
 ## Recovery regression
 
 The first controlled worker-crash test exposed an approval-exempt command that

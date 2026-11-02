@@ -12,19 +12,21 @@ are starter profiles on the same reusable runtime.
 - Private account setup and personal Meta model-key onboarding are implemented.
 - A live development run verified shared-computer repair and independent peer
   review, durable messages, retained files after restart and downloadable source.
-- MCP, OpenAPI and GraphQL setup is available, with six MCP presets. Public
+- MCP, OpenAPI and GraphQL setup is available, with seven MCP presets. Public
   documentation MCP discovery and one real worker tool call are verified.
 - Hiring includes role choices and optional skills.sh search, preview and import.
   Imported instructions and supporting text files are available to the runtime.
-  Integration rows show logos, descriptions and add/manage controls.
-- Meta reasoning has offline protocol coverage. Live Meta inference, Meta media,
-  social account actions and the complete marketing launch demonstration remain
-  unfinished. Shared corrections, worker recovery and the engineering
+  Integration browsing preloads twelve popular apps with local logos and setup
+  routes, even without a managed app catalog.
+- Live Meta Spark inference, tool work, saved preferences and attached Team
+  Computer reports are verified. Meta media, social account actions and the
+  complete marketing launch demonstration remain unfinished.
+  Shared corrections, worker recovery and the engineering
   repair-to-PR-to-deployment demonstration are verified.
 
-The live development checks used an isolated temporary Codex connection; they
-do not prove Meta model behavior. Submission configuration requires a personal
-Meta API-key connection.
+Earlier core development checks used an isolated temporary Codex connection.
+[The Meta verification](docs/verification/2026-11-02-meta-and-integrations.md)
+used a personal Meta API-key connection. Submission configuration requires Meta.
 
 See [implementation status](docs/CORE_IMPLEMENTATION.md),
 [verification records](docs/verification/), [account access status](docs/ACCESS_MATRIX.md)

@@ -15,11 +15,19 @@ The lockfile pins [Pi](https://github.com/earendil-works/pi) 1.3.0. Its native
 `meta` provider implements the Responses transport; MuseOrg reuses it rather than maintaining a second
 Meta agent loop. Provider support in source is distinct from live account access.
 
+Integration logos use paths from [Simple Icons](https://github.com/simple-icons/simple-icons):
+the MCP marks are pinned to 13.21.0 and the popular-app additions to 11.15.0.
+Their CC0-1.0 notice is retained in
+[the icon license](packages/core/src/mcp-preset-icons.LICENSE.md). Brand marks identify
+the available setup routes; they do not imply partnership or connected accounts.
+
 Initial MuseOrg changes cover private account bootstrap, required personal model
 connections, Meta onboarding, and reusable coworker profiles. The full product
 requirements remain in [the goal](docs/MUSEORG_GOAL.md); this initial slice does
 not complete the launch or website-repair demonstrations.
 
 Development uses Node 24.22.1 and pnpm 9.15.0. No hosted provider is required for
-the deterministic offline test path. Meta and other account setup is deferred;
-no live connection is implied by passing fixture tests.
+the deterministic offline test path. Live Meta model verification is recorded in
+[the verification notes](docs/verification/2026-11-02-meta-and-integrations.md).
+Social publishing, ads, and messaging account setup remains separate; no live
+connection is implied by passing fixture tests.
