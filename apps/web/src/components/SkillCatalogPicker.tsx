@@ -22,6 +22,7 @@ export function SkillCatalogPicker({
   const [preview, setPreview] = useState<SkillBundle | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedPreview, setFailedPreview] = useState<SkillCatalogEntry | null>(null);
   const request = useRef(0);
   useEffect(() => {
     let current = true;
@@ -48,14 +49,19 @@ export function SkillCatalogPicker({
       request.current++;
     };
   }, [rpc, initialQuery]);
-  async function run(action: () => Promise<void>) {
+  async function run(action: () => Promise<void>, previewSkill?: SkillCatalogEntry) {
     const id = ++request.current;
     setBusy(true);
     setError(null);
+    setFailedPreview(null);
+    setPreview(null);
     try {
       await action();
     } catch (err) {
-      if (id === request.current) setError(errorText(err));
+      if (id === request.current) {
+        setError(previewSkill ? t`Preview unavailable.` : errorText(err));
+        setFailedPreview(previewSkill ?? null);
+      }
     } finally {
       if (id === request.current) setBusy(false);
     }
@@ -115,9 +121,21 @@ export function SkillCatalogPicker({
       ) : null}
       {busy ? <Spinner aria-label={t`Loading skills…`} /> : null}
       {error ? (
-        <p role="alert" className="text-sm text-destructive">
-          {error}
-        </p>
+        <div className="space-y-2">
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+          {failedPreview ? (
+            <a
+              href={failedPreview.url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm underline underline-offset-4"
+            >
+              <Trans>View on skills.sh</Trans>
+            </a>
+          ) : null}
+        </div>
       ) : null}
       {!busy && !error && !results.length ? (
         <p className="text-sm text-muted-foreground">
@@ -141,6 +159,7 @@ export function SkillCatalogPicker({
                   href={skill.url}
                   target="_blank"
                   rel="noreferrer"
+                  aria-label={t`View ${skill.name} on skills.sh`}
                   className="text-xs text-muted-foreground hover:underline"
                 >
                   {skill.source}
@@ -160,7 +179,7 @@ export function SkillCatalogPicker({
                         key: skill.key,
                       }),
                     );
-                  })
+                  }, skill)
                 }
               >
                 {builtin ? t`Included` : added ? t`Selected` : t`Preview`}

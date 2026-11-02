@@ -3,7 +3,7 @@ import type { SkillBundle } from "@rakazo/contracts";
 import type { ReactNode } from "react";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { expect, it, vi } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 
 const bundle: SkillBundle = {
   source: "example/skills",
@@ -33,6 +33,36 @@ const client = {
 };
 
 import { SkillCatalogPicker } from "./SkillCatalogPicker";
+
+beforeEach(() => vi.clearAllMocks());
+
+it("offers the selected public skill page when preview fails without adding anything", async () => {
+  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+  client.agentSkills.previewCatalog.mockRejectedValueOnce(new Error("fixture source unavailable"));
+  const container = document.createElement("div");
+  document.body.append(container);
+  const root = createRoot(container);
+  const onChange = vi.fn();
+  try {
+    await act(async () =>
+      root.render(<SkillCatalogPicker initialQuery="design" selected={[]} onChange={onChange} />),
+    );
+    await act(async () =>
+      container.querySelector<HTMLButtonElement>('[aria-label="Preview fixture"]')!.click(),
+    );
+    expect(container.querySelector('[role="alert"]')?.textContent).toBe("Preview unavailable.");
+    const external = [...container.querySelectorAll("a")].find(
+      (link) => link.textContent === "View on skills.sh",
+    );
+    expect(external?.getAttribute("href")).toBe(bundle.url);
+    expect(external?.getAttribute("target")).toBe("_blank");
+    expect(container.querySelector('[data-testid="skill-preview"]')).toBeNull();
+    expect(onChange).not.toHaveBeenCalled();
+  } finally {
+    act(() => root.unmount());
+    container.remove();
+  }
+});
 
 it("requires preview and explicit selection before adding a remote skill", async () => {
   (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

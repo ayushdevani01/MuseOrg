@@ -42,6 +42,37 @@ function fixture(
   return { request, catalog: new SkillsShCatalog(request as typeof fetch) };
 }
 describe("public skill catalog conformance", () => {
+  it("finds the canonical frontmatter name when its directory uses a shorter name", async () => {
+    const base = fixture();
+    const request = vi.fn<typeof fetch>(async (input) => {
+      const response = await base.request(input as string);
+      if (String(input).includes("/git/trees/")) {
+        const tree = await response.json();
+        for (const file of tree.tree)
+          file.path = file.path.replace(
+            "skills/fixture-skill/",
+            "skills/productivity/short-folder/",
+          );
+        return Response.json(tree);
+      }
+      return response;
+    });
+    const routed = vi.fn<typeof fetch>((input, init) =>
+      request(
+        String(input).replace("skills/productivity/short-folder/", "skills/fixture-skill/"),
+        init,
+      ),
+    );
+    const catalog = new SkillsShCatalog(routed);
+    const loaded = await catalog.load({ source: "example/skills", key: "fixture-skill" });
+    expect(loaded.name).toBe("fixture-skill");
+    expect(loaded.resources).toEqual({ "references/check.md": "Check bytes.\n" });
+    expect(
+      routed.mock.calls.some(([url]) =>
+        String(url).includes("/skills/productivity/short-folder/SKILL.md"),
+      ),
+    ).toBe(true);
+  });
   it("normalizes public search results without accepting URL sources", async () => {
     expect(await fixture().catalog.search("synthetic recipe")).toEqual([
       {

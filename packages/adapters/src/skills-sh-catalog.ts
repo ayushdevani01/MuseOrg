@@ -133,16 +133,30 @@ export class SkillsShCatalog implements SkillCatalogProvider {
     );
     if (tree.truncated)
       throw new SkillCatalogError("The source tree is incomplete. This skill cannot be imported.");
-    const candidates = tree.tree.filter(
-      (file) =>
-        file.type === "blob" &&
-        file.mode === "100644" &&
-        (file.path === "SKILL.md" || file.path.endsWith(`/${input.key}/SKILL.md`)) &&
-        safePath(file.path),
-    );
+    const candidates = tree.tree
+      .filter(
+        (file) =>
+          file.type === "blob" &&
+          file.mode === "100644" &&
+          (file.path === "SKILL.md" || file.path.endsWith("/SKILL.md")) &&
+          safePath(file.path),
+      )
+      .sort((left, right) => {
+        // Directory names need not equal the canonical frontmatter name. Prefer
+        // likely matches, then inspect a bounded set of other skill files.
+        const rank = (path: string) => {
+          const directory = path.split("/").at(-2);
+          return directory && (directory === input.key || input.key.endsWith(`-${directory}`))
+            ? 0
+            : path === "SKILL.md"
+              ? 1
+              : 2;
+        };
+        return rank(left.path) - rank(right.path) || left.path.localeCompare(right.path);
+      });
     const raw = (path: string) =>
       `https://raw.githubusercontent.com/${input.source}/${revision}/${path.split("/").map(encodeURIComponent).join("/")}`;
-    for (const candidate of candidates) {
+    for (const candidate of candidates.slice(0, 16)) {
       const content = await this.text(raw(candidate.path), signal, MAX_BYTES);
       const parsed = parseSkillMd(content);
       if ("error" in parsed || parsed.name !== input.key) continue;
