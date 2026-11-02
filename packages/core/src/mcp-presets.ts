@@ -1,4 +1,5 @@
 import { MCP_PRESET_ICONS } from "./mcp-preset-icons.js";
+import { POPULAR_INTEGRATION_ICONS } from "./popular-integration-icons.js";
 
 /** Reviewed official endpoints, not an installation or a grant of account access. */
 export type McpPreset = {
@@ -45,6 +46,14 @@ export const MCP_PRESETS: readonly McpPreset[] = [
     auth: "oauth",
     supportsBearer: true,
     iconPath: MCP_PRESET_ICONS.stripe,
+  },
+  {
+    id: "supabase",
+    name: "Supabase",
+    endpoint: "https://mcp.supabase.com/mcp",
+    docsUrl: "https://supabase.com/docs/guides/ai-tools/mcp",
+    auth: "oauth",
+    iconPath: POPULAR_INTEGRATION_ICONS.supabase,
   },
   {
     id: "cloudflare-docs",

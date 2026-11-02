@@ -88,9 +88,11 @@ export function buildFeaturedConnectorTiles(
 export function filterConnectionCatalogItems(
   catalog: readonly ConnectionCatalogItem[],
   query: string,
+  options: { includeFeatured?: boolean } = {},
 ): ConnectionCatalogItem[] {
   const needle = query.trim().toLowerCase();
   if (!needle) {
+    if (options.includeFeatured) return [...catalog];
     return catalog.filter(
       (item) =>
         matchFeaturedConnectorId(item.slug) === null &&
