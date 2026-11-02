@@ -6456,3 +6456,31 @@ msgstr "Popular"
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect through an MCP server. Account access is granted during setup."
 msgstr "Connect through an MCP server. Account access is granted during setup."
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview unavailable."
+msgstr "Preview unavailable."
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "View on skills.sh"
+msgstr "View on skills.sh"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "View {0} on skills.sh"
+msgstr "View {0} on skills.sh"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "More connections"
+msgstr "More connections"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Searching integrations…"
+msgstr "Searching integrations…"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Set up"
+msgstr "Set up"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Manual setup"
+msgstr "Manual setup"
