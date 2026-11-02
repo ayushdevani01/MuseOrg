@@ -85,7 +85,28 @@ describe("searchIntegrationCatalog", () => {
         }),
     });
     expect(results).toHaveLength(1);
-    expect(results[0]?.surfaces).toHaveLength(2);
+    expect(results[0]?.surfaces).toHaveLength(1);
+    expect(results[0]?.surfaces[0]?.slug).toBe("fixture-api");
+  });
+  it("uses the public index connection URL for API setup documents", async () => {
+    const results = await searchIntegrationCatalog({
+      baseUrl: "https://integrations.sh",
+      query: "fixture",
+      signal: new AbortController().signal,
+      fetch: async () =>
+        Response.json({
+          data: [
+            {
+              domain: "fixture.example.test",
+              name: "Fixture",
+              kind: "openapi",
+              slug: "fixture",
+              connectUrl: "https://fixture.example.test/openapi.json",
+            },
+          ],
+        }),
+    });
+    expect(results[0]?.surfaces[0]?.source).toBe("https://fixture.example.test/openapi.json");
   });
   it("normalizes an integrations.sh-compatible feed and keeps unsupported surfaces visible", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async (input, init) => {

@@ -3,7 +3,15 @@ import type { IntegrationCatalogResult, IntegrationCatalogSurface } from "@rakaz
 const RESPONSE_LIMIT = 1_000_000;
 const SEARCH_LIMIT = 100;
 const PUBLIC_INDEX_LIMIT = 12_000_000;
-type IndexedIntegration = { result: IntegrationCatalogResult; text: string };
+type IndexedIntegration = {
+  result: IntegrationCatalogResult;
+  methods: Array<{
+    surface: IntegrationCatalogSurface;
+    text: string;
+    name: string;
+    description: string;
+  }>;
+};
 const publicIndexes = new WeakMap<
   typeof globalThis.fetch,
   { expiresAt: number; value: Promise<IndexedIntegration[]> }
@@ -35,8 +43,21 @@ export async function searchIntegrationCatalog(input: {
     }
     const terms = query.toLowerCase().split(/\s+/);
     return (await cached.value)
-      .filter((item) => terms.every((term) => item.text.includes(term)))
-      .map((item) => item.result)
+      .flatMap((item) => {
+        const methods = item.methods.filter((method) =>
+          terms.every((term) => method.text.includes(term)),
+        );
+        return methods.length
+          ? [
+              {
+                ...item.result,
+                name: methods[0]!.name,
+                description: methods[0]!.description,
+                surfaces: methods.map((method) => method.surface),
+              },
+            ]
+          : [];
+      })
       .sort(
         (left, right) =>
           Number(right.name.toLowerCase() === query.toLowerCase()) -
@@ -87,7 +108,7 @@ async function loadPublicIndex(request: typeof globalThis.fetch): Promise<Indexe
     if (!domain) continue;
     const surfaces = normalizeSurface({
       ...record,
-      url: record.kind === "mcp" ? record.connectUrl : record.url,
+      url: record.kind === "mcp" ? record.connectUrl : (record.connectUrl ?? record.url),
     });
     if (!surfaces.length) continue;
     let entry = domains.get(domain);
@@ -101,11 +122,11 @@ async function loadPublicIndex(request: typeof globalThis.fetch): Promise<Indexe
           logo: httpUrl(record.icon),
           surfaces: [],
         },
-        text: "",
+        methods: [],
       };
       domains.set(domain, entry);
     }
-    entry.text += ` ${[
+    const text = ` ${[
       record.domain,
       record.name,
       record.description,
@@ -117,14 +138,20 @@ async function loadPublicIndex(request: typeof globalThis.fetch): Promise<Indexe
       .toLowerCase()}`;
     for (const surface of surfaces) {
       if (
-        !entry.result.surfaces.some(
+        entry.methods.some(
           (existing) =>
-            existing.kind === surface.kind &&
-            existing.slug === surface.slug &&
-            existing.source === surface.source,
+            existing.surface.kind === surface.kind &&
+            existing.surface.slug === surface.slug &&
+            existing.surface.source === surface.source,
         )
       )
-        entry.result.surfaces.push(surface);
+        continue;
+      entry.methods.push({
+        surface,
+        text,
+        name: shortString(record.name, 120) ?? domain,
+        description: shortString(record.description, 500) ?? "",
+      });
     }
   }
   return [...domains.values()];
