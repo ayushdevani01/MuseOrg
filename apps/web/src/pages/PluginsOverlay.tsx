@@ -7,17 +7,20 @@ import type {
   IntegrationCatalogSurface,
 } from "@rakazo/contracts";
 import { CONNECTION_LABEL_MAX_LENGTH } from "@rakazo/contracts";
+import type { PopularIntegration } from "@rakazo/core";
 import {
-  buildFeaturedConnectorTiles,
   CONNECTION_CATALOG_PAGE_SIZE,
   catalogItemAccounts,
   catalogItemKey,
   connectCatalogItem,
   filterConnectionCatalogItems,
+  filterPopularIntegrations,
   humanizeToolName,
   isCatalogItemConnected,
   MCP_PRESETS,
   mcpPresetForEndpoint,
+  POPULAR_INTEGRATIONS,
+  popularIntegrationForCatalogItem,
 } from "@rakazo/core";
 import { fetchFresh, writeSaved } from "@rakazo/core/query";
 import {
@@ -65,7 +68,18 @@ function ConnectorIcon({
   logo?: string | null;
   iconPath?: string;
 }) {
-  return iconPath ? (
+  const [failedLogo, setFailedLogo] = useState<string | null>(null);
+  return logo && failedLogo !== logo ? (
+    <img
+      src={logo}
+      alt=""
+      data-testid="connector-logo"
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailedLogo(logo)}
+      className="h-9 w-9 shrink-0 rounded-xl bg-accent object-contain"
+    />
+  ) : iconPath ? (
     <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-foreground">
       <svg
         aria-hidden="true"
@@ -77,14 +91,6 @@ function ConnectorIcon({
         <path d={iconPath} />
       </svg>
     </div>
-  ) : logo ? (
-    <img
-      src={logo}
-      alt=""
-      loading="lazy"
-      decoding="async"
-      className="h-9 w-9 shrink-0 rounded-xl bg-accent object-contain"
-    />
   ) : (
     <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-sm font-semibold text-foreground">
       {name[0]}
@@ -155,6 +161,7 @@ export function PluginsOverlay({
     connectorId: string;
     slug: string;
   } | null>(null);
+  const [setupApp, setSetupApp] = useState<PopularIntegration | null>(null);
   const connectionAttempt = useRef<AbortController | null>(null);
   const sourceNameInput = useRef<HTMLInputElement>(null);
   const queries = useSpaceQueries();
@@ -259,26 +266,89 @@ export function PluginsOverlay({
     );
   }, [catalog, detailKey]);
 
-  const featuredTiles = useMemo(() => buildFeaturedConnectorTiles(catalog), [catalog]);
-  const showFeatured = !query.trim() && catalogView === "discover";
-
   const visible = useMemo(
     () =>
-      filterConnectionCatalogItems(catalog, query).filter(
+      filterConnectionCatalogItems(catalog, query, { includeFeatured: true }).filter(
         (item) => catalogView === "discover" || isCatalogItemConnected(connections, item),
       ),
     [catalog, query, catalogView, connections],
   );
-  const unfeatured = showFeatured
-    ? visible.filter(
-        (item) =>
-          !featuredTiles.some(
-            (tile) =>
-              tile.item && !tile.missing && catalogItemKey(tile.item) === catalogItemKey(item),
-          ),
-      )
-    : visible;
+  const unfeatured =
+    catalogView === "discover"
+      ? visible.filter((item) => !popularIntegrationForCatalogItem(item))
+      : visible;
   const rendered = unfeatured.slice(0, visibleCount);
+  const popularApps = filterPopularIntegrations(query);
+  const remainingPresets = MCP_PRESETS.filter(
+    (preset) =>
+      !POPULAR_INTEGRATIONS.some((app) => "presetId" in app && app.presetId === preset.id) &&
+      preset.name.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+
+  function popularDescription(id: PopularIntegration["id"]) {
+    switch (id) {
+      case "gmail":
+      case "outlook":
+        return t`Email and inbox`;
+      case "google-drive":
+        return t`Files and documents`;
+      case "google-calendar":
+        return t`Calendar and events`;
+      case "slack":
+        return t`Channels and conversations`;
+      case "github":
+        return t`Code, issues and pull requests`;
+      case "notion":
+        return t`Pages, documents and projects`;
+      case "linear":
+        return t`Issues and project tracking`;
+      case "supabase":
+        return t`Databases and projects`;
+      case "instagram":
+        return t`Posts, comments and messages`;
+      case "facebook-ads":
+        return t`Campaigns and ads`;
+      case "whatsapp":
+        return t`Business messages`;
+    }
+  }
+
+  function renderPopularApp(app: PopularIntegration) {
+    const matches = catalog.filter((item) => popularIntegrationForCatalogItem(item)?.id === app.id);
+    const item = matches.find(itemConnected) ?? matches[0];
+    const presetId = "presetId" in app ? app.presetId : undefined;
+    const installed = presetId
+      ? mcpServers.find((server) => mcpPresetForEndpoint(server.endpoint)?.id === presetId)
+      : undefined;
+    if (item && (itemConnected(item) || !installed)) {
+      return renderCatalogTile(item, app.name, item.logo, { iconPath: app.iconPath });
+    }
+    return (
+      <div
+        key={app.id}
+        data-testid="popular-integration"
+        className="flex min-w-0 items-center gap-3 rounded-xl px-2.5 py-3 hover:bg-muted/50"
+      >
+        <ConnectorIcon name={app.name} iconPath={app.iconPath} />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[15px] font-medium">{app.name}</div>
+          <p className="line-clamp-1 text-sm text-muted-foreground">{popularDescription(app.id)}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label={installed ? t`Manage ${app.name}` : t`Add ${app.name}`}
+          onClick={() => {
+            if (installed && onOpenMcp) onOpenMcp({ serverId: installed.id });
+            else if (presetId && onOpenMcp) onOpenMcp({ presetId });
+            else setSetupApp(app);
+          }}
+        >
+          {installed ? <MoreHorizontal aria-hidden="true" /> : <Plus aria-hidden="true" />}
+        </Button>
+      </div>
+    );
+  }
 
   function openDetail(item: ConnectionCatalogItem) {
     setCatalogError(null);
@@ -570,29 +640,17 @@ export function PluginsOverlay({
     item: ConnectionCatalogItem,
     label: string,
     logo?: string | null,
-    opts?: { tileTestId?: boolean },
+    opts?: { tileTestId?: boolean; iconPath?: string },
   ) {
     const connected = itemConnected(item);
     const tileTestId = opts?.tileTestId !== false && connected;
-    const icon = <ConnectorIcon name={label} logo={logo} />;
+    const popularApp = popularIntegrationForCatalogItem(item);
+    const icon = <ConnectorIcon name={label} logo={logo} iconPath={opts?.iconPath} />;
     const title = (
       <div className="min-w-0 flex-1 text-start">
         <div className="truncate text-[15px] font-medium text-foreground">{label}</div>
         <p className="line-clamp-1 text-sm text-muted-foreground">
-          {item.description ??
-            (item.slug.toLowerCase() === "gmail"
-              ? t`Email and inbox`
-              : item.slug.toLowerCase() === "googlecalendar"
-                ? t`Calendar and events`
-                : item.slug.toLowerCase() === "googledrive"
-                  ? t`Files and documents`
-                  : item.slug.toLowerCase() === "slack"
-                    ? t`Channels and conversations`
-                    : item.slug.toLowerCase() === "github"
-                      ? t`Code, issues and pull requests`
-                      : item.slug.toLowerCase() === "notion"
-                        ? t`Pages, documents and projects`
-                        : null)}
+          {item.description ?? (popularApp ? popularDescription(popularApp.id) : null)}
         </p>
       </div>
     );
@@ -643,19 +701,11 @@ export function PluginsOverlay({
             >
               <ChevronLeft />
             </Button>
-            {item.logo ? (
-              <img
-                src={item.logo}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                className="h-9 w-9 shrink-0 rounded-xl bg-accent object-contain"
-              />
-            ) : (
-              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-accent text-sm font-semibold text-foreground">
-                {item.name[0]}
-              </div>
-            )}
+            <ConnectorIcon
+              name={item.name}
+              logo={item.logo}
+              iconPath={popularIntegrationForCatalogItem(item)?.iconPath}
+            />
             <div className="truncate text-[17px] font-medium text-foreground">{item.name}</div>
           </div>
           <Button
@@ -761,7 +811,7 @@ export function PluginsOverlay({
           <DialogTitle className="flex-1 text-heading2 text-foreground">
             <Trans>Integrations</Trans>
           </DialogTitle>
-          {!detailItem ? (
+          {!detailItem && !setupApp ? (
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button variant="outline" size="sm" />}>
                 <Plus aria-hidden="true" />
@@ -787,7 +837,7 @@ export function PluginsOverlay({
           </DialogClose>
         </DialogHeader>
 
-        {!detailItem ? (
+        {!detailItem && !setupApp ? (
           <div className="px-8 pt-4">
             <Tabs
               value={catalogView}
@@ -807,7 +857,6 @@ export function PluginsOverlay({
               </TabsList>
             </Tabs>
             <Input
-              disabled={loading}
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -958,7 +1007,10 @@ export function PluginsOverlay({
             </div>
           ) : null}
 
-          {!detailItem && catalogView === "added" && (mcpServers.length > 0 || mcpError) ? (
+          {!detailItem &&
+          !setupApp &&
+          catalogView === "added" &&
+          (mcpServers.length > 0 || mcpError) ? (
             <section data-testid="registered-mcp-servers" className="mb-6">
               <div className="mb-2 flex items-center justify-between gap-3">
                 <h2 className="text-sm font-medium">
@@ -1032,8 +1084,47 @@ export function PluginsOverlay({
 
           {detailItem ? (
             renderDetail(detailItem)
+          ) : setupApp ? (
+            <section data-testid="popular-integration-setup" className="space-y-5">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={t`Back`}
+                  onClick={() => setSetupApp(null)}
+                >
+                  <ChevronLeft />
+                </Button>
+                <ConnectorIcon name={setupApp.name} iconPath={setupApp.iconPath} />
+                <h2 className="text-lg font-medium">{setupApp.name}</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                <Trans>
+                  Connect through an MCP server. Account access is granted during setup.
+                </Trans>
+              </p>
+              <IntegrationSetup
+                key={setupApp.id}
+                botId={activeBotId}
+                appName={setupApp.name}
+                onDone={() => {
+                  setSetupApp(null);
+                  void refresh().catch(() => undefined);
+                }}
+              />
+            </section>
           ) : (
             <>
+              {catalogView === "discover" && popularApps.length > 0 ? (
+                <section data-testid="popular-integrations" className="mb-6">
+                  <h2 className="mb-3 text-sm font-medium">
+                    <Trans>Popular</Trans>
+                  </h2>
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2">
+                    {popularApps.map(renderPopularApp)}
+                  </div>
+                </section>
+              ) : null}
               {catalogView === "added" &&
               !visible.length &&
               !mcpServers.length &&
@@ -1044,14 +1135,12 @@ export function PluginsOverlay({
                   <Trans>No integrations added.</Trans>
                 </p>
               ) : null}
-              {onOpenMcp && catalogView === "discover" ? (
+              {onOpenMcp && catalogView === "discover" && remainingPresets.length > 0 ? (
                 <section
                   data-testid="mcp-presets"
                   className="mb-6 grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
                 >
-                  {MCP_PRESETS.filter((preset) =>
-                    preset.name.toLowerCase().includes(query.trim().toLowerCase()),
-                  ).map((preset) => {
+                  {remainingPresets.map((preset) => {
                     const installed = mcpServers.find(
                       (server) => mcpPresetForEndpoint(server.endpoint)?.id === preset.id,
                     );
@@ -1099,37 +1188,23 @@ export function PluginsOverlay({
                   })}
                 </section>
               ) : null}
-              {catalogLoaded && catalog.length > 0 && showFeatured ? (
-                <div
-                  className="mb-6 grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
-                  data-testid="featured-connectors"
-                >
-                  {featuredTiles.flatMap((tile) =>
-                    tile.item && !tile.missing
-                      ? [
-                          renderCatalogTile(tile.item, tile.label, tile.item.logo, {
-                            tileTestId: true,
-                          }),
-                        ]
-                      : [],
-                  )}
-                </div>
-              ) : null}
-
-              {catalogLoaded && catalog.length > 0 && visible.length === 0 && !showFeatured ? (
+              {catalogLoaded &&
+              visible.length === 0 &&
+              popularApps.length === 0 &&
+              remainingPresets.length === 0 &&
+              catalogView === "discover" ? (
                 <p className="text-muted-foreground/80">
                   <Trans>No apps match your search.</Trans>
                 </p>
               ) : null}
-              {visible.length > 0 ? (
+              {rendered.length > 0 ? (
                 <div
                   data-testid="managed-connector-catalog"
                   className="grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-2"
                 >
                   {rendered.map((item) =>
                     renderCatalogTile(item, item.name, item.logo, {
-                      // Avoid duplicate connection-tile-* ids while featured is also shown.
-                      tileTestId: !showFeatured,
+                      iconPath: popularIntegrationForCatalogItem(item)?.iconPath,
                     }),
                   )}
                 </div>

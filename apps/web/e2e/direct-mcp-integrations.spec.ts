@@ -69,7 +69,7 @@ test("adds MCP and API integrations without a managed app catalog", async ({ pag
   await completeOnboarding(page);
   await page.route("**/rpc/connections/catalog", (route) => route.fulfill({ json: { json: [] } }));
   await page.getByRole("button", { name: "Connect apps", exact: true }).click();
-  await expect(page.getByTestId("featured-connectors")).toBeHidden();
+  await expect(page.getByTestId("popular-integrations")).toBeVisible();
   await expect(page.getByText("Not in the plugin catalog", { exact: true })).toBeHidden();
   await page.getByRole("button", { name: "Add integration", exact: true }).click();
   await captureScreenshot(page, testInfo, "integrations-add-without-managed-catalog");
@@ -119,16 +119,14 @@ test("official MCP presets show logos and fill the reviewed setup without granti
   await completeOnboarding(page);
   await page.getByRole("button", { name: "Connect apps", exact: true }).click();
   const presets = page.getByTestId("mcp-presets");
-  await expect(presets.getByTestId("mcp-preset")).toHaveCount(MCP_PRESETS.length);
-  await expect(presets.getByTestId("connector-logo").locator("path")).toHaveCount(
-    MCP_PRESETS.length,
+  await expect(presets.getByTestId("mcp-preset")).toHaveCount(3);
+  await expect(presets.getByTestId("connector-logo").locator("path")).toHaveCount(3);
+  await expect(page.getByTestId("popular-integrations").getByTestId("connector-logo")).toHaveCount(
+    12,
   );
   await captureScreenshot(page, testInfo, "integrations-official-mcp-presets");
   for (const preset of MCP_PRESETS) {
-    const row = presets
-      .getByTestId("mcp-preset")
-      .filter({ has: page.getByText(preset.name, { exact: true }) });
-    await row.getByRole("button", { name: `Add ${preset.name}`, exact: true }).click();
+    await page.getByRole("button", { name: `Add ${preset.name}`, exact: true }).click();
     await expect(page.getByRole("textbox", { name: "Server name", exact: true })).toHaveValue(
       preset.name,
     );

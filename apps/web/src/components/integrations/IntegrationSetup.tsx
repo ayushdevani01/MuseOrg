@@ -8,10 +8,18 @@ import { rpc } from "../../lib/rpc";
 import { errorText } from "../../lib/user-error";
 
 /** Personal MCP connections never configure deployment-wide provider credentials. */
-export function IntegrationSetup({ onDone, botId }: { onDone?: () => void; botId?: string }) {
+export function IntegrationSetup({
+  onDone,
+  botId,
+  appName,
+}: {
+  onDone?: () => void;
+  botId?: string;
+  appName?: string;
+}) {
   const { t } = useLingui();
   const [endpoint, setEndpoint] = useState("");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(appName ?? "");
   const [results, setResults] = useState<IntegrationCatalogResult[]>([]);
   const [searched, setSearched] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -105,7 +113,11 @@ export function IntegrationSetup({ onDone, botId }: { onDone?: () => void; botId
           <Trans>No remote MCP servers found</Trans>
         </p>
       ) : null}
-      <Disclosure className="text-sm text-muted-foreground" summary={<Trans>Add server URL</Trans>}>
+      <Disclosure
+        defaultOpen={Boolean(appName)}
+        className="text-sm text-muted-foreground"
+        summary={<Trans>Add server URL</Trans>}
+      >
         <div className="mt-3 space-y-3">
           <Input
             aria-label={t`Server URL`}
@@ -115,7 +127,7 @@ export function IntegrationSetup({ onDone, botId }: { onDone?: () => void; botId
           />
           <Button
             disabled={busy || !endpoint.trim()}
-            onClick={() => void connect("MCP server", endpoint.trim())}
+            onClick={() => void connect(appName ?? "MCP server", endpoint.trim())}
           >
             <Trans>Connect</Trans>
           </Button>
