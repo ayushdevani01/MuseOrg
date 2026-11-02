@@ -21,6 +21,11 @@ Their CC0-1.0 notice is retained in
 [the icon license](packages/core/src/mcp-preset-icons.LICENSE.md). Brand marks identify
 the available setup routes; they do not imply partnership or connected accounts.
 
+Integration discovery caches metadata from
+[integrations.sh](https://github.com/UsefulSoftwareCo/integrations)'s public
+index for searching within MuseOrg. Its
+[MIT notice](apps/api/src/integration-catalog-data.LICENSE.md) is retained.
+
 Initial MuseOrg changes cover private account bootstrap, required personal model
 connections, Meta onboarding, and reusable coworker profiles. The full product
 requirements remain in [the goal](docs/MUSEORG_GOAL.md); this initial slice does
