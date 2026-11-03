@@ -6484,3 +6484,13 @@ msgstr "Set up"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Manual setup"
 msgstr "Manual setup"
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Allow popups to connect this app."
+msgstr "Allow popups to connect this app."
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Open sign-in"
+msgstr "Open sign-in"

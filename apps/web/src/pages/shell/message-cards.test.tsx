@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { expect, it, vi } from "vitest";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 const calls = vi.hoisted(() => ({
   begin: vi.fn(async () => ({ connectionId: "connection", authorizationUrl: null })),
@@ -25,7 +25,12 @@ vi.mock("@lingui/react/macro", () => ({
 
 import { AppConnectCard } from "./message-cards";
 
+beforeEach(() => vi.clearAllMocks());
+afterEach(() => vi.restoreAllMocks());
+
 it("authorizes a card in a normal chat and marks its thread connected", async () => {
+  const popup = { opener: {}, close: vi.fn(), location: { replace: vi.fn() } };
+  vi.spyOn(window, "open").mockReturnValue(popup as unknown as Window);
   const host = document.createElement("div");
   document.body.append(host);
   const root = createRoot(host);
@@ -57,6 +62,42 @@ it("authorizes a card in a normal chat and marks its thread connected", async ()
     });
     expect(host.textContent).toContain("Connected");
     expect(host.querySelector("button")).toBeNull();
+    expect(popup.close).toHaveBeenCalledOnce();
+  } finally {
+    await act(async () => root.unmount());
+    host.remove();
+  }
+});
+
+it("keeps the chat card unconnected when the browser blocks sign-in", async () => {
+  vi.spyOn(window, "open").mockReturnValue(null);
+  const host = document.createElement("div");
+  document.body.append(host);
+  const root = createRoot(host);
+  try {
+    await act(async () =>
+      root.render(
+        <AppConnectCard
+          botId="bot"
+          threadId="normal-chat"
+          block={{
+            kind: "app_connect",
+            connectorId: "composio",
+            provider: "GMAIL",
+            name: "Gmail",
+            description: "",
+            logo: null,
+            status: "pending",
+          }}
+        />,
+      ),
+    );
+    await act(async () => host.querySelector("button")?.click());
+    expect(host.textContent).toContain("Allow popups to connect this app.");
+    expect(calls.begin).not.toHaveBeenCalled();
+    expect(calls.complete).not.toHaveBeenCalled();
+    expect(calls.mark).not.toHaveBeenCalled();
+    expect(host.querySelector("button")?.textContent).toBe("Authorize");
   } finally {
     await act(async () => root.unmount());
     host.remove();

@@ -1,13 +1,21 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { MessageBlock } from "@rakazo/contracts";
 import { appConnectedInput, waitForConnection } from "@rakazo/core";
-import { Button, Dialog, DialogClose, DialogContent, DialogTitle } from "@rakazo/ui-web";
+import {
+  Button,
+  buttonVariants,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+} from "@rakazo/ui-web";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { BuiCard, SuccessPop } from "../../components/ai/primitives";
 import { OptionRow } from "../../components/OptionRow";
 import type { ArtifactTarget } from "../../lib/artifact-open";
 import { chartViewport } from "../../lib/chart-viewport";
+import { prepareConnectionPopup } from "../../lib/connection-popup";
 import { connectMcpOauth } from "../../lib/mcp-connect";
 import { importChunk } from "../../lib/preload-recovery";
 import { rpc } from "../../lib/rpc";
@@ -162,6 +170,7 @@ export function AppConnectCard({
   const [localStatus, setLocalStatus] = useState<"pending" | "connected">(block.status);
   const [error, setError] = useState<string | null>(null);
   const connectionAttempt = useRef<AbortController | null>(null);
+  const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
   const status = block.status === "connected" ? "connected" : localStatus;
   useEffect(() => () => connectionAttempt.current?.abort(), []);
 
@@ -171,14 +180,19 @@ export function AppConnectCard({
     connectionAttempt.current = controller;
     setBusy(true);
     setError(null);
+    setAuthorizationUrl(null);
+    let authorization: ReturnType<typeof prepareConnectionPopup> | undefined;
     try {
+      authorization = prepareConnectionPopup(t`Allow popups to connect this app.`);
       const started = await rpc.connections.begin({
         connectorId: block.connectorId,
         provider: block.provider,
         displayName: block.name,
       });
+      if (controller.signal.aborted) return;
       if (started.authorizationUrl) {
-        window.open(started.authorizationUrl, "rakazo-app-connect", "popup,width=560,height=720");
+        setAuthorizationUrl(started.authorizationUrl);
+        authorization.open(started.authorizationUrl);
       }
       const result = await waitForConnection(
         started.connectionId,
@@ -187,6 +201,7 @@ export function AppConnectCard({
       );
       if (result.status === "aborted") return;
       if (result.status === "connected") {
+        setAuthorizationUrl(null);
         setLocalStatus("connected");
         await rpc.onboarding
           .appConnected(appConnectedInput(botId, threadId, block, messageId))
@@ -199,6 +214,7 @@ export function AppConnectCard({
         setError(errorText(error, t`Could not authorize this app`));
       }
     } finally {
+      authorization?.closeUnused();
       if (connectionAttempt.current === controller) {
         connectionAttempt.current = null;
         setBusy(false);
@@ -237,6 +253,16 @@ export function AppConnectCard({
           </Button>
         )}
       </div>
+      {status !== "connected" && authorizationUrl ? (
+        <a
+          className={buttonVariants({ variant: "link", size: "sm" })}
+          href={authorizationUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Trans>Open sign-in</Trans>
+        </a>
+      ) : null}
       {error ? <p className="mt-2 text-xs text-destructive">{error}</p> : null}
     </BuiCard>
   );

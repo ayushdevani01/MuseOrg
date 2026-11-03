@@ -26,6 +26,7 @@ import { fetchFresh, writeSaved } from "@rakazo/core/query";
 import {
   Badge,
   Button,
+  buttonVariants,
   Card,
   CardContent,
   CardHeader,
@@ -55,6 +56,7 @@ import { ConnectorIcon } from "../components/integrations/ConnectorIcon";
 import { IntegrationSetup } from "../components/integrations/IntegrationSetup";
 import { McpServerHealthLine } from "../components/McpServerHealthLine";
 import { connectedAppMarks } from "../lib/connected-apps";
+import { prepareConnectionPopup } from "../lib/connection-popup";
 import { optionalCatalogFeedProbe } from "../lib/optional-catalog-feed";
 import { useSpaceQueries } from "../lib/query";
 import { rpc } from "../lib/rpc";
@@ -112,6 +114,7 @@ export function PluginsOverlay({
   const [authName, setAuthName] = useState("x-api-key");
   const [pending, setPending] = useState<string | null>(null);
   const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
   const [sourceError, setSourceError] = useState<string | null>(null);
   const [sourceHint, setSourceHint] = useState<string | null>(null);
   const [catalogFeedQuery, setCatalogFeedQuery] = useState("");
@@ -348,17 +351,27 @@ export function PluginsOverlay({
     const controller = new AbortController();
     connectionAttempt.current = controller;
     setCatalogError(null);
+    setAuthorizationUrl(null);
     const key = catalogItemKey(item);
     setPending(key);
+    let authorization: ReturnType<typeof prepareConnectionPopup> | undefined;
     try {
+      if (!item.noAuth) {
+        authorization = prepareConnectionPopup(t`Allow popups to connect this app.`);
+      }
       const result = await connectCatalogItem(item, connections, {
         begin: (input) => rpc.connections.begin(input),
         complete: (input) => rpc.connections.complete(input),
-        openUrl: (url) => window.open(url, "rakazo-plugin-connect", "noopener,noreferrer"),
+        openUrl: (url) => {
+          setAuthorizationUrl(url);
+          if (!authorization) throw new Error(t`Could not connect`);
+          authorization.open(url);
+        },
         signal: controller.signal,
       });
       if (result.status === "aborted") return;
       if (result.status === "connected") {
+        setAuthorizationUrl(null);
         await setItemConnected(item, true);
         void notifyAppConnected(item);
         await refresh().catch(() => undefined);
@@ -373,6 +386,7 @@ export function PluginsOverlay({
       if (controller.signal.aborted) return;
       setCatalogError(errorText(err, t`Could not connect`));
     } finally {
+      authorization?.closeUnused();
       if (connectionAttempt.current === controller) {
         connectionAttempt.current = null;
         setPending(null);
@@ -959,6 +973,16 @@ export function PluginsOverlay({
             </>
           ) : null}
 
+          {authorizationUrl ? (
+            <a
+              className={buttonVariants({ variant: "link", size: "sm" })}
+              href={authorizationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Trans>Open sign-in</Trans>
+            </a>
+          ) : null}
           {catalogError || loadError ? (
             <div className="mb-4 flex items-center gap-3">
               <p className="text-sm text-destructive">{catalogError ?? loadError}</p>
