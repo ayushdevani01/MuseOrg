@@ -25,3 +25,8 @@ are inferred from these three directories' licenses.
 
 Bundled integration marks retain their
 [Simple Icons CC0 notice](packages/core/src/mcp-preset-icons.LICENSE.md).
+
+Native segmentation uses Meta's official `@meta-sam/parser` package, pinned to
+version 0.1.0. Its [SAM License](packages/adapters/src/meta-sam.LICENSE.txt) is
+retained in this distribution. The package decodes the documented mask format;
+MuseOrg's worker performs source validation, artifact storage and image composition.
