@@ -224,11 +224,39 @@ export const builtinAgentTools: ConnectorTool[] = [
   {
     name: "generate_image",
     description:
-      "Generate one image from a prompt and attach it to chat. Uses the deployment media model and may incur charges. Do not retry failed submissions automatically.",
+      "Generate one image and attach it to chat. An optional sourcePath edits an existing image when the connected media model supports editing. Uses the connected or deployment media model and may incur charges. Do not retry failed submissions automatically.",
     inputSchema: {
       type: "object",
-      properties: { prompt: { type: "string", minLength: 1, maxLength: 4000 } },
+      properties: {
+        prompt: { type: "string", minLength: 1, maxLength: 4000 },
+        sourcePath: { type: "string", minLength: 1, maxLength: 500 },
+      },
       required: ["prompt"],
+    },
+    readOnly: false,
+  },
+  {
+    name: "transcribe_media",
+    description:
+      "Transcribe an audio or video file from sourcePath on the employee computer. Saves the transcript and source metadata as shared files and attaches the result. May incur charges; do not retry uncertain submissions automatically.",
+    inputSchema: {
+      type: "object",
+      properties: { sourcePath: { type: "string", minLength: 1, maxLength: 500 } },
+      required: ["sourcePath"],
+    },
+    readOnly: false,
+  },
+  {
+    name: "segment_image",
+    description:
+      "Find an object in an image at sourcePath using a short concrete noun prompt. Saves real masks, a cutout, overlay and raw geometry on the shared computer. Zero matches is a valid result, never invent a mask. For an explicit region, prompt may use the documented SAM box/point grammar in source pixels. May incur charges; do not retry uncertain submissions automatically.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        sourcePath: { type: "string", minLength: 1, maxLength: 500 },
+        prompt: { type: "string", minLength: 1, maxLength: 4000 },
+      },
+      required: ["sourcePath", "prompt"],
     },
     readOnly: false,
   },

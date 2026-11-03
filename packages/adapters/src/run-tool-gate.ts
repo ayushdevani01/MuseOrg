@@ -563,7 +563,9 @@ async function settleToolUncertainty(
       error: "This delivery has no verified receipt yet. It was not replayed.",
     };
   }
-  if (call.name === "generate_image" || call.name === "generate_video") {
+  if (
+    ["generate_image", "generate_video", "transcribe_media", "segment_image"].includes(call.name)
+  ) {
     const recovered = await callMediaTool(ctx, call, true);
     if (
       recovered !== undefined &&

@@ -84,7 +84,10 @@ import {
   MAX_RECALLED_MEMORIES,
   selectCompactedHistory,
 } from "./history-compaction.js";
-import { createMediaGenerationProvider } from "./media-generation-factory.js";
+import {
+  createConnectedMediaGenerationProvider,
+  createMediaGenerationProvider,
+} from "./media-generation-factory.js";
 import { loadAgentMemoryContext } from "./memory-context.js";
 import { HostedModelCreditsRequiredError } from "./model-credit-observer.js";
 import {
@@ -775,6 +778,12 @@ export function createRunExecutor(deps: ExecutorDeps) {
           return;
         }
         runSecrets.push(...resolved.redact);
+        const runMediaGeneration =
+          mediaGeneration ??
+          createConnectedMediaGenerationProvider({
+            provider: runModelProvider,
+            apiKey: resolved.apiKey,
+          });
         // A pin stays as it was created. Unpinned runs still record the model they
         // used; modelPinned is what keeps that record from becoming the next choice.
         if (!run.modelPinned) {
@@ -948,8 +957,14 @@ export function createRunExecutor(deps: ExecutorDeps) {
             trigger: run.trigger,
             semanticMemoryEnabled,
             semanticMemoryForgets: Boolean(semanticMemory?.forget),
-            mediaImagesEnabled: Boolean(deps.artifacts && mediaGeneration?.capabilities.images),
-            mediaVideoEnabled: Boolean(deps.artifacts && mediaGeneration?.capabilities.video),
+            mediaImagesEnabled: Boolean(deps.artifacts && runMediaGeneration?.capabilities.images),
+            mediaVideoEnabled: Boolean(deps.artifacts && runMediaGeneration?.capabilities.video),
+            mediaTranscriptionEnabled: Boolean(
+              deps.artifacts && runMediaGeneration?.capabilities.transcription,
+            ),
+            mediaSegmentationEnabled: Boolean(
+              deps.artifacts && runMediaGeneration?.capabilities.segmentation,
+            ),
             cloudAgentEnabled: cloudAgentsEnabled(cloudAgent, run.spaceId),
             messagingChannelRun,
             voiceCall,
@@ -1088,7 +1103,7 @@ export function createRunExecutor(deps: ExecutorDeps) {
 
         const ctx: RunContext = {
           deps,
-          providers: { web, mediaGeneration, browser, cloudAgent },
+          providers: { web, mediaGeneration: runMediaGeneration, browser, cloudAgent },
           run,
           runId,
           workerId,

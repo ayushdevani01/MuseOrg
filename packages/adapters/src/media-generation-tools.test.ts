@@ -53,7 +53,7 @@ function setup() {
 
 describe("bot media tools", () => {
   it("uses existing approval and per-bot disable controls, hidden by default", () => {
-    for (const name of ["generate_image", "generate_video"])
+    for (const name of ["generate_image", "generate_video", "transcribe_media", "segment_image"])
       expect(toolRequiresApproval(name, false)).toBe(true);
     const base = {
       graphicalToolsAllowed: false,
@@ -66,6 +66,20 @@ describe("bot media tools", () => {
       selectBuiltinToolsForRun({ ...base, ...extra }).map((tool) => tool.name);
     expect(names()).not.toContain("generate_image");
     expect(names()).not.toContain("generate_video");
+    expect(names()).not.toContain("transcribe_media");
+    expect(names()).not.toContain("segment_image");
+    expect(names({ mediaTranscriptionEnabled: true })).toContain("transcribe_media");
+    expect(names({ mediaSegmentationEnabled: true })).toContain("segment_image");
+    expect(
+      names({ mediaTranscriptionEnabled: true, disabledBuiltinTools: ["transcribe_media"] }),
+    ).not.toContain("transcribe_media");
+    expect(
+      names({
+        trigger: "tickets",
+        mediaTranscriptionEnabled: true,
+        mediaSegmentationEnabled: true,
+      }),
+    ).not.toContain("segment_image");
     expect(names({ mediaImagesEnabled: true })).toContain("generate_image");
     expect(names({ mediaImagesEnabled: true })).not.toContain("generate_video");
     expect(names({ mediaVideoEnabled: true })).toContain("generate_video");
@@ -95,6 +109,65 @@ describe("bot media tools", () => {
       expect.objectContaining({ id: "local-job" }),
     );
     expect(publish).toHaveBeenCalledTimes(1);
+  });
+  it("journals transcription before billing and retains its source and derived-file receipt", async () => {
+    const { options, externalEffect, provider, attach } = setup();
+    const transcribe = vi
+      .fn()
+      .mockResolvedValue({ bytes: new TextEncoder().encode("{}"), mimeType: "application/json" });
+    const media = Object.assign(provider, {
+      capabilities: { ...provider.capabilities, transcription: true },
+      transcribe,
+    });
+    const source = { bytes: new Uint8Array([1]), mimeType: "audio/wav" };
+    const loadSource = vi.fn().mockResolvedValue(source);
+    attach.mockResolvedValue({
+      artifactId: "artifact",
+      block: { kind: "file", artifactId: "artifact", name: "transcript.json" },
+      files: ["shared/media/transcript.txt"],
+    } as never);
+    const result = await generateMediaFromTool({
+      ...options,
+      provider: media,
+      name: "transcribe_media",
+      args: { sourcePath: "shared/brief.wav" },
+      loadSource,
+    });
+    expect(result).toEqual({
+      status: "completed",
+      artifactId: "artifact",
+      files: ["shared/media/transcript.txt"],
+    });
+    expect(externalEffect.create.mock.invocationCallOrder[0]).toBeLessThan(
+      transcribe.mock.invocationCallOrder[0]!,
+    );
+    expect(transcribe).toHaveBeenCalledWith(expect.objectContaining({ source }), context);
+    expect(externalEffect.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          request: expect.objectContaining({ sourcePath: "shared/brief.wav" }),
+        }),
+      }),
+    );
+  });
+  it("does not submit media when its source cannot be read", async () => {
+    const { options, externalEffect, provider } = setup();
+    const transcribe = vi.fn();
+    const media = Object.assign(provider, {
+      capabilities: { ...provider.capabilities, transcription: true },
+      transcribe,
+    });
+    expect(
+      await generateMediaFromTool({
+        ...options,
+        provider: media,
+        name: "transcribe_media",
+        args: { sourcePath: "missing.wav" },
+        loadSource: vi.fn().mockRejectedValue(new Error("missing")),
+      }),
+    ).toHaveProperty("error");
+    expect(externalEffect.create).not.toHaveBeenCalled();
+    expect(transcribe).not.toHaveBeenCalled();
   });
   it("rejects invalid inputs before reserving or billing", async () => {
     const { options, externalEffect } = setup();

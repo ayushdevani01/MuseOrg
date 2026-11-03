@@ -1,8 +1,10 @@
+import { createHash } from "node:crypto";
 import { ATTACHMENT_MAX_BYTES } from "@rakazo/contracts";
 import { inferAttachmentMimeType, isBackgroundRunTrigger } from "@rakazo/core";
 import { resolveBotWorkspacePath } from "./computer-support.js";
 import { desktopProtectionGuardMessage } from "./desktop-command-guard.js";
 import { protectedActivateScriptWriteRefusal } from "./desktop-guard-words.js";
+import { isSupportedTranscriptionWav } from "./media-audio.js";
 import { generateMediaFromTool } from "./media-generation-tools.js";
 import type { RunContext } from "./run-context.js";
 import { persistMessageInTransaction, publishMessage } from "./run-messages.js";
@@ -24,13 +26,16 @@ function runWorkspace(ctx: RunContext, call: ToolCall): RunWorkspace {
   };
 }
 
-/** Generate an image or video, or with recoverOnly, only resume a job an earlier attempt started. */
+/** Run native media work, or recover only a job an earlier attempt already started. */
 export async function callMediaTool(ctx: RunContext, call: ToolCall, recoverOnly = false) {
   const { deps, run, bot, thread, context } = ctx;
   const { name, args, executionId, applied } = call;
   const mediaGeneration = ctx.providers.mediaGeneration;
   if (
-    (name !== "generate_image" && name !== "generate_video") ||
+    (name !== "generate_image" &&
+      name !== "generate_video" &&
+      name !== "transcribe_media" &&
+      name !== "segment_image") ||
     isBackgroundRunTrigger(run.trigger) ||
     !mediaGeneration ||
     !deps.artifacts
@@ -46,8 +51,110 @@ export async function callMediaTool(ctx: RunContext, call: ToolCall, recoverOnly
     prisma: deps.prisma,
     context,
     run,
-    attach: (output, fileName, job) =>
-      attachWorkspaceFileToThread(
+    loadSource: async (sourcePath) => {
+      const computer = await ctx.computer.get("tool", name);
+      const storedPath = resolveBotWorkspacePath(ctx.computer.mode, bot.id, sourcePath);
+      const mimeType = inferAttachmentMimeType(sourcePath);
+      if (
+        !mimeType ||
+        !(name === "transcribe_media"
+          ? /^(audio|video)\//.test(mimeType)
+          : /^image\/(png|jpeg|webp)$/.test(mimeType))
+      )
+        throw new Error("Unsupported source media type.");
+      let bytes = await deps.sandbox.readFile(computer, storedPath, context, {
+        maxBytes: ATTACHMENT_MAX_BYTES,
+      });
+      if (name !== "transcribe_media" || isSupportedTranscriptionWav(bytes))
+        return { bytes, mimeType };
+      const suffix = createHash("sha256")
+        .update(`${run.id}:${executionId}`)
+        .digest("hex")
+        .slice(0, 24);
+      const normalizedPath = resolveBotWorkspacePath(
+        ctx.computer.mode,
+        bot.id,
+        `shared/media-input-${suffix}.wav`,
+      );
+      ctx.computer.checkpoint.markDirty();
+      await deps.sandbox.writeFile(
+        computer,
+        { path: normalizedPath, content: new Uint8Array() },
+        context,
+      );
+      let exit: number | undefined;
+      for await (const event of deps.sandbox.execute(
+        computer,
+        {
+          argv: [
+            "ffmpeg",
+            "-nostdin",
+            "-hide_banner",
+            "-loglevel",
+            "error",
+            "-y",
+            "-i",
+            storedPath,
+            "-t",
+            "601",
+            "-vn",
+            "-ac",
+            "1",
+            "-ar",
+            "24000",
+            "-c:a",
+            "pcm_s16le",
+            "-map_metadata",
+            "-1",
+            normalizedPath,
+          ],
+          timeoutMs: 90_000,
+        },
+        context,
+      ))
+        if (event.type === "exit") exit = event.code;
+      if (exit !== 0)
+        throw new Error(
+          "Audio conversion failed. The computer needs FFmpeg and a decodable audio track.",
+        );
+      bytes = await deps.sandbox.readFile(computer, normalizedPath, context, {
+        maxBytes: ATTACHMENT_MAX_BYTES,
+      });
+      if (!isSupportedTranscriptionWav(bytes))
+        throw new Error("Use a recording of at most ten minutes.");
+      return { bytes, mimeType: "audio/wav" };
+    },
+    attach: async (output, fileName, job) => {
+      let files: string[] | undefined;
+      if (output.files?.length) {
+        if (
+          output.files.length > 18 ||
+          output.files.some((file) => !/^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,99}$/.test(file.name)) ||
+          output.files.reduce(
+            (size, file) => size + file.bytes.byteLength,
+            output.bytes.byteLength,
+          ) > ATTACHMENT_MAX_BYTES
+        )
+          throw new Error("Derived media exceeds the output limit.");
+        const directory = `shared/media/${job.id}`;
+        const allFiles = [{ name: fileName, bytes: output.bytes }, ...output.files];
+        const computer = await ctx.computer.get("tool", name);
+        ctx.computer.checkpoint.markDirty();
+        files = [];
+        for (const file of allFiles) {
+          const path = `${directory}/${file.name}`;
+          await deps.sandbox.writeFile(
+            computer,
+            {
+              path: resolveBotWorkspacePath(ctx.computer.mode, bot.id, path),
+              content: file.bytes,
+            },
+            context,
+          );
+          files.push(path);
+        }
+      }
+      const attached = await attachWorkspaceFileToThread(
         { prisma: deps.prisma, artifacts, maxUploadSizeBytes: deps.maxUploadSizeBytes },
         {
           spaceId: run.spaceId,
@@ -67,21 +174,23 @@ export async function callMediaTool(ctx: RunContext, call: ToolCall, recoverOnly
               },
               data: {
                 status: "media_polling",
-                result: { ...job.result, artifactId: artifact.id },
+                result: { ...job.result, artifactId: artifact.id, ...(files ? { files } : {}) },
               },
             });
             if (!checkpointed.count) throw new Error("Media attachment was already checkpointed");
           },
         },
-      ),
-    publish: async (block, jobId, artifactId) => {
+      );
+      return { ...attached, ...(files ? { files } : {}) };
+    },
+    publish: async (block, jobId, artifactId, files) => {
       const committed = await deps.prisma.$transaction(async (tx) => {
         // Commit completion with the message so a restarted poll cannot post twice.
         const claimed = await tx.externalEffect.updateMany({
           where: { id: jobId, status: { not: "media_completed" } },
           data: {
             status: "media_completed",
-            result: { provider: mediaGeneration.id, artifactId },
+            result: { provider: mediaGeneration.id, artifactId, ...(files ? { files } : {}) },
           },
         });
         if (!claimed.count) return null;
@@ -142,6 +251,8 @@ export const fileTools: ToolHandlers = {
   },
   generate_image: generateMedia,
   generate_video: generateMedia,
+  transcribe_media: generateMedia,
+  segment_image: generateMedia,
   async render_plot(ctx, call) {
     const { deps, run } = ctx;
     const { args, executionId } = call;

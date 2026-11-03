@@ -64,6 +64,8 @@ export function selectBuiltinToolsForRun(options: {
   cloudAgentEnabled?: boolean;
   mediaImagesEnabled?: boolean;
   mediaVideoEnabled?: boolean;
+  mediaTranscriptionEnabled?: boolean;
+  mediaSegmentationEnabled?: boolean;
   messagingChannelRun: boolean;
   /** Hanging up is only offered to a turn the caller spoke on a live call. */
   voiceCall?: boolean;
@@ -100,6 +102,8 @@ export function selectBuiltinToolsForRun(options: {
         (Boolean(options.fleetManagement) && fleetToolsAllowed)) &&
       (options.mediaImagesEnabled || tool.name !== "generate_image") &&
       (options.mediaVideoEnabled || tool.name !== "generate_video") &&
+      (options.mediaTranscriptionEnabled || tool.name !== "transcribe_media") &&
+      (options.mediaSegmentationEnabled || tool.name !== "segment_image") &&
       (options.ticketBoardEnabled ||
         (tool.name !== "board_tickets" && !tool.name.startsWith("ticket_"))) &&
       (!isBackgroundRunTrigger(options.trigger) ||
@@ -110,6 +114,8 @@ export function selectBuiltinToolsForRun(options: {
           "message_agent",
           "generate_image",
           "generate_video",
+          "transcribe_media",
+          "segment_image",
         ].includes(tool.name)) &&
       (options.voiceCall || tool.name !== "end_call") &&
       // Already on a call, or reached through a messaging channel that cannot ring.

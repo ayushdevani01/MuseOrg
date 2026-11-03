@@ -40,6 +40,8 @@ export const BUILTIN_TOOL_NAMES = [
   "render_plot",
   "generate_image",
   "generate_video",
+  "transcribe_media",
+  "segment_image",
   "add_mcp_server",
   "remember",
   "save_shared_memory",

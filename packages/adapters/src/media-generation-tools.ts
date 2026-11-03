@@ -2,6 +2,8 @@ import type {
   AdapterContext,
   GeneratedMedia,
   MediaGenerationProvider,
+  MediaSource,
+  MediaToolName,
   MediaVideoJob,
 } from "@rakazo/adapter-kit";
 import { MediaGenerationError } from "@rakazo/adapter-kit";
@@ -16,9 +18,10 @@ const savedJob = z.object({
   provider: z.string(),
   jobId: z.string().optional(),
   artifactId: z.string().optional(),
+  files: z.array(z.string()).optional(),
 });
 export async function generateMediaFromTool(options: {
-  name: "generate_image" | "generate_video";
+  name: MediaToolName;
   args: Record<string, unknown>;
   executionId: string;
   /** Recover only persisted state; never submit a new billed generation. */
@@ -26,19 +29,42 @@ export async function generateMediaFromTool(options: {
   provider: MediaGenerationProvider;
   prisma: PrismaClient;
   context: AdapterContext;
+  loadSource?: (path: string) => Promise<MediaSource>;
   run: { id: string; threadId: string; botId: string; userId: string; spaceId: string };
   attach: (
     output: GeneratedMedia,
     name: string,
     job: { id: string; result: { provider: string; jobId?: string } },
-  ) => Promise<{ artifactId: string; block: MessageBlock }>;
-  publish: (block: MessageBlock, jobId: string, artifactId: string) => Promise<unknown>;
+  ) => Promise<{ artifactId: string; block: MessageBlock; files?: string[] }>;
+  publish: (
+    block: MessageBlock,
+    jobId: string,
+    artifactId: string,
+    files?: string[],
+  ) => Promise<unknown>;
 }) {
-  const { provider, prisma, context, run, args } = options;
+  const { provider, prisma, context, run } = options;
+  const args =
+    options.name === "transcribe_media"
+      ? { ...options.args, prompt: "Transcribe the recording." }
+      : options.args;
   const video = options.name === "generate_video";
-  if (!(video ? provider.capabilities.video : provider.capabilities.images))
-    return { error: "Media generation is unavailable." };
+  const capable =
+    options.name === "transcribe_media"
+      ? provider.capabilities.transcription && provider.transcribe
+      : options.name === "segment_image"
+        ? provider.capabilities.segmentation && provider.segmentImage
+        : video
+          ? provider.capabilities.video
+          : provider.capabilities.images;
+  if (!capable) return { error: "Media generation is unavailable." };
   try {
+    const withFiles = (artifactId: string, files?: string[]) => ({
+      status: "completed" as const,
+      artifactId,
+      ...(files?.length ? { files } : {}),
+    });
+    let source: MediaSource | undefined;
     if (
       args.jobId !== undefined &&
       (!video ||
@@ -68,7 +94,7 @@ export async function generateMediaFromTool(options: {
             "Video job provider changed or submission is uncertain. Do not resubmit automatically.",
         };
       if (saved.data.artifactId && reservation.status === "media_completed")
-        return { status: "completed", artifactId: saved.data.artifactId };
+        return withFiles(saved.data.artifactId, saved.data.files);
       if (reservation.status === "media_failed") return { status: "failed" };
       if (!saved.data.jobId && !saved.data.artifactId)
         return { error: "Submission is uncertain. Do not resubmit automatically." };
@@ -84,7 +110,7 @@ export async function generateMediaFromTool(options: {
         const saved = savedJob.safeParse(prior.result);
         if (saved.success && saved.data.artifactId) {
           if (prior.status === "media_completed")
-            return { status: "completed", artifactId: saved.data.artifactId };
+            return withFiles(saved.data.artifactId, saved.data.files);
           reservation = prior;
         } else {
           if (video && saved.success && saved.data.jobId)
@@ -103,6 +129,14 @@ export async function generateMediaFromTool(options: {
         if (options.recoverOnly) return undefined;
         const input = mediaPromptSchema.safeParse(args);
         if (!input.success) return { error: "A prompt of 1–4000 characters is required." };
+        if (["transcribe_media", "segment_image"].includes(options.name) && !input.data.sourcePath)
+          return { error: "A sourcePath on the employee computer is required." };
+        if (input.data.sourcePath) {
+          if (video || (options.name === "generate_image" && !provider.capabilities.imageEditing))
+            return { error: "This media model cannot use a source image." };
+          if (!options.loadSource) return { error: "Source files are unavailable." };
+          source = await options.loadSource(input.data.sourcePath);
+        }
         // A unique slot makes the per-run cap durable even across concurrent calls/restarts.
         for (let slot = 0; slot < 2; slot++) {
           try {
@@ -116,6 +150,7 @@ export async function generateMediaFromTool(options: {
                 request: {
                   tool: options.name,
                   prompt: input.data.prompt,
+                  ...(input.data.sourcePath ? { sourcePath: input.data.sourcePath } : {}),
                   executionId: options.executionId,
                 },
                 result: { provider: provider.id },
@@ -137,8 +172,10 @@ export async function generateMediaFromTool(options: {
         where: { id: saved.artifactId, spaceId: run.spaceId, userId: run.userId, botId: run.botId },
       });
       if (!artifact) return { error: "Generated attachment is unavailable." };
-      await options.publish(messageBlockForArtifact(artifact), reservation.id, artifact.id);
-      return { status: "completed", artifactId: artifact.id };
+      const block = messageBlockForArtifact(artifact);
+      if (saved.files) await options.publish(block, reservation.id, artifact.id, saved.files);
+      else await options.publish(block, reservation.id, artifact.id);
+      return withFiles(artifact.id, saved.files);
     }
     if (video && typeof args.jobId === "string") {
       const claim = await prisma.externalEffect.updateMany({
@@ -168,7 +205,16 @@ export async function generateMediaFromTool(options: {
           : await provider.generateVideo(mediaPromptSchema.parse(args), context)
         : {
             status: "completed" as const,
-            output: await provider.generateImage(mediaPromptSchema.parse(args), context),
+            output: await (options.name === "transcribe_media"
+              ? provider.transcribe!
+              : options.name === "segment_image"
+                ? provider.segmentImage!
+                : provider.generateImage
+            ).call(
+              provider,
+              { ...mediaPromptSchema.parse(args), ...(source ? { source } : {}) },
+              context,
+            ),
           };
     } catch (error) {
       if (polling)
@@ -202,18 +248,29 @@ export async function generateMediaFromTool(options: {
         status: output.status,
         ...("progress" in output ? { progress: output.progress } : {}),
       };
-    validateGeneratedMedia(output.output, video ? "video/mp4" : "image/png");
+    const expected = video
+      ? "video/mp4"
+      : options.name === "transcribe_media"
+        ? "application/json"
+        : options.name === "segment_image"
+          ? output.output.mimeType
+          : "image/png";
+    if (options.name === "segment_image" && !["image/png", "application/json"].includes(expected))
+      throw new MediaGenerationError("provider_failure");
+    validateGeneratedMedia(output.output, expected);
     context.signal.throwIfAborted();
     const attached = await options.attach(
       output.output,
-      `generated-${reservation.id}.${video ? "mp4" : "png"}`,
+      `generated-${reservation.id}.${output.output.mimeType === "application/json" ? "json" : video ? "mp4" : "png"}`,
       {
         id: reservation.id,
         result: { provider: provider.id, ...("id" in output ? { jobId: output.id } : {}) },
       },
     );
-    await options.publish(attached.block, reservation.id, attached.artifactId);
-    return { status: "completed", artifactId: attached.artifactId };
+    if (attached.files)
+      await options.publish(attached.block, reservation.id, attached.artifactId, attached.files);
+    else await options.publish(attached.block, reservation.id, attached.artifactId);
+    return withFiles(attached.artifactId, attached.files);
   } catch (error) {
     context.signal.throwIfAborted();
     return {
