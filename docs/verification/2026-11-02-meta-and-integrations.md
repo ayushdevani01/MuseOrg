@@ -67,8 +67,8 @@ eligibility, allowed permission access and any required review must be checked
 in the actual app dashboard.
 
 Publishing, ad-management and inbound-message adapters still need to be wired
-and tested with those account grants. Meta image generation also still needs
-an application adapter; sharing a model key does not make it an available tool.
+and tested with those account grants. The later [media and account verification](./2026-11-03-meta-media.md)
+records native Meta media tools, live application runs and actual account reads.
 EC2 deployment and a full marketing rehearsal remain outside this verification.
 
 ## Sources
