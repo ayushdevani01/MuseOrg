@@ -13,7 +13,10 @@ import { FAKE_VIDEO_BASE64 } from "./fake-media-assets.js";
 import type { ResolveHostname } from "./web-ssrf.js";
 import { fetchSafeWebBytes } from "./web-ssrf.js";
 
-export const mediaPromptSchema = z.object({ prompt: z.string().trim().min(1).max(4000) });
+export const mediaPromptSchema = z.object({
+  prompt: z.string().trim().min(1).max(4000),
+  sourcePath: z.string().trim().min(1).max(500).optional(),
+});
 export function validateGeneratedMedia(
   output: GeneratedMedia,
   mimeType: GeneratedMedia["mimeType"],
@@ -26,7 +29,7 @@ export function validateGeneratedMedia(
   }
 }
 
-async function boundedBytes(response: Response, limit: number): Promise<Uint8Array> {
+export async function boundedMediaBytes(response: Response, limit: number): Promise<Uint8Array> {
   if (Number(response.headers.get("content-length")) > limit) {
     await response.body?.cancel();
     throw new MediaGenerationError("output_limit");
@@ -132,7 +135,7 @@ export class FalMediaGenerationProvider implements MediaGenerationProvider {
               : "provider_failure",
         );
       }
-      return JSON.parse(new TextDecoder().decode(await boundedBytes(response, 100_000)));
+      return JSON.parse(new TextDecoder().decode(await boundedMediaBytes(response, 100_000)));
     } catch (error) {
       context.signal.throwIfAborted();
       if (error instanceof MediaGenerationError) throw error;
