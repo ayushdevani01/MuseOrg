@@ -3,6 +3,17 @@ import {
   FakeMediaGenerationProvider,
   FalMediaGenerationProvider,
 } from "./media-generation-provider.js";
+import { MetaMediaGenerationProvider } from "./meta-media-provider.js";
+
+/** Reuse the selected connection without adding a second credential or vendor environment setting. */
+export function createConnectedMediaGenerationProvider(connection: {
+  provider: string;
+  apiKey?: string;
+}): MediaGenerationProvider | undefined {
+  return connection.provider === "meta" && connection.apiKey
+    ? new MetaMediaGenerationProvider({ apiKey: connection.apiKey })
+    : undefined;
+}
 
 export function createMediaGenerationProvider(
   env: NodeJS.ProcessEnv = process.env,
