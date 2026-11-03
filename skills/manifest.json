@@ -24,6 +24,7 @@
     },
     { "path": "museorg/incident-repair", "resources": [] },
     { "path": "museorg/github-delivery", "resources": [] },
-    { "path": "museorg/project-coordination", "resources": [] }
+    { "path": "museorg/project-coordination", "resources": [] },
+    { "path": "museorg/meta-media", "resources": [] }
   ]
 }
