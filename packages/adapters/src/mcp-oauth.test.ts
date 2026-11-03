@@ -1949,6 +1949,25 @@ describe("MCP OAuth", () => {
       expect(authorizationUrlOf(started).searchParams.get("scope")).toBe("mail.read mail.send");
     });
 
+    it("keeps the configured scope when a challenge advertises broader access", async () => {
+      nonRegisteringAuthServer(() => undefined, {
+        resourceScopes: ["mail.read", "mail.send"],
+        serverScopes: ["mail.read", "mail.send"],
+      });
+      const { broker } = brokerWithMaterial({
+        oauthClient: { ...oauthClient, scope: "mail.read" },
+      });
+
+      const started = await broker.begin({
+        serverId: "server-1",
+        spaceId: "workspace-1",
+        userId: "user-1",
+        redirectUri: "https://app.example.test/mcp/oauth/callback",
+      });
+
+      expect(authorizationUrlOf(started).searchParams.get("scope")).toBe("mail.read");
+    });
+
     describe("offline_access", () => {
       const begin = {
         serverId: "server-1",

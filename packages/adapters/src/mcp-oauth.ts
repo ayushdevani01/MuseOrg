@@ -513,6 +513,8 @@ export class StoredMcpOAuthProvider implements OAuthClientProvider {
       }
       throw error;
     }
+    // Transport-driven authorization can prefer advertised scopes over client metadata.
+    if (this.configuredScope) authorizationUrl.searchParams.set("scope", this.configuredScope);
     const extra = this.material.oauthClient?.authorization_params;
     if (extra) {
       for (const [key, value] of Object.entries(parseMcpOAuthAuthorizationParams(extra)))
