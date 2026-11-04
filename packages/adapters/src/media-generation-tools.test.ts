@@ -196,11 +196,11 @@ describe("bot media tools", () => {
     });
     const transcribe = vi.fn(async () => ({
       bytes: new TextEncoder().encode("{}"),
-      mimeType: "application/json",
+      mimeType: "application/json" as const,
     }));
     const segmentImage = vi.fn(async () => ({
       bytes: new TextEncoder().encode("{}"),
-      mimeType: "application/json",
+      mimeType: "application/json" as const,
     }));
     const media = Object.assign(provider, {
       capabilities: { ...provider.capabilities, transcription: true, segmentation: true },

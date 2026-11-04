@@ -27,8 +27,11 @@ text rendering. Use deterministic text composition when exact wording is require
 
 Media calls may cost money and use the normal approval controls. An uncertain or
 interrupted submission must not be resubmitted automatically. Read its saved result or
-report the blocker. Two new media submissions are allowed per run; continue a larger
-task in a later user-authorized turn.
+report the blocker. A run permits two image/video generation submissions in total,
+plus two transcription and two segmentation submissions. Transcribing and segmenting
+inputs therefore do not consume the generation allowance: the recording → cutout →
+campaign image pipeline fits in one run. Continue larger tasks in a later authorized
+turn. Do not describe a local composition as a successful provider generation.
 
 Register useful files against the current shared project revision. A changed offer,
 locale or product makes dependent drafts stale. Keep external posts, messages and ads

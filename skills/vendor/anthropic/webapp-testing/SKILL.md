@@ -23,7 +23,9 @@ readiness check; copy it into the authorized project before executing it.
 Test one important user path and its relevant failure case. Inspect console or
 server errors when needed, capture actual screenshots, and attach useful evidence.
 Use an installed Playwright setup if the project already has one; do not assume
-Python Playwright or browser binaries are present. Manage any server you start
+Python Playwright or browser binaries are present. When the computer already has
+browser tools, do not launch another Chromium/Chrome process from shell for a
+screenshot. Serve the page over HTTP and use those tools. Manage any server you start
 with a bounded lifetime and preserve its logs. Do not stop shared browser/display
 processes or unrelated services.
 
