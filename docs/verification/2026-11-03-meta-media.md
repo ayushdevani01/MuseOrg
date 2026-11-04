@@ -53,8 +53,10 @@ The parser's upstream SAM license is retained with its attribution.
 
 ## Outstanding
 
-- WAV and MP3 transcription are verified; separate video-input proof remains.
-- In-app Threads publishing and the official Ads MCP path still need live receipts.
+- WAV and MP3 transcription are verified. The later [video rehearsal](./2026-11-04-video-rehearsal.md)
+  also verifies video normalization, localized images and a peer draft handoff.
+- In-app Threads publishing still needs live receipts. Official Ads MCP and Threads
+  profile reads have [separate employee evidence](./2026-11-04-meta-connections.md).
   WhatsApp test-number provisioning and messaging were deferred by the user before
   its terms were accepted. Account creation alone is insufficient.
 - Social publishing/staging, revision-bound authorization, scoped inbound replies,
