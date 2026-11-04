@@ -374,10 +374,6 @@ msgstr "A bit of everything"
 msgid "A command's output"
 msgstr "A command's output"
 
-#: src/pages/MetaOnboarding.tsx
-msgid "A coworker's model is unavailable. Try again later."
-msgstr "A coworker's model is unavailable. Try again later."
-
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -416,10 +412,6 @@ msgstr "Account label"
 #: src/components/SidebarFooter.tsx
 msgid "Account menu for {name}"
 msgstr "Account menu for {name}"
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Account sign-in"
-#~ msgstr "Account sign-in"
 
 #: src/pages/ProjectSettings.tsx
 msgid "Action scopes"
@@ -1069,7 +1061,7 @@ msgstr "Budget: {0} spent, {1} reserved, {2} total cents"
 msgid "Build software"
 msgstr "Build software"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Build, investigate and maintain software."
 msgstr "Build, investigate and maintain software."
 
@@ -1279,7 +1271,7 @@ msgstr "Checking connection…"
 msgid "Checking…"
 msgstr "Checking…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Chief of Staff"
 msgstr "Chief of Staff"
 
@@ -1523,10 +1515,6 @@ msgstr "Computers are available. Reload or open a bot to continue."
 msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TOKEN, or set SANDBOX_PROVIDER to e2b, daytona, or boat with its API key. Recreate the stack after changing .env."
 msgstr "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TOKEN, or set SANDBOX_PROVIDER to e2b, daytona, or boat with its API key. Recreate the stack after changing .env."
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Configure a plugin catalog on the server to connect apps."
-#~ msgstr "Configure a plugin catalog on the server to connect apps."
-
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
 msgstr "Configured servers"
@@ -1613,10 +1601,6 @@ msgstr "Connect OAuth"
 #: src/lib/agent-import-errors.ts
 msgid "Connect this model's provider first."
 msgstr "Connect this model's provider first."
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Connect through an MCP server. Account access is granted during setup."
-#~ msgstr "Connect through an MCP server. Account access is granted during setup."
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
@@ -1708,7 +1692,7 @@ msgstr "Continue with credits"
 msgid "Conversations"
 msgstr "Conversations"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Coordinate priorities, projects and the team."
 msgstr "Coordinate priorities, projects and the team."
 
@@ -1921,7 +1905,7 @@ msgstr "Could not download {0}. Try again."
 msgid "Could not download {name}. Try again."
 msgstr "Could not download {name}. Try again."
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Could not hire your coworkers. Try again."
 msgstr "Could not hire your coworkers. Try again."
 
@@ -2272,10 +2256,6 @@ msgstr "Create space"
 msgid "Create your MuseOrg"
 msgstr "Create your MuseOrg"
 
-#: src/pages/Auth.tsx
-#~ msgid "Create your Rakazo"
-#~ msgstr "Create your Rakazo"
-
 #: src/components/AskCard.tsx
 msgid "Created"
 msgstr "Created"
@@ -2286,7 +2266,7 @@ msgstr "Created"
 msgid "Creating…"
 msgstr "Creating…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Creative Director"
 msgstr "Creative Director"
 
@@ -2981,10 +2961,6 @@ msgstr "Gateway ID"
 msgid "General"
 msgstr "General"
 
-#: src/components/SidebarFooter.tsx
-#~ msgid "Get the mobile app"
-#~ msgstr "Get the mobile app"
-
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
 msgstr "Getting ready"
@@ -3075,15 +3051,15 @@ msgstr "High"
 msgid "High"
 msgstr "High"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire coworkers"
 msgstr "Hire coworkers"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire your coworkers"
 msgstr "Hire your coworkers"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hiring"
 msgstr "Hiring"
 
@@ -3697,7 +3673,7 @@ msgstr "Messaging"
 msgid "Meta API key"
 msgstr "Meta API key"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Meta Growth Operator"
 msgstr "Meta Growth Operator"
 
@@ -4016,10 +3992,6 @@ msgstr "No integrations added."
 msgid "No longer active"
 msgstr "No longer active"
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "No managed app catalog is configured on this deployment."
-#~ msgstr "No managed app catalog is configured on this deployment."
-
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
 msgstr "No matching artifacts on this page."
@@ -4057,10 +4029,6 @@ msgstr "No models listed."
 #: src/pages/shell/agent-import.tsx
 msgid "No OpenClaw, Hermes or agent document found."
 msgstr "No OpenClaw, Hermes or agent document found."
-
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "No remote MCP servers found"
-#~ msgstr "No remote MCP servers found"
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4115,10 +4083,6 @@ msgstr "Not imported"
 #: src/pages/shell/import-status.ts
 msgid "Not in Rakazo's catalog"
 msgstr "Not in Rakazo's catalog"
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Not in the plugin catalog"
-#~ msgstr "Not in the plugin catalog"
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4453,7 +4417,7 @@ msgstr "Pin"
 msgid "Pinned"
 msgstr "Pinned"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Plan distribution, outreach and follow-up."
 msgstr "Plan distribution, outreach and follow-up."
 
@@ -5148,10 +5112,6 @@ msgstr "Search by domain"
 msgid "Search Cloudflare documentation"
 msgstr "Search Cloudflare documentation"
 
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "Search integrations.sh"
-#~ msgstr "Search integrations.sh"
-
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/shell/chat-model-picker.tsx
@@ -5313,7 +5273,7 @@ msgstr "Shape"
 msgid "Shape {0}"
 msgstr "Shape {0}"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Shape ideas, design and creative work."
 msgstr "Shape ideas, design and creative work."
 
@@ -5397,10 +5357,6 @@ msgstr "Sign in at <0>{0}</0>, then paste the code here."
 #: src/pages/Auth.tsx
 msgid "Sign in to MuseOrg"
 msgstr "Sign in to MuseOrg"
-
-#: src/pages/Auth.tsx
-#~ msgid "Sign in to Rakazo"
-#~ msgstr "Sign in to Rakazo"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5548,7 +5504,7 @@ msgstr "Speech model"
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO is temporarily unavailable. Try again."
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Staff Engineer"
 msgstr "Staff Engineer"
 

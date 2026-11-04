@@ -60,10 +60,10 @@ import {
   runModelConnectionPreflight,
   unavailableSelectedModel,
 } from "../lib/model-connection-preflight";
-import type { RpcClient } from "../lib/rpc";
 import { createSpaceRpc, rpc } from "../lib/rpc";
 import { useModelOAuthSignIn } from "../lib/use-model-oauth-signin";
 import { errorText } from "../lib/user-error";
+import { CoworkerOnboarding } from "./CoworkerOnboarding";
 import { MetaOnboarding } from "./MetaOnboarding";
 import { CompatibleKeyField } from "./model-settings/compatible-key-field";
 import { OnboardingImport } from "./onboarding-import";
@@ -90,9 +90,6 @@ const FIRST_BOT_NAME = "Chief";
 const FIRST_BOT_SPAWN_KEY = "onboarding:first";
 const FIRST_BOT_LOCK = "rakazo:onboarding-first-bot";
 
-/** Survives StrictMode remounts; concurrent first-bot creates share one in-flight attempt. */
-const firstBotEnsures = new Map<string, Promise<{ id: string }>>();
-
 function findFirstBot(
   bots: Array<{ id: string; name: string; spawnKey: string | null }>,
 ): { id: string } | undefined {
@@ -103,46 +100,10 @@ function findFirstBot(
   return byName ? { id: byName.id } : undefined;
 }
 
-async function createOrReuseFirstBot(client: RpcClient): Promise<{ id: string }> {
-  const existing = await client.bots.list();
-  const reuse = findFirstBot(existing);
-  if (reuse) return reuse;
-  try {
-    const created = await client.bots.create({
-      name: FIRST_BOT_NAME,
-      title: "",
-      description: "",
-      instructions: "",
-      notifyOnFinish: true,
-      spawnKey: FIRST_BOT_SPAWN_KEY,
-    });
-    return { id: created.id };
-  } catch (error) {
-    // Another tab won the unique (spaceId, spawnKey) race; reuse that bot only.
-    const afterConflict = await client.bots.list();
-    const winner = afterConflict.find((bot) => bot.spawnKey === FIRST_BOT_SPAWN_KEY);
-    if (winner) return { id: winner.id };
-    throw error;
-  }
-}
-
 async function withFirstBotLock<T>(run: () => Promise<T>): Promise<T> {
   const locks = globalThis.navigator?.locks;
   if (!locks?.request) return run();
   return locks.request(FIRST_BOT_LOCK, run);
-}
-
-async function ensureFirstBot(accountBoundary: string, client: RpcClient): Promise<{ id: string }> {
-  const pending = firstBotEnsures.get(accountBoundary);
-  if (pending) return pending;
-  // Web Lock serializes cross-tab creates; module promise covers same-tab StrictMode.
-  // spawnKey makes create idempotent when locks are unavailable.
-  // Clear after settle so a later empty-space visit re-lists instead of reusing a deleted id.
-  const attempt = withFirstBotLock(() => createOrReuseFirstBot(client)).finally(() => {
-    firstBotEnsures.delete(accountBoundary);
-  });
-  firstBotEnsures.set(accountBoundary, attempt);
-  return attempt;
 }
 
 export function OnboardingPage() {
@@ -168,6 +129,12 @@ export function OnboardingPage() {
 
   if (failed) return <OnboardingUnavailable onRetry={() => setAttempt((value) => value + 1)} />;
   if (!loaded) return <PageLoading />;
+  const reload = () => {
+    setLoaded(null);
+    setAttempt((value) => value + 1);
+  };
+  if (!loaded.me.needsModel && !loaded.me.needsSignupSurvey)
+    return <CoworkerOnboarding key={loaded.me.userId} me={loaded.me} onReload={reload} />;
   return loaded.me.requiredPersonalModelProvider === "meta" ? (
     <MetaOnboarding
       key={loaded.me.userId}
@@ -183,6 +150,7 @@ export function OnboardingPage() {
       key={loaded.me.userId}
       initialMe={loaded.me}
       initialCatalog={loaded.models}
+      onModelReady={reload}
     />
   );
 }
@@ -190,9 +158,11 @@ export function OnboardingPage() {
 function GenericOnboardingPage({
   initialMe,
   initialCatalog,
+  onModelReady,
 }: {
   initialMe: Me;
   initialCatalog: ModelCatalogEntry[];
+  onModelReady: () => void;
 }) {
   const [rpc] = useState(() => createSpaceRpc(initialMe.spaceId));
   const { t } = useLingui();
@@ -587,18 +557,12 @@ function GenericOnboardingPage({
     setError(null);
     try {
       const imported = importedBotRef.current;
-      const bot =
-        imported ?? (await ensureFirstBot(`${initialMe.userId}:${initialMe.spaceId}`, rpc));
-      // Onboarding continues conversationally in the thread: greeting first,
-      // then the focus choice (immediate for the first bot), which an imported
-      // bot already answered.
-      const started = await rpc.onboarding
-        .start({ botId: bot.id })
-        .then(() => true)
-        .catch(() => false);
-      if (started && !imported) {
-        await rpc.onboarding.promptFocus({ botId: bot.id }).catch(() => undefined);
+      if (!imported) {
+        onModelReady();
+        return;
       }
+      const bot = imported;
+      await rpc.onboarding.start({ botId: bot.id }).catch(() => undefined);
       navigate(`/app/${bot.id}`);
     } catch (err) {
       createStartedRef.current = false;

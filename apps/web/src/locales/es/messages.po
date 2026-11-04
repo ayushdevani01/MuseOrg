@@ -374,10 +374,6 @@ msgstr ""
 msgid "A command's output"
 msgstr "La salida de un comando"
 
-#: src/pages/MetaOnboarding.tsx
-msgid "A coworker's model is unavailable. Try again later."
-msgstr ""
-
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -1065,7 +1061,7 @@ msgstr ""
 msgid "Build software"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Build, investigate and maintain software."
 msgstr ""
 
@@ -1275,7 +1271,7 @@ msgstr "Comprobando la conexión…"
 msgid "Checking…"
 msgstr "Comprobando…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Chief of Staff"
 msgstr ""
 
@@ -1519,10 +1515,6 @@ msgstr ""
 msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TOKEN, or set SANDBOX_PROVIDER to e2b, daytona, or boat with its API key. Recreate the stack after changing .env."
 msgstr "Las computadoras están apagadas. Configura SANDBOX_PROVIDER=docker con SANDBOX_SUPERVISOR_TOKEN, o establece SANDBOX_PROVIDER en e2b, daytona o boat con su clave de API. Recrea el stack después de cambiar .env."
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Configure a plugin catalog on the server to connect apps."
-#~ msgstr ""
-
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
 msgstr "Servidores configurados"
@@ -1609,10 +1601,6 @@ msgstr "Conectar OAuth"
 #: src/lib/agent-import-errors.ts
 msgid "Connect this model's provider first."
 msgstr "Conecta primero el proveedor de este modelo."
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Connect through an MCP server. Account access is granted during setup."
-#~ msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
@@ -1704,7 +1692,7 @@ msgstr ""
 msgid "Conversations"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Coordinate priorities, projects and the team."
 msgstr ""
 
@@ -1917,7 +1905,7 @@ msgstr "No se pudo descargar {0}. Inténtalo de nuevo."
 msgid "Could not download {name}. Try again."
 msgstr "No se pudo descargar {name}. Inténtalo de nuevo."
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Could not hire your coworkers. Try again."
 msgstr ""
 
@@ -2268,10 +2256,6 @@ msgstr "Crear space"
 msgid "Create your MuseOrg"
 msgstr ""
 
-#: src/pages/Auth.tsx
-#~ msgid "Create your Rakazo"
-#~ msgstr "Crea tu Rakazo"
-
 #: src/components/AskCard.tsx
 msgid "Created"
 msgstr "Creado"
@@ -2282,7 +2266,7 @@ msgstr "Creado"
 msgid "Creating…"
 msgstr "Creando…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Creative Director"
 msgstr ""
 
@@ -2977,10 +2961,6 @@ msgstr "ID de gateway"
 msgid "General"
 msgstr "General"
 
-#: src/components/SidebarFooter.tsx
-#~ msgid "Get the mobile app"
-#~ msgstr "Obtener la aplicación móvil"
-
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
 msgstr ""
@@ -3071,15 +3051,15 @@ msgstr "Alto"
 msgid "High"
 msgstr "Alto"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire coworkers"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire your coworkers"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hiring"
 msgstr ""
 
@@ -3693,7 +3673,7 @@ msgstr "Mensajería"
 msgid "Meta API key"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Meta Growth Operator"
 msgstr ""
 
@@ -4012,10 +3992,6 @@ msgstr ""
 msgid "No longer active"
 msgstr "Ya no está activo"
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "No managed app catalog is configured on this deployment."
-#~ msgstr "No hay un catálogo de apps administradas configurado en este despliegue."
-
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
 msgstr ""
@@ -4053,10 +4029,6 @@ msgstr "No hay modelos en la lista."
 #: src/pages/shell/agent-import.tsx
 msgid "No OpenClaw, Hermes or agent document found."
 msgstr "No se encontraron archivos de OpenClaw, Hermes ni un documento de agente."
-
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "No remote MCP servers found"
-#~ msgstr ""
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4111,10 +4083,6 @@ msgstr "No importado"
 #: src/pages/shell/import-status.ts
 msgid "Not in Rakazo's catalog"
 msgstr "No está en el catálogo de Rakazo"
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Not in the plugin catalog"
-#~ msgstr "No está en el catálogo de plugins"
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4449,7 +4417,7 @@ msgstr "Fijar"
 msgid "Pinned"
 msgstr "Fijados"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Plan distribution, outreach and follow-up."
 msgstr ""
 
@@ -5144,10 +5112,6 @@ msgstr ""
 msgid "Search Cloudflare documentation"
 msgstr ""
 
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "Search integrations.sh"
-#~ msgstr ""
-
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/shell/chat-model-picker.tsx
@@ -5309,7 +5273,7 @@ msgstr "Forma"
 msgid "Shape {0}"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Shape ideas, design and creative work."
 msgstr ""
 
@@ -5393,10 +5357,6 @@ msgstr "Inicia sesión en <0>{0}</0> y pega el código aquí."
 #: src/pages/Auth.tsx
 msgid "Sign in to MuseOrg"
 msgstr ""
-
-#: src/pages/Auth.tsx
-#~ msgid "Sign in to Rakazo"
-#~ msgstr "Inicia sesión en Rakazo"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5544,7 +5504,7 @@ msgstr "Modelo de habla"
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO no está disponible temporalmente. Inténtalo de nuevo."
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Staff Engineer"
 msgstr ""
 

@@ -11,15 +11,16 @@ const api = vi.hoisted(() => ({
   connect: vi.fn(),
   list: vi.fn(),
   hire: vi.fn(),
+  reload: vi.fn(),
 }));
 vi.mock("../lib/rpc", () => ({
   createSpaceRpc: () => ({
     me: api.me,
     models: { connect: api.connect },
     bots: { list: api.list },
+    onboarding: { hireCoworkers: api.hire },
   }),
 }));
-vi.mock("../lib/onboarding-coworkers", () => ({ hireOnboardingCoworker: api.hire }));
 vi.mock("@lingui/react/macro", () => ({
   useLingui: () => ({ t: (parts: TemplateStringsArray) => parts.join("") }),
   Trans: ({ children }: { children: ReactNode }) => children,
@@ -56,7 +57,7 @@ beforeEach(() => {
   api.connect.mockResolvedValue({ id: "connection" });
   api.me.mockResolvedValue({ ...me, needsModel: false });
   api.list.mockResolvedValue([]);
-  api.hire.mockResolvedValue({ id: "hired" });
+  api.hire.mockResolvedValue({ botIds: ["hired"] });
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
@@ -70,7 +71,7 @@ async function render(initialMe = me) {
   await act(async () =>
     root.render(
       <MemoryRouter initialEntries={["/onboarding/model"]}>
-        <MetaOnboarding initialMe={initialMe} catalog={catalog} onReload={() => {}} />
+        <MetaOnboarding initialMe={initialMe} catalog={catalog} onReload={api.reload} />
         <Location />
       </MemoryRouter>,
     ),
@@ -131,6 +132,28 @@ it("revisits an existing team without asking for the stored key", async () => {
   expect(api.connect).not.toHaveBeenCalled();
 });
 
+it("offers all four roles with a shared model and no personal key or model catalog", async () => {
+  await render({
+    ...me,
+    needsModel: false,
+    requiredPersonalModelProvider: null,
+    defaultProvider: "local",
+    defaultModel: "shared",
+  });
+  expect(host.querySelector('input[type="password"]')).toBeNull();
+  expect(
+    [...host.querySelectorAll<HTMLInputElement>('input[type="checkbox"]')].every(
+      (input) => input.checked,
+    ),
+  ).toBe(true);
+  await act(async () => host.querySelector("button")!.click());
+  expect(api.hire).toHaveBeenCalledExactlyOnceWith({
+    templateIds: ["chief", "engineer", "creative", "growth"],
+  });
+  expect(api.connect).not.toHaveBeenCalled();
+  expect(host.querySelector("output")?.textContent).toBe("/app/hired");
+});
+
 it("fails closed when loading the existing team fails", async () => {
   api.list.mockRejectedValue(new Error("offline"));
   await render({ ...me, needsModel: false });
@@ -139,13 +162,15 @@ it("fails closed when loading the existing team fails", async () => {
   expect(api.hire).not.toHaveBeenCalled();
 });
 
-it("rechecks a removed key before creating any selected coworker", async () => {
+it("returns to setup when the server rejects hiring after a key was removed", async () => {
   await render({ ...me, needsModel: false });
   api.me.mockResolvedValue(me);
+  api.hire.mockRejectedValue(new Error("Connection removed"));
   await act(async () => {
     host.querySelector("button")!.click();
   });
-  expect(api.hire).not.toHaveBeenCalled();
-  expect(host.querySelector('input[type="password"]')).not.toBeNull();
-  expect(host.querySelector("output")?.textContent).toBe("/onboarding/model");
+  expect(api.hire).toHaveBeenCalledWith({
+    templateIds: ["chief", "engineer", "creative", "growth"],
+  });
+  expect(api.reload).toHaveBeenCalledOnce();
 });

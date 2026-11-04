@@ -375,10 +375,6 @@ msgstr "什麼都做一點"
 msgid "A command's output"
 msgstr "命令的輸出"
 
-#: src/pages/MetaOnboarding.tsx
-msgid "A coworker's model is unavailable. Try again later."
-msgstr ""
-
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -1066,7 +1062,7 @@ msgstr ""
 msgid "Build software"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Build, investigate and maintain software."
 msgstr ""
 
@@ -1276,7 +1272,7 @@ msgstr "正在檢查連線…"
 msgid "Checking…"
 msgstr "正在檢查…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Chief of Staff"
 msgstr ""
 
@@ -1520,10 +1516,6 @@ msgstr "電腦已可使用。請重新載入或開啟機器人以繼續。"
 msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TOKEN, or set SANDBOX_PROVIDER to e2b, daytona, or boat with its API key. Recreate the stack after changing .env."
 msgstr "電腦未開啟。請設定 SANDBOX_PROVIDER=docker 並提供 SANDBOX_SUPERVISOR_TOKEN，或將 SANDBOX_PROVIDER 設為 e2b、daytona 或 boat 並提供對應 API 金鑰。更改 .env 後請重建環境。"
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Configure a plugin catalog on the server to connect apps."
-#~ msgstr "請在伺服器上設定外掛程式目錄，以連接應用程式。"
-
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
 msgstr "已設定的伺服器"
@@ -1610,10 +1602,6 @@ msgstr "連線 OAuth"
 #: src/lib/agent-import-errors.ts
 msgid "Connect this model's provider first."
 msgstr "請先連結此模型的供應商。"
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Connect through an MCP server. Account access is granted during setup."
-#~ msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
@@ -1705,7 +1693,7 @@ msgstr "使用額度繼續"
 msgid "Conversations"
 msgstr "對話"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Coordinate priorities, projects and the team."
 msgstr ""
 
@@ -1918,7 +1906,7 @@ msgstr "無法下載 {0}。請重試。"
 msgid "Could not download {name}. Try again."
 msgstr "無法下載 {name}。請重試。"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Could not hire your coworkers. Try again."
 msgstr ""
 
@@ -2269,10 +2257,6 @@ msgstr "建立空間"
 msgid "Create your MuseOrg"
 msgstr ""
 
-#: src/pages/Auth.tsx
-#~ msgid "Create your Rakazo"
-#~ msgstr "建立你的 Rakazo"
-
 #: src/components/AskCard.tsx
 msgid "Created"
 msgstr "已建立"
@@ -2283,7 +2267,7 @@ msgstr "已建立"
 msgid "Creating…"
 msgstr "正在建立…"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Creative Director"
 msgstr ""
 
@@ -2978,10 +2962,6 @@ msgstr "閘道器 ID"
 msgid "General"
 msgstr "一般"
 
-#: src/components/SidebarFooter.tsx
-#~ msgid "Get the mobile app"
-#~ msgstr "下載手機應用程式"
-
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
 msgstr "正在準備"
@@ -3072,15 +3052,15 @@ msgstr "高"
 msgid "High"
 msgstr "高"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire coworkers"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hire your coworkers"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Hiring"
 msgstr ""
 
@@ -3694,7 +3674,7 @@ msgstr "訊息"
 msgid "Meta API key"
 msgstr ""
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Meta Growth Operator"
 msgstr ""
 
@@ -4013,10 +3993,6 @@ msgstr ""
 msgid "No longer active"
 msgstr "已停用"
 
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "No managed app catalog is configured on this deployment."
-#~ msgstr "此部署尚未設定受管理的應用程式目錄。"
-
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
 msgstr "此頁面沒有符合的成品。"
@@ -4054,10 +4030,6 @@ msgstr "未列出模型。"
 #: src/pages/shell/agent-import.tsx
 msgid "No OpenClaw, Hermes or agent document found."
 msgstr "找不到 OpenClaw、Hermes 或代理程式文件。"
-
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "No remote MCP servers found"
-#~ msgstr "找不到遠端 MCP 伺服器"
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4112,10 +4084,6 @@ msgstr "未匯入"
 #: src/pages/shell/import-status.ts
 msgid "Not in Rakazo's catalog"
 msgstr "不在 Rakazo 目錄中"
-
-#: src/pages/PluginsOverlay.tsx
-#~ msgid "Not in the plugin catalog"
-#~ msgstr "不在外掛程式目錄中"
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4450,7 +4418,7 @@ msgstr "置頂"
 msgid "Pinned"
 msgstr "置頂"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Plan distribution, outreach and follow-up."
 msgstr ""
 
@@ -5145,10 +5113,6 @@ msgstr "依網域搜尋"
 msgid "Search Cloudflare documentation"
 msgstr ""
 
-#: src/components/integrations/IntegrationSetup.tsx
-#~ msgid "Search integrations.sh"
-#~ msgstr "搜尋 integrations.sh"
-
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/shell/chat-model-picker.tsx
@@ -5310,7 +5274,7 @@ msgstr "形狀"
 msgid "Shape {0}"
 msgstr "形狀 {0}"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Shape ideas, design and creative work."
 msgstr ""
 
@@ -5394,10 +5358,6 @@ msgstr "在 <0>{0}</0> 登入，然後將代碼貼到這裡。"
 #: src/pages/Auth.tsx
 msgid "Sign in to MuseOrg"
 msgstr ""
-
-#: src/pages/Auth.tsx
-#~ msgid "Sign in to Rakazo"
-#~ msgstr "登入 Rakazo"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5545,7 +5505,7 @@ msgstr "語音模型"
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO 暫時不可用，請重試。"
 
-#: src/pages/MetaOnboarding.tsx
+#: src/pages/CoworkerOnboarding.tsx
 msgid "Staff Engineer"
 msgstr ""
 

@@ -28,11 +28,11 @@ export async function rpc<T>(page: Page, procedure: string, body: unknown): Prom
 
 export async function completeOnboarding(page: Page, testInfo?: TestInfo) {
   await page.waitForURL(/\/(onboarding|app)/, { timeout: 20_000 });
-  // Optional Server integrations step (needsSetup). Skip when shown, then the
-  // first bot is created automatically — land in Chief's chat with no form.
+  // Keep ordinary test fixtures small; the starter-team journey separately hires all roles.
   const integrations = page.getByRole("heading", { name: "Server integrations", exact: true });
+  const team = page.getByRole("heading", { name: "Hire your coworkers", exact: true });
   const chief = page.getByText("Chief").first();
-  await integrations.or(chief).waitFor({ timeout: 20_000 });
+  await integrations.or(team).or(chief).first().waitFor({ timeout: 20_000 });
   if ((await chief.isVisible().catch(() => false)) && page.url().includes("/app")) {
     if (testInfo) {
       await captureScreenshot(page, testInfo, "03-create-first-bot");
@@ -43,6 +43,11 @@ export async function completeOnboarding(page: Page, testInfo?: TestInfo) {
   if (await integrations.isVisible().catch(() => false)) {
     if (testInfo) await captureScreenshot(page, testInfo, "02-connect-apps");
     await page.getByRole("button", { name: "Skip", exact: true }).click();
+  }
+  if (await team.isVisible().catch(() => false)) {
+    for (const name of ["Staff Engineer", "Creative Director", "Meta Growth Operator"])
+      await page.getByRole("checkbox", { name: new RegExp(name) }).uncheck();
+    await page.getByRole("button", { name: "Hire coworkers", exact: true }).click();
   }
   await page.waitForURL(/\/app\//, { timeout: 20_000 });
   await expect(page.getByText("Chief").first()).toBeVisible();
