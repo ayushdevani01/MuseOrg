@@ -156,6 +156,7 @@ function SessionApp() {
         <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/" element={user ? <Navigate to="/app" replace /> : <WelcomePage />} />
+            <Route path="/welcome" element={<WelcomePage />} />
             <Route
               path="/sign-in"
               element={

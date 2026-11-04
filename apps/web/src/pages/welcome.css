@@ -1,0 +1,1212 @@
+.muse-landing {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  overflow-x: clip;
+  isolation: isolate;
+}
+.muse-landing * {
+  box-sizing: border-box;
+}
+.muse-landing a {
+  text-decoration: none;
+  color: inherit;
+}
+.muse-landing button,
+.muse-landing a,
+.muse-landing summary {
+  -webkit-tap-highlight-color: transparent;
+}
+.muse-landing a:focus-visible,
+.muse-landing summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 5px;
+}
+.muse-landing h1,
+.muse-landing h2,
+.muse-landing h3,
+.muse-landing p {
+  margin: 0;
+}
+.muse-landing section[id] {
+  scroll-margin-top: 40px;
+}
+.muse-container {
+  width: min(1140px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.muse-skip {
+  position: fixed;
+  left: 20px;
+  top: -80px;
+  padding: 12px 20px;
+  background: var(--primary);
+  color: var(--primary-foreground) !important;
+  z-index: 20;
+  border-radius: 8px;
+}
+.muse-skip:focus {
+  top: 16px;
+}
+.muse-window-chrome {
+  height: 22px;
+  padding: 10px 15px 0;
+}
+.muse-header {
+  height: 84px;
+  width: min(1320px, calc(100% - 80px));
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  gap: 24px;
+}
+.muse-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 650;
+  font-size: 23px;
+  letter-spacing: -1px;
+}
+.muse-brand img {
+  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+}
+.muse-desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  font-size: 13px;
+  color: var(--muted-foreground);
+}
+.muse-desktop-nav a:hover,
+.muse-sign-in:hover {
+  color: var(--foreground);
+}
+.muse-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  font-size: 13px;
+}
+.muse-sign-in {
+  color: var(--muted-foreground) !important;
+}
+.muse-button {
+  height: 48px !important;
+  padding-inline: 23px !important;
+  border-radius: 100px !important;
+  font-size: 14px !important;
+  gap: 14px !important;
+  font-weight: 500 !important;
+}
+.muse-nav-cta {
+  height: 36px !important;
+  font-size: 12px !important;
+  padding-inline: 17px !important;
+  gap: 15px !important;
+}
+.muse-button svg {
+  height: 15px;
+  width: 15px;
+}
+.muse-menu-toggle {
+  display: none !important;
+}
+.muse-mobile-menu {
+  display: none;
+}
+.muse-hero {
+  padding: 80px 24px 60px;
+  text-align: center;
+}
+.muse-beta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--border);
+  padding: 6px 10px 6px 11px;
+  border-radius: 40px;
+  font-size: 10px;
+  letter-spacing: 0.15px;
+}
+.muse-beta > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--foreground);
+}
+.muse-beta svg {
+  margin-left: 8px;
+  color: var(--muted-foreground);
+}
+.muse-hero h1 {
+  font-size: clamp(68px, 7.5vw, 108px);
+  line-height: 0.98;
+  letter-spacing: -7px;
+  font-weight: 450;
+  margin: 31px 0 28px;
+}
+.muse-hero h1 > span {
+  color: var(--muted-foreground);
+}
+.muse-hero > p {
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+  letter-spacing: -0.25px;
+}
+.muse-hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 29px;
+}
+.muse-text-action {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+.muse-text-action:hover svg {
+  transform: translateY(3px);
+}
+.muse-text-action svg {
+  transition: transform 0.2s;
+}
+.muse-hero-note {
+  display: block;
+  margin-top: 19px;
+  color: var(--faint-foreground);
+  font-size: 10px;
+  letter-spacing: 0.2px;
+}
+.muse-workspace-section {
+  padding-top: 9px;
+}
+.muse-workspace-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--faint-foreground);
+  margin-bottom: 13px;
+}
+.muse-workspace-caption > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--muted-foreground);
+}
+.muse-small-mark {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--foreground);
+}
+.muse-workspace {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr) 285px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  overflow: hidden;
+  min-height: 450px;
+  box-shadow: 0 16px 55px -28px color-mix(in srgb, var(--foreground) 22%, transparent);
+  background: var(--background);
+}
+.muse-preview-sidebar {
+  padding: 19px 10px 13px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.muse-sidebar-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px 17px;
+  color: var(--faint-foreground);
+  font-size: 10px;
+}
+.muse-coworker-tab {
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  border-radius: 9px;
+  padding: 10px 7px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+  cursor: pointer;
+  min-height: 64px;
+  position: relative;
+}
+.muse-coworker-tab:hover {
+  background: var(--accent);
+}
+.muse-coworker-tab.is-selected {
+  background: var(--sidebar-accent);
+}
+.muse-coworker-tab img {
+  mix-blend-mode: multiply;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.muse-coworker-tab strong {
+  display: block;
+  font-weight: 550;
+  font-size: 11px;
+}
+.muse-coworker-tab small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted-foreground);
+  margin-top: 3px;
+}
+.muse-current-dot {
+  height: 4px;
+  width: 4px;
+  background: var(--foreground);
+  border-radius: 50%;
+  margin-left: auto;
+}
+.muse-shared-computer {
+  margin-top: auto;
+  padding: 16px 9px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.muse-shared-computer svg:last-child {
+  margin-left: auto;
+}
+.muse-preview-thread {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.muse-thread-heading {
+  height: 58px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-size: 11px;
+}
+.muse-thread-heading > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 550;
+}
+.muse-thread-heading img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.muse-thread-heading > svg {
+  color: var(--faint-foreground);
+}
+.muse-conversation {
+  padding: 20px 25px 10px;
+  min-height: 310px;
+  flex: 1;
+}
+.muse-thread-date {
+  text-align: center;
+  color: var(--faint-foreground);
+  font-size: 8px;
+  margin-bottom: 22px;
+}
+.muse-user-message {
+  margin-left: auto;
+  width: fit-content;
+  max-width: 90%;
+  border-radius: 12px 12px 3px 12px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 12px 14px;
+  font-size: 10px;
+}
+.muse-bot-message {
+  display: flex;
+  gap: 9px;
+  margin-top: 26px;
+}
+.muse-bot-message > img {
+  mix-blend-mode: multiply;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  align-self: flex-start;
+}
+.muse-bot-message > div {
+  min-width: 0;
+}
+.muse-message-author {
+  font-size: 10px;
+  font-weight: 600;
+}
+.muse-bot-message p {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  line-height: 1.75;
+  margin-top: 6px;
+  max-width: 340px;
+}
+.muse-file-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 12px;
+  margin-top: 14px;
+  font-size: 10px;
+  width: fit-content;
+  min-width: 170px;
+}
+.muse-file-chip > svg:first-child {
+  color: var(--muted-foreground);
+}
+.muse-file-chip > svg:last-child {
+  margin-left: auto;
+}
+.muse-handoff {
+  font-size: 8px;
+  color: var(--faint-foreground);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 17px 0 0 45px;
+}
+.muse-preview-composer {
+  height: 39px;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 18px 18px;
+  padding: 0 9px 0 12px;
+  font-size: 10px;
+  color: var(--faint-foreground);
+}
+.muse-preview-send {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--muted);
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+}
+.muse-project-preview {
+  border-left: 1px solid var(--border);
+  padding: 20px 16px;
+  background: var(--background);
+}
+.muse-project-label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 9px;
+  color: var(--muted-foreground);
+  margin-bottom: 18px;
+}
+.muse-mini-site {
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.muse-mini-site-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 13px 13px;
+  border-bottom: 1px solid var(--border);
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.muse-mini-site-copy {
+  padding: 18px 18px 16px;
+  background: var(--muted);
+  overflow: hidden;
+  position: relative;
+}
+.muse-mini-site-copy > span:first-child {
+  font-size: 5px;
+  letter-spacing: 1px;
+  color: var(--muted-foreground);
+}
+.muse-mini-site h3 {
+  font-weight: 500;
+  font-size: 29px;
+  line-height: 1.07;
+  letter-spacing: -1.5px;
+  margin-top: 9px;
+}
+.muse-paper-object {
+  margin: 19px 20px 14px 85px;
+  background: var(--background);
+  box-shadow:
+    4px 5px 0 var(--border),
+    -8px 12px 18px color-mix(in srgb, var(--foreground) 8%, transparent);
+  height: 83px;
+  width: 63px;
+  border: 1px solid var(--border);
+  transform: rotate(-15deg);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.6px;
+}
+.muse-mini-site-link {
+  font-size: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.muse-output-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 17px;
+  font-size: 9px;
+  color: var(--muted-foreground);
+}
+.muse-output-row svg:last-child {
+  margin-left: auto;
+  color: var(--success);
+}
+.muse-review-label {
+  margin-left: auto;
+  font-size: 7px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+.muse-section-heading {
+  position: relative;
+}
+.muse-eyebrow {
+  font-size: 10px;
+  color: var(--muted-foreground);
+  display: block;
+  margin-bottom: 22px;
+}
+.muse-section-heading h2,
+.muse-editorial-copy h2 {
+  font-size: clamp(38px, 4.3vw, 61px);
+  font-weight: 450;
+  line-height: 1.08;
+  letter-spacing: -2.8px;
+}
+.muse-team {
+  padding-top: 141px;
+}
+.muse-section-heading > p {
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.muse-roster {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 40px;
+}
+.muse-role-card {
+  min-width: 0;
+}
+.muse-role-art {
+  aspect-ratio: 1.18;
+  border-radius: 13px;
+  background: var(--muted);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.muse-role-art img {
+  width: 91%;
+  height: 91%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.35s;
+}
+.muse-role-card:hover img {
+  transform: translateY(-5px) rotate(-2deg);
+}
+.muse-role-card h3 {
+  font-size: 17px;
+  font-weight: 550;
+  letter-spacing: -0.5px;
+  margin: 19px 0 5px;
+}
+.muse-role-job {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.muse-role-card > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted-foreground);
+  margin-top: 14px;
+}
+.muse-role-card > a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 21px;
+}
+.muse-role-card > a:hover svg {
+  transform: translateX(3px);
+}
+.muse-role-card > a svg {
+  transition: transform 0.2s;
+}
+.muse-together,
+.muse-approval {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 100px;
+  padding-top: 155px;
+}
+.muse-editorial-copy > p {
+  max-width: 360px;
+  margin-top: 25px;
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--muted-foreground);
+}
+.muse-inline-link {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 28px;
+}
+.muse-handoff-illustration {
+  background: var(--muted);
+  border-radius: 16px;
+  padding: 45px 30px;
+  min-height: 315px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.muse-shared-file {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  background: var(--background);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+.muse-shared-file > svg {
+  color: var(--muted-foreground);
+}
+.muse-shared-file strong {
+  display: block;
+  font-size: 9px;
+  color: var(--muted-foreground);
+  font-weight: 400;
+  margin-top: 3px;
+}
+.muse-file-count {
+  margin-left: auto;
+  font-size: 8px;
+  color: var(--faint-foreground);
+}
+.muse-sharing-note {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 14px 12px 0;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.muse-sharing-note img {
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+.muse-sharing-note strong {
+  font-size: 9px;
+}
+.muse-sharing-note p {
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-top: 3px;
+  line-height: 1.7;
+}
+.muse-shared-assets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 25px;
+  color: var(--muted-foreground);
+  font-size: 9px;
+}
+.muse-shared-assets > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.muse-approval {
+  padding-top: 110px;
+}
+.muse-approval-illustration {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  min-height: 315px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.muse-approval-icon {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--background);
+  margin-bottom: 26px;
+}
+.muse-approval-illustration > .muse-eyebrow {
+  margin-bottom: 10px;
+  font-size: 9px;
+}
+.muse-approval-illustration h3 {
+  font-size: 32px;
+  line-height: 1.15;
+  font-weight: 450;
+  letter-spacing: -1.3px;
+}
+.muse-approval-footer {
+  align-self: stretch;
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.muse-approval-footer > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.muse-draft-tag {
+  border: 1px solid var(--border);
+  background: var(--background);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: 9px;
+}
+.muse-faq {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 100px;
+  padding-top: 150px;
+}
+.muse-faq > h2 {
+  font-size: 34px;
+  font-weight: 450;
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+}
+.muse-faq details {
+  border-top: 1px solid var(--border);
+}
+.muse-faq details:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.muse-faq summary {
+  padding: 22px 0;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  font-size: 13px;
+}
+.muse-faq summary::-webkit-details-marker {
+  display: none;
+}
+.muse-faq summary svg {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  transition: transform 0.2s;
+}
+.muse-faq details[open] summary svg {
+  transform: rotate(180deg);
+}
+.muse-faq details > p {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  line-height: 1.9;
+  max-width: 470px;
+  padding: 0 30px 24px 0;
+}
+.muse-final-cta {
+  text-align: center;
+  padding: 150px 0 100px;
+}
+.muse-final-mascots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 34px;
+}
+.muse-final-mascots img {
+  mix-blend-mode: multiply;
+  width: 65px;
+  height: 65px;
+  object-fit: contain;
+  margin-left: -10px;
+}
+.muse-final-mascots img:nth-child(2n) {
+  transform: translateY(7px);
+}
+.muse-final-cta > .muse-eyebrow {
+  margin-bottom: 20px;
+}
+.muse-final-cta h2 {
+  font-size: clamp(45px, 5.3vw, 76px);
+  font-weight: 450;
+  line-height: 1.04;
+  letter-spacing: -4px;
+  margin-bottom: 33px;
+}
+.muse-final-cta > p {
+  font-size: 10px;
+  color: var(--faint-foreground);
+  margin-top: 17px;
+}
+.muse-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--border);
+  padding-block: 25px 30px;
+}
+.muse-brand-footer {
+  font-size: 18px;
+}
+.muse-brand-footer img {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+}
+.muse-footer > span,
+.muse-footer > a:last-child {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.muse-footer > a:last-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+@media (min-width: 1600px) {
+  .muse-hero {
+    padding-top: 100px;
+    padding-bottom: 75px;
+  }
+  .muse-hero h1 {
+    font-size: 118px;
+  }
+  .muse-workspace {
+    min-height: 480px;
+  }
+}
+@media (max-width: 1000px) {
+  .muse-container {
+    width: calc(100% - 64px);
+  }
+  .muse-workspace {
+    grid-template-columns: 175px minmax(0, 1fr);
+  }
+  .muse-project-preview {
+    display: none;
+  }
+  .muse-hero h1 {
+    letter-spacing: -5px;
+  }
+  .muse-desktop-nav {
+    gap: 20px;
+  }
+  .muse-together,
+  .muse-approval {
+    gap: 45px;
+  }
+  .muse-faq {
+    gap: 40px;
+  }
+  .muse-role-card h3 {
+    font-size: 15px;
+  }
+  .muse-role-job {
+    font-size: 10px;
+  }
+  .muse-role-art {
+    aspect-ratio: 1;
+  }
+  .muse-workspace-caption {
+    font-size: 9px;
+  }
+}
+@media (max-width: 700px) {
+  .muse-container {
+    width: calc(100% - 40px);
+  }
+  .muse-header {
+    width: calc(100% - 40px);
+    height: 65px;
+    gap: 12px;
+  }
+  .muse-brand {
+    font-size: 21px;
+  }
+  .muse-brand img {
+    width: 27px;
+    height: 27px;
+    border-radius: 8px;
+  }
+  .muse-desktop-nav,
+  .muse-nav-cta {
+    display: none !important;
+  }
+  .muse-header-actions {
+    gap: 15px;
+  }
+  .muse-sign-in {
+    font-size: 12px;
+  }
+  .muse-menu-toggle {
+    display: inline-flex !important;
+  }
+  .muse-mobile-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 63px;
+    z-index: 10;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+  .muse-mobile-menu a {
+    padding: 13px 15px;
+    font-size: 13px;
+    border-radius: 6px;
+  }
+  .muse-mobile-menu a:hover {
+    background: var(--muted);
+  }
+  .muse-hero {
+    padding: 59px 20px 44px;
+  }
+  .muse-hero h1 {
+    font-size: clamp(59px, 12.5vw, 82px);
+    letter-spacing: -4.2px;
+    margin-top: 28px;
+    margin-bottom: 24px;
+  }
+  .muse-hero > p {
+    font-size: 14px;
+    max-width: 360px;
+    margin: auto;
+    line-height: 1.75;
+  }
+  .muse-desktop-break {
+    display: none;
+  }
+  .muse-hero-actions {
+    gap: 22px;
+    margin-top: 25px;
+  }
+  .muse-button {
+    font-size: 12px !important;
+    height: 44px !important;
+    padding-inline: 18px !important;
+    gap: 12px !important;
+  }
+  .muse-text-action {
+    font-size: 10px;
+    gap: 7px;
+  }
+  .muse-text-action svg {
+    width: 13px;
+  }
+  .muse-hero-note {
+    font-size: 9px;
+    margin-top: 17px;
+  }
+  .muse-workspace-caption > span:last-child {
+    font-size: 8px;
+  }
+  .muse-workspace {
+    display: flex;
+    flex-direction: column;
+    min-height: 415px;
+    border-radius: 12px;
+  }
+  .muse-preview-sidebar {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 8px;
+    gap: 3px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .muse-sidebar-label,
+  .muse-shared-computer {
+    display: none;
+  }
+  .muse-coworker-tab {
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    justify-content: center;
+    padding: 6px 2px;
+    min-height: 45px;
+    gap: 3px;
+  }
+  .muse-coworker-tab img {
+    width: 26px;
+    height: 26px;
+  }
+  .muse-coworker-tab strong {
+    font-size: 8px;
+  }
+  .muse-coworker-tab small,
+  .muse-current-dot {
+    display: none;
+  }
+  .muse-thread-heading {
+    height: 48px;
+    padding-inline: 14px;
+    font-size: 10px;
+  }
+  .muse-conversation {
+    padding: 17px 16px 3px;
+    min-height: 259px;
+  }
+  .muse-thread-date {
+    font-size: 7px;
+    margin-bottom: 19px;
+  }
+  .muse-user-message {
+    font-size: 9px;
+    max-width: 90%;
+    padding: 10px 12px;
+  }
+  .muse-bot-message {
+    margin-top: 21px;
+  }
+  .muse-bot-message p {
+    font-size: 10px;
+    line-height: 1.7;
+  }
+  .muse-preview-composer {
+    margin: 10px 12px 13px;
+  }
+  .muse-team {
+    padding-top: 78px;
+  }
+  .muse-section-heading h2,
+  .muse-editorial-copy h2 {
+    font-size: 42px;
+    letter-spacing: -2px;
+  }
+  .muse-section-heading > p {
+    position: static;
+    margin-top: 17px;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .muse-section-heading > p br {
+    display: none;
+  }
+  .muse-eyebrow {
+    font-size: 9px;
+    margin-bottom: 17px;
+  }
+  .muse-roster {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 36px 16px;
+    margin-top: 27px;
+  }
+  .muse-role-art {
+    border-radius: 10px;
+    aspect-ratio: 1.1;
+  }
+  .muse-role-card h3 {
+    font-size: 14px;
+    margin-top: 14px;
+  }
+  .muse-role-job {
+    font-size: 10px;
+    line-height: 1.6;
+    display: block;
+    min-height: 30px;
+  }
+  .muse-role-card > p {
+    font-size: 11px;
+    line-height: 1.75;
+    margin-top: 8px;
+  }
+  .muse-role-card > a {
+    font-size: 10px;
+    margin-top: 15px;
+    gap: 5px;
+  }
+  .muse-role-card > a svg {
+    width: 12px;
+  }
+  .muse-together,
+  .muse-approval {
+    grid-template-columns: 1fr;
+    gap: 29px;
+    padding-top: 80px;
+  }
+  .muse-editorial-copy > p {
+    font-size: 13px;
+    margin-top: 21px;
+    max-width: 390px;
+  }
+  .muse-inline-link {
+    font-size: 11px;
+    margin-top: 21px;
+  }
+  .muse-handoff-illustration {
+    padding: 28px 20px;
+    min-height: 280px;
+    border-radius: 12px;
+  }
+  .muse-shared-file {
+    padding: 17px 14px;
+    font-size: 11px;
+    gap: 11px;
+  }
+  .muse-sharing-note {
+    margin-inline: 5px;
+    padding: 13px 10px;
+  }
+  .muse-sharing-note p {
+    font-size: 10px;
+  }
+  .muse-file-count {
+    font-size: 7px;
+  }
+  .muse-approval-illustration {
+    order: 2;
+    min-height: 290px;
+    padding: 28px;
+  }
+  .muse-approval .muse-editorial-copy {
+    order: 1;
+  }
+  .muse-approval-illustration h3 {
+    font-size: 32px;
+  }
+  .muse-faq {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding-top: 80px;
+  }
+  .muse-faq > h2 {
+    font-size: 30px;
+  }
+  .muse-faq summary {
+    font-size: 12px;
+    padding-block: 20px;
+  }
+  .muse-faq details > p {
+    font-size: 12px;
+    padding-right: 10px;
+  }
+  .muse-final-cta {
+    padding: 83px 0 60px;
+  }
+  .muse-final-mascots {
+    margin-bottom: 27px;
+  }
+  .muse-final-mascots img {
+    width: 60px;
+    height: 60px;
+  }
+  .muse-final-cta h2 {
+    font-size: 48px;
+    letter-spacing: -2.7px;
+  }
+  .muse-footer {
+    flex-wrap: wrap;
+    padding-block: 20px 23px;
+    gap: 20px;
+  }
+  .muse-footer > span {
+    order: 3;
+    width: 100%;
+    font-size: 9px;
+  }
+  .muse-footer > a:last-child {
+    font-size: 9px;
+  }
+  .muse-footer .muse-brand {
+    font-size: 18px;
+  }
+  .muse-footer .muse-brand img {
+    width: 24px;
+    height: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .muse-landing * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+  .muse-role-card:hover img {
+    transform: none;
+  }
+}

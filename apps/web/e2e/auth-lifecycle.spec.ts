@@ -110,11 +110,13 @@ test("signed-out welcome fits a narrow phone and offers sign in", async ({ page 
   await page.setViewportSize({ width: 320, height: 640 });
   await page.goto("/");
   const main = page.getByRole("main");
-  await expect(main.getByRole("heading", { name: "Rakazo", level: 1 })).toBeVisible();
-  await expect(main.getByRole("button", { name: "Sign up", exact: true })).toBeVisible();
+  await expect(main.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(main.getByRole("button", { name: "Build your team", exact: true })).toBeVisible();
   await expect(page.locator("body")).toHaveJSProperty("scrollWidth", 320);
   await captureScreenshot(page, testInfo, "logged-out-welcome-phone");
-  await main.getByRole("link", { name: "Sign in", exact: true }).click();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await captureScreenshot(page, testInfo, "logged-out-welcome-desktop");
+  await page.getByRole("link", { name: "Sign in", exact: true }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
   await expect(page.getByRole("heading", { name: "Sign in to MuseOrg" })).toBeVisible();
 });
