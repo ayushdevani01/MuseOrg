@@ -7,6 +7,12 @@ const base = {
 };
 
 describe("loadEnv", () => {
+  it("loads the optional server-only beta invite", () => {
+    expect(loadEnv(base).betaInviteCode).toBeUndefined();
+    expect(loadEnv({ ...base, BETA_INVITE_CODE: " offline-invite " }).betaInviteCode).toBe(
+      "offline-invite",
+    );
+  });
   it("loads the required personal model provider without relying on a deployment key", () => {
     expect(loadEnv(base).requiredPersonalModelProvider).toBeUndefined();
     expect(

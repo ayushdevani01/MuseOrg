@@ -50,6 +50,8 @@ export interface AppEnv {
   clientIpHeader: string;
   signupsEnabled: string | undefined;
   signupAllowlist: string | undefined;
+  /** Optional deployment invite gate, checked after authentication. */
+  betaInviteCode?: string;
   encryptionKey: string;
   /** CONTENT_ENCRYPTION: whether new content is encrypted at rest. */
   contentEncryption: boolean;
@@ -222,6 +224,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
     clientIpHeader: optional(source.CLIENT_IP_HEADER)?.toLowerCase() ?? "x-forwarded-for",
     signupsEnabled: source.SIGNUPS_ENABLED,
     signupAllowlist: source.SIGNUP_ALLOWLIST,
+    betaInviteCode: optional(source.BETA_INVITE_CODE),
     encryptionKey: resolveEncryptionKey(source),
     contentEncryption: resolveContentEncryption(source),
     dataDir: source.DATA_DIR ?? "./data",

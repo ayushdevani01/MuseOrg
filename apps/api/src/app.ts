@@ -125,6 +125,7 @@ import { cors } from "hono/cors";
 import { deleteAccountContent } from "./account-deletion.js";
 import { mountAppAssociation, nativePasskeys } from "./app-association.js";
 import { storeInboundAttachment } from "./artifacts.js";
+import { betaAccessRoutes, hasBetaAccess } from "./beta-access.js";
 import { createBillingService } from "./billing.js";
 import { mountBillingRoutes } from "./billing-webhook.js";
 import { clientBuildMiddleware, readDeployedWebBuild } from "./client-build.js";
@@ -799,10 +800,20 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
     sandboxProvider: env.sandboxProvider,
     prisma,
   });
+  app.route(
+    "/",
+    betaAccessRoutes({
+      prisma,
+      code: env.betaInviteCode,
+      authenticate: async (request) =>
+        (await auth.api.getSession({ headers: request.headers }))?.user.id,
+    }),
+  );
   const requestSession = async (request: Request) => {
     // The bearer plugin turns a signed `Authorization: Bearer` into the session cookie.
     const session = await auth.api.getSession({ headers: request.headers });
     if (!session?.user) return null;
+    if (!(await hasBetaAccess(prisma, session.user.id, env.betaInviteCode))) return null;
     const actor = await actorFromMembership(
       requireMembership(prisma, session.user.id, request.headers.get("x-rakazo-space-id")),
     );
