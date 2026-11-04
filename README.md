@@ -27,6 +27,9 @@ runtime; custom coworkers use that runtime too.
   Preview and import were checked through the live application and runtime.
 - Live Meta Spark tool work, video/audio transcription, SAM segmentation,
   transparent cutouts and image editing have verified saved artifacts.
+- A four-coworker launch produced a working page, native Meta artwork and six
+  review drafts. One shared headline correction woke the affected coworkers and
+  updated those deliverables. See the [rehearsal and its limits](docs/verification/2026-11-04-four-coworker-launch.md).
 - The engineering demo repaired a disclosed website failure, opened a PR,
   passed its checks, required authorized merging and verified the deployed
   revision through a real browser interaction.
@@ -35,8 +38,8 @@ runtime; custom coworkers use that runtime too.
   delivery budget, payment method or active ad was configured.
 
 Social draft files are review candidates, not proof of platform publishing.
-Facebook, Instagram and Threads publishing/replies, and the full coordinated
-launch rehearsal, remain separate verification work. Google and WhatsApp account
+Facebook, Instagram and Threads publishing/replies remain separate verification
+work. Google and WhatsApp account
 setup is deferred. Account connections can require fresh authorization.
 
 Earlier core development checks used an isolated temporary Codex connection.
