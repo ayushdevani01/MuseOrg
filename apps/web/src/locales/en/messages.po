@@ -418,8 +418,8 @@ msgid "Account menu for {name}"
 msgstr "Account menu for {name}"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Account sign-in"
-msgstr "Account sign-in"
+#~ msgid "Account sign-in"
+#~ msgstr "Account sign-in"
 
 #: src/pages/ProjectSettings.tsx
 msgid "Action scopes"
@@ -457,6 +457,7 @@ msgstr "Activity"
 msgid "Add"
 msgstr "Add"
 
+#. placeholder {0}: app.name
 #. placeholder {0}: item.name
 #. placeholder {0}: preset.name
 #: src/pages/PluginsOverlay.tsx
@@ -545,6 +546,7 @@ msgstr "Add GraphQL endpoint"
 msgid "Add header"
 msgstr "Add header"
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add integration"
 msgstr "Add integration"
@@ -553,7 +555,6 @@ msgstr "Add integration"
 msgid "Add item"
 msgstr "Add item"
 
-#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add MCP server"
 msgstr "Add MCP server"
@@ -672,6 +673,11 @@ msgstr "Allow cross-space bot communication"
 #: src/components/AskCard.tsx
 msgid "Allow once"
 msgstr "Allow once"
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Allow popups to connect this app."
+msgstr "Allow popups to connect this app."
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Allow scope"
@@ -797,7 +803,6 @@ msgid "API keys stay connected."
 msgstr "API keys stay connected."
 
 #: src/pages/McpServersOverlay.tsx
-#: src/pages/PluginsOverlay.tsx
 msgid "API token"
 msgstr "API token"
 
@@ -942,6 +947,7 @@ msgstr "Avatar Studio"
 #: src/pages/RoutineEditor.tsx
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Back"
 msgstr "Back"
 
@@ -1073,6 +1079,10 @@ msgid "Built-in"
 msgstr "Built-in"
 
 #: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr "Business messages"
+
+#: src/pages/PluginsOverlay.tsx
 msgid "Calendar and events"
 msgstr "Calendar and events"
 
@@ -1100,6 +1110,10 @@ msgstr "Calling…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Calls"
 msgstr "Calls"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr "Campaigns and ads"
 
 #: src/App.tsx
 msgid "Can't reach the server."
@@ -1601,6 +1615,10 @@ msgid "Connect this model's provider first."
 msgstr "Connect this model's provider first."
 
 #: src/pages/PluginsOverlay.tsx
+#~ msgid "Connect through an MCP server. Account access is granted during setup."
+#~ msgstr "Connect through an MCP server. Account access is granted during setup."
+
+#: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
 msgstr "Connect Treg"
 
@@ -1636,6 +1654,7 @@ msgid "Connecting…"
 msgstr "Connecting…"
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
+#: src/pages/ProjectScopeForm.tsx
 msgid "Connection"
 msgstr "Connection"
 
@@ -1658,11 +1677,13 @@ msgstr "Contains code to run"
 msgid "Context limit"
 msgstr "Context limit"
 
+#: src/components/BetaAccessGate.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/SignupSurvey.tsx
 #: src/pages/Auth.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Continue"
 msgstr "Continue"
 
@@ -1938,6 +1959,7 @@ msgstr "Could not load bots. Reload to try again."
 msgid "Could not load credentials."
 msgstr "Could not load credentials."
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not load integrations"
 msgstr "Could not load integrations"
@@ -2191,6 +2213,10 @@ msgstr "Could not update the default memory scope"
 msgid "Could not verify computer setup ({failureMessage}). Fix the connection, then check again."
 msgstr "Could not verify computer setup ({failureMessage}). Fix the connection, then check again."
 
+#: src/components/BetaAccessGate.tsx
+msgid "Could not verify invite code"
+msgstr "Could not verify invite code"
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Couldn't load messaging settings"
 msgstr "Couldn't load messaging settings"
@@ -2325,6 +2351,10 @@ msgstr "Customize bot avatar"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Dark"
 msgstr "Dark"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr "Databases and projects"
 
 #: src/lib/billing.ts
 #: src/lib/cron.ts
@@ -2952,8 +2982,8 @@ msgid "General"
 msgstr "General"
 
 #: src/components/SidebarFooter.tsx
-msgid "Get the mobile app"
-msgstr "Get the mobile app"
+#~ msgid "Get the mobile app"
+#~ msgstr "Get the mobile app"
 
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
@@ -3242,6 +3272,10 @@ msgstr "Interval unit"
 msgid "Invalid code"
 msgstr "Invalid code"
 
+#: src/components/BetaAccessGate.tsx
+msgid "Invite code"
+msgstr "Invite code"
+
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
 msgid "Isolated"
@@ -3282,6 +3316,10 @@ msgstr "Its model changed since the import, so it stays."
 #: src/pages/shell/agent-import-undo.tsx
 msgid "Its model goes back to before the import."
 msgstr "Its model goes back to before the import."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Join the beta"
+msgstr "Join the beta"
 
 #: src/pages/shell/transcript.tsx
 msgid "Jump to latest"
@@ -3462,14 +3500,15 @@ msgid "Main model"
 msgstr "Main model"
 
 #: src/pages/BillingSettingsPanel.tsx
-#: src/pages/PluginsOverlay.tsx
 #: src/pages/SettingsOverlay.tsx
 msgid "Manage"
 msgstr "Manage"
 
+#. placeholder {0}: app.name
+#. placeholder {0}: item.name
 #. placeholder {0}: option.name
-#. placeholder {0}: providerName(choice)
 #: src/pages/ModelRoleSettings.tsx
+#: src/pages/PluginsOverlay.tsx
 #: src/pages/SettingsOverlay.tsx
 msgid "Manage {0}"
 msgstr "Manage {0}"
@@ -3490,6 +3529,10 @@ msgstr "Manage the bots it creates"
 #: src/pages/PluginsOverlay.tsx
 msgid "Manual"
 msgstr "Manual"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Manual setup"
+msgstr "Manual setup"
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Manual setup required"
@@ -3780,6 +3823,10 @@ msgstr "More"
 msgid "More computer actions"
 msgstr "More computer actions"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "More connections"
+msgstr "More connections"
+
 #: src/pages/ModelRoleSettings.tsx
 msgid "Move down"
 msgstr "Move down"
@@ -3810,6 +3857,7 @@ msgstr "Muted"
 #: src/pages/GroupPanel.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/providers-section.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-credentials.tsx
@@ -3869,7 +3917,6 @@ msgstr "New"
 #: src/pages/Shell.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-picker.tsx
-#: src/pages/shell/create-bot-dialog.tsx
 msgid "New bot"
 msgstr "New bot"
 
@@ -3932,10 +3979,10 @@ msgid "Next settings sections"
 msgstr "Next settings sections"
 
 #: src/pages/McpServersOverlay.tsx
-#: src/pages/PluginsOverlay.tsx
 msgid "No account needed"
 msgstr "No account needed"
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "No apps match your search."
 msgstr "No apps match your search."
@@ -4012,8 +4059,8 @@ msgid "No OpenClaw, Hermes or agent document found."
 msgstr "No OpenClaw, Hermes or agent document found."
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "No remote MCP servers found"
-msgstr "No remote MCP servers found"
+#~ msgid "No remote MCP servers found"
+#~ msgstr "No remote MCP servers found"
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4209,6 +4256,11 @@ msgstr "Open navigation"
 #: src/pages/ProjectScopeForm.tsx
 msgid "Open pull requests"
 msgstr "Open pull requests"
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Open sign-in"
+msgstr "Open sign-in"
 
 #: src/pages/ScratchpadSection.tsx
 msgid "Open work"
@@ -4417,6 +4469,10 @@ msgstr "Playing…"
 msgid "Plugin"
 msgstr "Plugin"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr "Popular"
+
 #: src/pages/RoutineEditor.tsx
 msgid "Post \"No changes\" in chat"
 msgstr "Post \"No changes\" in chat"
@@ -4424,6 +4480,10 @@ msgstr "Post \"No changes\" in chat"
 #: src/pages/RoutineEditor.tsx
 msgid "POST to"
 msgstr "POST to"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr "Posts, comments and messages"
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
@@ -4434,13 +4494,19 @@ msgid "Preview"
 msgstr "Preview"
 
 #. placeholder {0}: props.name
+#. placeholder {0}: skill.name
 #: src/components/ArtifactFileCard.tsx
+#: src/components/SkillCatalogPicker.tsx
 msgid "Preview {0}"
 msgstr "Preview {0}"
 
 #: src/pages/Artifacts.tsx
 msgid "Preview isn't available for this file type — download it to view it."
 msgstr "Preview isn't available for this file type — download it to view it."
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview unavailable."
+msgstr "Preview unavailable."
 
 #: src/components/markdown-copy.tsx
 msgid "Previous page"
@@ -4651,6 +4717,7 @@ msgid "Reload"
 msgstr "Reload"
 
 #: src/components/ApprovalRulesSettings.tsx
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/ModelRoleSettings.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4660,6 +4727,8 @@ msgid "Remove"
 msgstr "Remove"
 
 #. placeholder {0}: attachment.file.name
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/shell/composer.tsx
 msgid "Remove {0}"
 msgstr "Remove {0}"
@@ -4843,6 +4912,7 @@ msgid "Restoring your workspace"
 msgstr "Restoring your workspace"
 
 #: src/components/AccountAccess.tsx
+#: src/components/BetaAccessGate.tsx
 #: src/components/PasskeySettings.tsx
 #: src/pages/Auth.tsx
 #: src/pages/ModelRoleSettings.tsx
@@ -4880,6 +4950,7 @@ msgid "Revision {0}"
 msgstr "Revision {0}"
 
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/ProjectSettings.tsx
 msgid "Revoke"
 msgstr "Revoke"
 
@@ -4965,6 +5036,7 @@ msgstr "Saturday"
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/bot-panel.tsx
 #: src/pages/shell/dialogs.tsx
@@ -5042,6 +5114,7 @@ msgstr "Scopes (optional)"
 msgid "Screen not connected"
 msgstr "Screen not connected"
 
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -5076,8 +5149,8 @@ msgid "Search Cloudflare documentation"
 msgstr "Search Cloudflare documentation"
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "Search integrations.sh"
-msgstr "Search integrations.sh"
+#~ msgid "Search integrations.sh"
+#~ msgstr "Search integrations.sh"
 
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -5101,6 +5174,10 @@ msgstr "Search skills.sh"
 #: src/pages/ActivityList.tsx
 msgid "Search: {0}"
 msgstr "Search: {0}"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Searching integrations…"
+msgstr "Searching integrations…"
 
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/SpaceSearch.tsx
@@ -5195,6 +5272,10 @@ msgstr "Server name"
 msgid "Server URL"
 msgstr "Server URL"
 
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Set up"
+msgstr "Set up"
+
 #: src/components/call/CallCard.tsx
 #: src/components/SidebarFooter.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -5261,6 +5342,7 @@ msgstr "Show computer"
 msgid "Show list"
 msgstr "Show list"
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/ScratchpadSection.tsx
@@ -5331,6 +5413,10 @@ msgstr "Sign in with passkey"
 #: src/lib/model-connection-preflight.ts
 msgid "Sign in with the subscription, or test the API key instead."
 msgstr "Sign in with the subscription, or test the API key instead."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Sign out"
+msgstr "Sign out"
 
 #: src/pages/Auth.tsx
 #: src/pages/Welcome.tsx
@@ -5955,6 +6041,10 @@ msgstr "Trial ends {day}"
 msgid "Try again"
 msgstr "Try again"
 
+#: src/components/BetaAccessGate.tsx
+msgid "Try again in a minute"
+msgstr "Try again in a minute"
+
 #: src/lib/model-connection-preflight.ts
 msgid "Try the test again."
 msgstr "Try the test again."
@@ -6188,9 +6278,18 @@ msgstr "Verifying…"
 msgid "Version"
 msgstr "Version"
 
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
+msgid "View {0} on skills.sh"
+msgstr "View {0} on skills.sh"
+
 #: src/pages/RoutineRunHistory.tsx
 msgid "View chat"
 msgstr "View chat"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "View on skills.sh"
+msgstr "View on skills.sh"
 
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
@@ -6432,65 +6531,3 @@ msgstr "Your voice provider is out of credit."
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "Your voice provider key was rejected."
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Business messages"
-msgstr "Business messages"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Campaigns and ads"
-msgstr "Campaigns and ads"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Databases and projects"
-msgstr "Databases and projects"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Posts, comments and messages"
-msgstr "Posts, comments and messages"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Popular"
-msgstr "Popular"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Connect through an MCP server. Account access is granted during setup."
-msgstr "Connect through an MCP server. Account access is granted during setup."
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "Preview unavailable."
-msgstr "Preview unavailable."
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View on skills.sh"
-msgstr "View on skills.sh"
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View {0} on skills.sh"
-msgstr "View {0} on skills.sh"
-
-#: src/pages/PluginsOverlay.tsx
-msgid "More connections"
-msgstr "More connections"
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Searching integrations…"
-msgstr "Searching integrations…"
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Set up"
-msgstr "Set up"
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Manual setup"
-msgstr "Manual setup"
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Allow popups to connect this app."
-msgstr "Allow popups to connect this app."
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Open sign-in"
-msgstr "Open sign-in"

@@ -374,6 +374,10 @@ msgstr ""
 msgid "A command's output"
 msgstr "Bir komutun çıktısı"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "A coworker's model is unavailable. Try again later."
+msgstr ""
+
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -449,6 +453,7 @@ msgstr "Etkinlik"
 msgid "Add"
 msgstr "Ekle"
 
+#. placeholder {0}: app.name
 #. placeholder {0}: item.name
 #. placeholder {0}: preset.name
 #: src/pages/PluginsOverlay.tsx
@@ -498,6 +503,10 @@ msgid "Add a trigger to run this routine."
 msgstr "Bu rutini çalıştırmak için bir tetikleyici ekleyin."
 
 #: src/pages/McpServersOverlay.tsx
+msgid "Add an API token"
+msgstr ""
+
+#: src/pages/McpServersOverlay.tsx
 msgid "Add an HTTPS server URL."
 msgstr "Bir HTTPS sunucu URL'si gir."
 
@@ -533,6 +542,7 @@ msgstr "GraphQL uç noktası ekle"
 msgid "Add header"
 msgstr "Üstbilgi ekle"
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add integration"
 msgstr ""
@@ -541,7 +551,6 @@ msgstr ""
 msgid "Add item"
 msgstr "Öğe ekle"
 
-#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add MCP server"
 msgstr "MCP sunucusu ekle"
@@ -660,6 +669,11 @@ msgstr ""
 #: src/components/AskCard.tsx
 msgid "Allow once"
 msgstr "Bir kez izin ver"
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Allow popups to connect this app."
+msgstr ""
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Allow scope"
@@ -783,6 +797,10 @@ msgstr "API anahtarları"
 #: src/pages/shell/agent-import-undo.tsx
 msgid "API keys stay connected."
 msgstr "API anahtarları bağlı kalır."
+
+#: src/pages/McpServersOverlay.tsx
+msgid "API token"
+msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Appearance"
@@ -925,6 +943,7 @@ msgstr "Avatar Stüdyosu"
 #: src/pages/RoutineEditor.tsx
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Back"
 msgstr "Geri"
 
@@ -1046,10 +1065,18 @@ msgstr ""
 msgid "Build software"
 msgstr ""
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Build, investigate and maintain software."
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "Yerleşik"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Calendar and events"
@@ -1079,6 +1106,10 @@ msgstr ""
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Calls"
 msgstr "Çağrılar"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr ""
 
 #: src/App.tsx
 msgid "Can't reach the server."
@@ -1242,6 +1273,10 @@ msgstr "Bağlantı kontrol ediliyor…"
 #: src/components/DesktopUpdates.tsx
 #: src/pages/HostComputerPrompt.tsx
 msgid "Checking…"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Chief of Staff"
 msgstr ""
 
 #: src/pages/shell/agent-import.tsx
@@ -1485,8 +1520,8 @@ msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TO
 msgstr "Bilgisayarlar kapalı. SANDBOX_PROVIDER=docker ve SANDBOX_SUPERVISOR_TOKEN ayarlayın; ya da SANDBOX_PROVIDER değerini e2b, daytona veya boat yapıp API anahtarını ekleyin. .env değişince stacki yeniden oluşturun."
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Configure a plugin catalog on the server to connect apps."
-msgstr ""
+#~ msgid "Configure a plugin catalog on the server to connect apps."
+#~ msgstr ""
 
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
@@ -1511,6 +1546,7 @@ msgstr "URL'nin bu tarayıcı oturumundan erişilebilir olduğunu doğrula, sonr
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Connect"
@@ -1558,6 +1594,10 @@ msgstr "“{name}” MCP sunucusunu bağla"
 msgid "Connect memory provider"
 msgstr "Hafıza sağlayıcısı bağla"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Connect Meta"
+msgstr ""
+
 #: src/components/ModelCredits.tsx
 msgid "Connect my own"
 msgstr ""
@@ -1569,6 +1609,10 @@ msgstr "OAuth ile bağlan"
 #: src/lib/agent-import-errors.ts
 msgid "Connect this model's provider first."
 msgstr "Önce bu modelin sağlayıcısını bağla."
+
+#: src/pages/PluginsOverlay.tsx
+#~ msgid "Connect through an MCP server. Account access is granted during setup."
+#~ msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
@@ -1592,6 +1636,10 @@ msgstr "Bağlandı"
 msgid "Connected {0}."
 msgstr "{0} bağlandı."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Connecting"
+msgstr ""
+
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
@@ -1602,6 +1650,7 @@ msgid "Connecting…"
 msgstr "Bağlanıyor…"
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
+#: src/pages/ProjectScopeForm.tsx
 msgid "Connection"
 msgstr "Bağlantı"
 
@@ -1624,11 +1673,13 @@ msgstr "Çalıştırılacak kod içeriyor"
 msgid "Context limit"
 msgstr "Bağlam sınırı"
 
+#: src/components/BetaAccessGate.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/SignupSurvey.tsx
 #: src/pages/Auth.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Continue"
 msgstr "Devam"
 
@@ -1651,6 +1702,10 @@ msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Conversations"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Coordinate priorities, projects and the team."
 msgstr ""
 
 #: src/pages/shell/create-bot-dialog.tsx
@@ -1757,6 +1812,10 @@ msgstr "Bu sağlayıcı bağlanamadı"
 msgid "Could not connect this voice provider"
 msgstr "Bu ses sağlayıcısı bağlanamadı"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not connect to Meta. Check your key and try again."
+msgstr ""
+
 #: src/pages/shell/use-computer.tsx
 msgid "Could not connect to the computer screen"
 msgstr ""
@@ -1858,6 +1917,10 @@ msgstr "{0} indirilemedi. Tekrar dene."
 msgid "Could not download {name}. Try again."
 msgstr "{name} indirilemedi. Tekrar dene."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not hire your coworkers. Try again."
+msgstr ""
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not install connector"
 msgstr "Bağlayıcı kurulamadı"
@@ -1892,6 +1955,7 @@ msgstr ""
 msgid "Could not load credentials."
 msgstr ""
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not load integrations"
 msgstr "Entegrasyonlar yüklenemedi"
@@ -1908,6 +1972,10 @@ msgstr "Model ayarları yüklenemedi"
 #: src/pages/RoutineRunHistory.tsx
 msgid "Could not load run history"
 msgstr "Çalıştırma geçmişi yüklenemedi"
+
+#: src/components/OnboardingUnavailable.tsx
+msgid "Could not load setup."
+msgstr ""
 
 #: src/lib/account-security.ts
 #: src/pages/Auth.tsx
@@ -2141,6 +2209,10 @@ msgstr "Varsayılan hafıza kapsamı güncellenemedi"
 msgid "Could not verify computer setup ({failureMessage}). Fix the connection, then check again."
 msgstr ""
 
+#: src/components/BetaAccessGate.tsx
+msgid "Could not verify invite code"
+msgstr ""
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Couldn't load messaging settings"
 msgstr ""
@@ -2193,8 +2265,12 @@ msgid "Create space"
 msgstr ""
 
 #: src/pages/Auth.tsx
-msgid "Create your Rakazo"
-msgstr "Rakazo hesabını oluştur"
+msgid "Create your MuseOrg"
+msgstr ""
+
+#: src/pages/Auth.tsx
+#~ msgid "Create your Rakazo"
+#~ msgstr "Rakazo hesabını oluştur"
 
 #: src/components/AskCard.tsx
 msgid "Created"
@@ -2205,6 +2281,10 @@ msgstr ""
 #: src/pages/shell/dialogs.tsx
 msgid "Creating…"
 msgstr "Oluşturuluyor…"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Creative Director"
+msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Credential"
@@ -2267,6 +2347,10 @@ msgstr "Bot avatarını özelleştir"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Dark"
 msgstr "Koyu"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr ""
 
 #: src/lib/billing.ts
 #: src/lib/cron.ts
@@ -2894,8 +2978,8 @@ msgid "General"
 msgstr "Genel"
 
 #: src/components/SidebarFooter.tsx
-msgid "Get the mobile app"
-msgstr "Mobil uygulamayı indir"
+#~ msgid "Get the mobile app"
+#~ msgstr "Mobil uygulamayı indir"
 
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
@@ -2986,6 +3070,18 @@ msgstr "Yüksek"
 #: src/lib/model-catalog.ts
 msgid "High"
 msgstr "Yüksek"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire coworkers"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire your coworkers"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hiring"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk"
@@ -3172,6 +3268,10 @@ msgstr "Aralık birimi"
 msgid "Invalid code"
 msgstr "Geçersiz kod"
 
+#: src/components/BetaAccessGate.tsx
+msgid "Invite code"
+msgstr ""
+
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
 msgid "Isolated"
@@ -3212,6 +3312,10 @@ msgstr "Modeli içe aktarmadan sonra değişti, bu yüzden kalıyor."
 #: src/pages/shell/agent-import-undo.tsx
 msgid "Its model goes back to before the import."
 msgstr "Modeli içe aktarmadan önceki haline döner."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Join the beta"
+msgstr ""
 
 #: src/pages/shell/transcript.tsx
 msgid "Jump to latest"
@@ -3396,9 +3500,11 @@ msgstr "Ana model"
 msgid "Manage"
 msgstr "Yönet"
 
+#. placeholder {0}: app.name
+#. placeholder {0}: item.name
 #. placeholder {0}: option.name
-#. placeholder {0}: providerName(choice)
 #: src/pages/ModelRoleSettings.tsx
+#: src/pages/PluginsOverlay.tsx
 #: src/pages/SettingsOverlay.tsx
 msgid "Manage {0}"
 msgstr "{0} yönet"
@@ -3418,6 +3524,10 @@ msgstr "Oluşturduğu botları yönet"
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Manual"
+msgstr ""
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Manual setup"
 msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
@@ -3579,6 +3689,18 @@ msgstr "{peer} botuna mesaj gönderildi"
 msgid "Messaging"
 msgstr ""
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta API key"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta Growth Operator"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta is unavailable. Try again later."
+msgstr ""
+
 #: src/lib/call-session.ts
 msgid "Microphone failed"
 msgstr "Mikrofon hatası"
@@ -3697,6 +3819,10 @@ msgstr ""
 msgid "More computer actions"
 msgstr ""
 
+#: src/pages/PluginsOverlay.tsx
+msgid "More connections"
+msgstr ""
+
 #: src/pages/ModelRoleSettings.tsx
 msgid "Move down"
 msgstr "Aşağı taşı"
@@ -3727,6 +3853,7 @@ msgstr ""
 #: src/pages/GroupPanel.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/providers-section.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-credentials.tsx
@@ -3786,7 +3913,6 @@ msgstr ""
 #: src/pages/Shell.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-picker.tsx
-#: src/pages/shell/create-bot-dialog.tsx
 msgid "New bot"
 msgstr "Yeni bot"
 
@@ -3848,6 +3974,11 @@ msgstr "Sonraki sayfa"
 msgid "Next settings sections"
 msgstr ""
 
+#: src/pages/McpServersOverlay.tsx
+msgid "No account needed"
+msgstr ""
+
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "No apps match your search."
 msgstr "Aramanla eşleşen uygulama yok."
@@ -3882,8 +4013,8 @@ msgid "No longer active"
 msgstr "Artık etkin değil"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "No managed app catalog is configured on this deployment."
-msgstr ""
+#~ msgid "No managed app catalog is configured on this deployment."
+#~ msgstr ""
 
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
@@ -3924,8 +4055,8 @@ msgid "No OpenClaw, Hermes or agent document found."
 msgstr "OpenClaw, Hermes veya agent belgesi bulunamadı."
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "No remote MCP servers found"
-msgstr ""
+#~ msgid "No remote MCP servers found"
+#~ msgstr ""
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -3982,8 +4113,8 @@ msgid "Not in Rakazo's catalog"
 msgstr "Rakazo kataloğunda yok"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Not in the plugin catalog"
-msgstr ""
+#~ msgid "Not in the plugin catalog"
+#~ msgstr ""
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4120,6 +4251,11 @@ msgstr "Gezinmeyi aç"
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Open pull requests"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Open sign-in"
 msgstr ""
 
 #: src/pages/ScratchpadSection.tsx
@@ -4313,6 +4449,10 @@ msgstr "Sabitle"
 msgid "Pinned"
 msgstr "Sabitlenenler"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Plan distribution, outreach and follow-up."
+msgstr ""
+
 #: src/components/ArtifactFileCard.tsx
 msgid "Play {name}"
 msgstr "{name} dosyasını oynat"
@@ -4325,12 +4465,20 @@ msgstr "Çalınıyor…"
 msgid "Plugin"
 msgstr "Eklenti"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr ""
+
 #: src/pages/RoutineEditor.tsx
 msgid "Post \"No changes\" in chat"
 msgstr "Sohbete “Değişiklik yok” gönder"
 
 #: src/pages/RoutineEditor.tsx
 msgid "POST to"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
 msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
@@ -4342,12 +4490,18 @@ msgid "Preview"
 msgstr ""
 
 #. placeholder {0}: props.name
+#. placeholder {0}: skill.name
 #: src/components/ArtifactFileCard.tsx
+#: src/components/SkillCatalogPicker.tsx
 msgid "Preview {0}"
 msgstr "{0} önizle"
 
 #: src/pages/Artifacts.tsx
 msgid "Preview isn't available for this file type — download it to view it."
+msgstr ""
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview unavailable."
 msgstr ""
 
 #: src/components/markdown-copy.tsx
@@ -4559,6 +4713,7 @@ msgid "Reload"
 msgstr "Yeniden yükle"
 
 #: src/components/ApprovalRulesSettings.tsx
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/ModelRoleSettings.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4568,6 +4723,8 @@ msgid "Remove"
 msgstr "Kaldır"
 
 #. placeholder {0}: attachment.file.name
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/shell/composer.tsx
 msgid "Remove {0}"
 msgstr "{0} kaldır"
@@ -4751,6 +4908,7 @@ msgid "Restoring your workspace"
 msgstr ""
 
 #: src/components/AccountAccess.tsx
+#: src/components/BetaAccessGate.tsx
 #: src/components/PasskeySettings.tsx
 #: src/pages/Auth.tsx
 #: src/pages/ModelRoleSettings.tsx
@@ -4788,6 +4946,7 @@ msgid "Revision {0}"
 msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/ProjectSettings.tsx
 msgid "Revoke"
 msgstr "İptal et"
 
@@ -4873,6 +5032,7 @@ msgstr "Cumartesi"
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/bot-panel.tsx
 #: src/pages/shell/dialogs.tsx
@@ -4890,6 +5050,10 @@ msgstr ""
 #: src/components/ComputerMaintenanceActions.tsx
 msgid "Save the workspace and install current software."
 msgstr "Çalışma alanını kaydedin ve güncel yazılımı yükleyin."
+
+#: src/pages/McpServersOverlay.tsx
+msgid "Save, then connect OAuth"
+msgstr ""
 
 #: src/components/AskCard.tsx
 #: src/components/teach/SkillDraftCard.tsx
@@ -4946,6 +5110,7 @@ msgstr "Kapsamlar (isteğe bağlı)"
 msgid "Screen not connected"
 msgstr "Ekran bağlı değil"
 
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -4980,8 +5145,8 @@ msgid "Search Cloudflare documentation"
 msgstr ""
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "Search integrations.sh"
-msgstr ""
+#~ msgid "Search integrations.sh"
+#~ msgstr ""
 
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -5004,6 +5169,10 @@ msgstr ""
 #. placeholder {0}: filters.query.trim()
 #: src/pages/ActivityList.tsx
 msgid "Search: {0}"
+msgstr ""
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Searching integrations…"
 msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
@@ -5099,6 +5268,10 @@ msgstr "Sunucu adı"
 msgid "Server URL"
 msgstr "Sunucu URL'si"
 
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Set up"
+msgstr ""
+
 #: src/components/call/CallCard.tsx
 #: src/components/SidebarFooter.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -5119,6 +5292,10 @@ msgstr "Ayarlar: Kullanım"
 msgid "Setup complete"
 msgstr "Kurulum tamamlandı"
 
+#: src/pages/McpServersOverlay.tsx
+msgid "Setup guide"
+msgstr ""
+
 #: src/pages/model-settings/compatible-model-fields.tsx
 msgid "Setup help"
 msgstr "Kurulum yardımı"
@@ -5130,6 +5307,10 @@ msgstr "Şekil"
 #. placeholder {0}: index + 1
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Shape {0}"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Shape ideas, design and creative work."
 msgstr ""
 
 #: src/pages/MemorySettingsOverlay.tsx
@@ -5157,6 +5338,7 @@ msgstr ""
 msgid "Show list"
 msgstr ""
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/ScratchpadSection.tsx
@@ -5209,8 +5391,12 @@ msgid "Sign in at <0>{0}</0>, then paste the code here."
 msgstr "<0>{0}</0> adresinde oturum açın, ardından kodu buraya yapıştırın."
 
 #: src/pages/Auth.tsx
-msgid "Sign in to Rakazo"
-msgstr "Rakazo'da oturum aç"
+msgid "Sign in to MuseOrg"
+msgstr ""
+
+#: src/pages/Auth.tsx
+#~ msgid "Sign in to Rakazo"
+#~ msgstr "Rakazo'da oturum aç"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5223,6 +5409,10 @@ msgstr "Geçiş anahtarıyla oturum aç"
 #: src/lib/model-connection-preflight.ts
 msgid "Sign in with the subscription, or test the API key instead."
 msgstr "Abonelikle oturum aç veya bunun yerine API anahtarını test et."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Sign out"
+msgstr ""
 
 #: src/pages/Auth.tsx
 #: src/pages/Welcome.tsx
@@ -5353,6 +5543,10 @@ msgstr "Konuşma modeli"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO geçici olarak kullanılamıyor. Yeniden deneyin."
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Staff Engineer"
+msgstr ""
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Stage ads"
@@ -5836,10 +6030,16 @@ msgstr ""
 msgid "Trial ends {day}"
 msgstr ""
 
+#: src/components/OnboardingUnavailable.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/Onboarding.tsx
 msgid "Try again"
 msgstr "Tekrar dene"
+
+#: src/components/BetaAccessGate.tsx
+msgid "Try again in a minute"
+msgstr ""
 
 #: src/lib/model-connection-preflight.ts
 msgid "Try the test again."
@@ -6074,9 +6274,18 @@ msgstr "Doğrulanıyor…"
 msgid "Version"
 msgstr ""
 
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
+msgid "View {0} on skills.sh"
+msgstr ""
+
 #: src/pages/RoutineRunHistory.tsx
 msgid "View chat"
 msgstr "Sohbeti görüntüle"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "View on skills.sh"
+msgstr ""
 
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
@@ -6280,6 +6489,10 @@ msgstr "İlk botun zaten vardı, bu yüzden ajan içe aktarılmadı."
 msgid "Your first bot already exists."
 msgstr "İlk botun zaten var."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Your Meta connection is not ready. Try again."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/lib/run-error.ts
 msgid "Your model provider"
@@ -6314,65 +6527,3 @@ msgstr "Ses sağlayıcınızın kredisi bitti."
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "Ses sağlayıcınız anahtarı reddetti."
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Business messages"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Campaigns and ads"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Databases and projects"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Posts, comments and messages"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Popular"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Connect through an MCP server. Account access is granted during setup."
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "Preview unavailable."
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View on skills.sh"
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View {0} on skills.sh"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "More connections"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Searching integrations…"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Set up"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Manual setup"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Allow popups to connect this app."
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Open sign-in"
-msgstr ""

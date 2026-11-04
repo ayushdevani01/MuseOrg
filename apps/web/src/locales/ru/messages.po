@@ -374,6 +374,10 @@ msgstr ""
 msgid "A command's output"
 msgstr "Вывод команды"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "A coworker's model is unavailable. Try again later."
+msgstr ""
+
 #. placeholder {0}: oauth.verificationUri.replace(/^https:\/\//, "")
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/Onboarding.tsx
@@ -449,6 +453,7 @@ msgstr "Активность"
 msgid "Add"
 msgstr "Добавить"
 
+#. placeholder {0}: app.name
 #. placeholder {0}: item.name
 #. placeholder {0}: preset.name
 #: src/pages/PluginsOverlay.tsx
@@ -498,6 +503,10 @@ msgid "Add a trigger to run this routine."
 msgstr "Добавьте триггер для запуска этой процедуры."
 
 #: src/pages/McpServersOverlay.tsx
+msgid "Add an API token"
+msgstr ""
+
+#: src/pages/McpServersOverlay.tsx
 msgid "Add an HTTPS server URL."
 msgstr "Добавьте URL-адрес HTTPS-сервера."
 
@@ -533,6 +542,7 @@ msgstr "Добавить конечную точку GraphQL"
 msgid "Add header"
 msgstr "Добавить заголовок"
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add integration"
 msgstr ""
@@ -541,7 +551,6 @@ msgstr ""
 msgid "Add item"
 msgstr "Добавить элемент"
 
-#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Add MCP server"
 msgstr "Добавить MCP-сервер"
@@ -660,6 +669,11 @@ msgstr "Разрешить общение ботов из разных прос�
 #: src/components/AskCard.tsx
 msgid "Allow once"
 msgstr "Разрешить один раз"
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Allow popups to connect this app."
+msgstr ""
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Allow scope"
@@ -783,6 +797,10 @@ msgstr "Ключи API"
 #: src/pages/shell/agent-import-undo.tsx
 msgid "API keys stay connected."
 msgstr "API-ключи остаются подключёнными."
+
+#: src/pages/McpServersOverlay.tsx
+msgid "API token"
+msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Appearance"
@@ -925,6 +943,7 @@ msgstr "Студия аватаров"
 #: src/pages/RoutineEditor.tsx
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Back"
 msgstr "Назад"
 
@@ -1046,10 +1065,18 @@ msgstr ""
 msgid "Build software"
 msgstr ""
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Build, investigate and maintain software."
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "Встроенный"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Business messages"
+msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Calendar and events"
@@ -1079,6 +1106,10 @@ msgstr "Вызов…"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Calls"
 msgstr "Вызовы"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Campaigns and ads"
+msgstr ""
 
 #: src/App.tsx
 msgid "Can't reach the server."
@@ -1243,6 +1274,10 @@ msgstr "Проверка подключения…"
 #: src/pages/HostComputerPrompt.tsx
 msgid "Checking…"
 msgstr "Проверка…"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Chief of Staff"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Choose a bot"
@@ -1485,8 +1520,8 @@ msgid "Computers are off. Set SANDBOX_PROVIDER=docker with SANDBOX_SUPERVISOR_TO
 msgstr "Компьютеры выключены. Установите SANDBOX_PROVIDER=docker с помощью SANDBOX_SUPERVISOR_TOKEN или установите для SANDBOX_PROVIDER значение e2b, Daytona или boat с его ключом API. Воссоздайте стек после изменения .env."
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Configure a plugin catalog on the server to connect apps."
-msgstr ""
+#~ msgid "Configure a plugin catalog on the server to connect apps."
+#~ msgstr ""
 
 #: src/pages/McpServersOverlay.tsx
 msgid "Configured servers"
@@ -1511,6 +1546,7 @@ msgstr "Убедитесь, что URL доступен из этого сеан
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/model-settings/role-model-picker.tsx
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "Connect"
@@ -1558,6 +1594,10 @@ msgstr "Подключите MCP-сервер «{name}»"
 msgid "Connect memory provider"
 msgstr "Подключить поставщика памяти"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Connect Meta"
+msgstr ""
+
 #: src/components/ModelCredits.tsx
 msgid "Connect my own"
 msgstr ""
@@ -1569,6 +1609,10 @@ msgstr "Подключить OAuth"
 #: src/lib/agent-import-errors.ts
 msgid "Connect this model's provider first."
 msgstr "Сначала подключите провайдера этой модели."
+
+#: src/pages/PluginsOverlay.tsx
+#~ msgid "Connect through an MCP server. Account access is granted during setup."
+#~ msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Connect Treg"
@@ -1592,6 +1636,10 @@ msgstr "Подключено"
 msgid "Connected {0}."
 msgstr "Подключено: {0}."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Connecting"
+msgstr ""
+
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
@@ -1602,6 +1650,7 @@ msgid "Connecting…"
 msgstr "Подключение…"
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
+#: src/pages/ProjectScopeForm.tsx
 msgid "Connection"
 msgstr "Подключение"
 
@@ -1624,11 +1673,13 @@ msgstr "Содержит исполняемый код"
 msgid "Context limit"
 msgstr ""
 
+#: src/components/BetaAccessGate.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/SignupSurvey.tsx
 #: src/pages/Auth.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/shell/agent-import.tsx
+#: src/pages/shell/create-bot-dialog.tsx
 msgid "Continue"
 msgstr "Продолжить"
 
@@ -1651,6 +1702,10 @@ msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Conversations"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Coordinate priorities, projects and the team."
 msgstr ""
 
 #: src/pages/shell/create-bot-dialog.tsx
@@ -1757,6 +1812,10 @@ msgstr "Не удалось подключить этого провайдера
 msgid "Could not connect this voice provider"
 msgstr "Не удалось подключить этого голосового провайдера."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not connect to Meta. Check your key and try again."
+msgstr ""
+
 #: src/pages/shell/use-computer.tsx
 msgid "Could not connect to the computer screen"
 msgstr "Не удалось подключиться к экрану компьютера"
@@ -1858,6 +1917,10 @@ msgstr "Не удалось загрузить {0}. Попробуйте еще 
 msgid "Could not download {name}. Try again."
 msgstr "Не удалось загрузить {name}. Попробуйте еще раз."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Could not hire your coworkers. Try again."
+msgstr ""
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not install connector"
 msgstr "Не удалось установить коннектор"
@@ -1892,6 +1955,7 @@ msgstr "Не удалось загрузить ботов. Обновите ст
 msgid "Could not load credentials."
 msgstr ""
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "Could not load integrations"
 msgstr "Не удалось загрузить интеграции"
@@ -1908,6 +1972,10 @@ msgstr "Не удалось загрузить настройки модели."
 #: src/pages/RoutineRunHistory.tsx
 msgid "Could not load run history"
 msgstr "Не удалось загрузить историю запусков"
+
+#: src/components/OnboardingUnavailable.tsx
+msgid "Could not load setup."
+msgstr ""
 
 #: src/lib/account-security.ts
 #: src/pages/Auth.tsx
@@ -2141,6 +2209,10 @@ msgstr "Не удалось обновить область памяти по у
 msgid "Could not verify computer setup ({failureMessage}). Fix the connection, then check again."
 msgstr ""
 
+#: src/components/BetaAccessGate.tsx
+msgid "Could not verify invite code"
+msgstr ""
+
 #: src/pages/MessagingSettingsPanel.tsx
 msgid "Couldn't load messaging settings"
 msgstr "Не удалось загрузить настройки обмена сообщениями."
@@ -2193,8 +2265,12 @@ msgid "Create space"
 msgstr "Создайте пространство"
 
 #: src/pages/Auth.tsx
-msgid "Create your Rakazo"
-msgstr "Создайте свой Rakazo"
+msgid "Create your MuseOrg"
+msgstr ""
+
+#: src/pages/Auth.tsx
+#~ msgid "Create your Rakazo"
+#~ msgstr "Создайте свой Rakazo"
 
 #: src/components/AskCard.tsx
 msgid "Created"
@@ -2205,6 +2281,10 @@ msgstr "Создано"
 #: src/pages/shell/dialogs.tsx
 msgid "Creating…"
 msgstr "Создание…"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Creative Director"
+msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Credential"
@@ -2267,6 +2347,10 @@ msgstr "Настроить аватар бота"
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Dark"
 msgstr "Тёмная"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Databases and projects"
+msgstr ""
 
 #: src/lib/billing.ts
 #: src/lib/cron.ts
@@ -2894,8 +2978,8 @@ msgid "General"
 msgstr "Общие"
 
 #: src/components/SidebarFooter.tsx
-msgid "Get the mobile app"
-msgstr "Скачать мобильное приложение"
+#~ msgid "Get the mobile app"
+#~ msgstr "Скачать мобильное приложение"
 
 #: src/components/ComputerUpdateProgress.tsx
 msgid "Getting ready"
@@ -2986,6 +3070,18 @@ msgstr "Высокий"
 #: src/lib/model-catalog.ts
 msgid "High"
 msgstr "Высокий"
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire coworkers"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hire your coworkers"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Hiring"
+msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk"
@@ -3172,6 +3268,10 @@ msgstr "Единица интервала"
 msgid "Invalid code"
 msgstr "Неверный код"
 
+#: src/components/BetaAccessGate.tsx
+msgid "Invite code"
+msgstr ""
+
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
 msgid "Isolated"
@@ -3212,6 +3312,10 @@ msgstr "Модель изменилась после импорта, поэто�
 #: src/pages/shell/agent-import-undo.tsx
 msgid "Its model goes back to before the import."
 msgstr "Модель вернётся к той, что была до импорта."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Join the beta"
+msgstr ""
 
 #: src/pages/shell/transcript.tsx
 msgid "Jump to latest"
@@ -3396,9 +3500,11 @@ msgstr "Основная модель"
 msgid "Manage"
 msgstr "Управлять"
 
+#. placeholder {0}: app.name
+#. placeholder {0}: item.name
 #. placeholder {0}: option.name
-#. placeholder {0}: providerName(choice)
 #: src/pages/ModelRoleSettings.tsx
+#: src/pages/PluginsOverlay.tsx
 #: src/pages/SettingsOverlay.tsx
 msgid "Manage {0}"
 msgstr "Управление {0}"
@@ -3419,6 +3525,10 @@ msgstr "Управлять созданными им ботами"
 #: src/pages/PluginsOverlay.tsx
 msgid "Manual"
 msgstr "Вручную"
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Manual setup"
+msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
 msgid "Manual setup required"
@@ -3579,6 +3689,18 @@ msgstr "Отправлено сообщение {peer}"
 msgid "Messaging"
 msgstr "Обмен сообщениями"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta API key"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta Growth Operator"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Meta is unavailable. Try again later."
+msgstr ""
+
 #: src/lib/call-session.ts
 msgid "Microphone failed"
 msgstr "Ошибка микрофона"
@@ -3697,6 +3819,10 @@ msgstr "Ещё"
 msgid "More computer actions"
 msgstr "Больше действий с компьютером"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "More connections"
+msgstr ""
+
 #: src/pages/ModelRoleSettings.tsx
 msgid "Move down"
 msgstr "Переместить вниз"
@@ -3727,6 +3853,7 @@ msgstr "микрофон выключен"
 #: src/pages/GroupPanel.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/providers-section.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-credentials.tsx
@@ -3786,7 +3913,6 @@ msgstr "Новые"
 #: src/pages/Shell.tsx
 #: src/pages/shell/agent-import.tsx
 #: src/pages/shell/bot-picker.tsx
-#: src/pages/shell/create-bot-dialog.tsx
 msgid "New bot"
 msgstr "Новый бот"
 
@@ -3848,6 +3974,11 @@ msgstr "Следующая страница"
 msgid "Next settings sections"
 msgstr ""
 
+#: src/pages/McpServersOverlay.tsx
+msgid "No account needed"
+msgstr ""
+
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "No apps match your search."
 msgstr "Нет приложений, соответствующих вашему запросу."
@@ -3882,8 +4013,8 @@ msgid "No longer active"
 msgstr "Больше не активен"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "No managed app catalog is configured on this deployment."
-msgstr "В этом развертывании не настроен каталог управляемых приложений."
+#~ msgid "No managed app catalog is configured on this deployment."
+#~ msgstr "В этом развертывании не настроен каталог управляемых приложений."
 
 #: src/pages/Artifacts.tsx
 msgid "No matching artifacts on this page."
@@ -3924,8 +4055,8 @@ msgid "No OpenClaw, Hermes or agent document found."
 msgstr "Не найдено файлов OpenClaw, Hermes или документа агента."
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "No remote MCP servers found"
-msgstr "Удаленные MCP-серверы не найдены"
+#~ msgid "No remote MCP servers found"
+#~ msgstr "Удаленные MCP-серверы не найдены"
 
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -3982,8 +4113,8 @@ msgid "Not in Rakazo's catalog"
 msgstr "Нет в каталоге Rakazo"
 
 #: src/pages/PluginsOverlay.tsx
-msgid "Not in the plugin catalog"
-msgstr "Нет в каталоге плагинов"
+#~ msgid "Not in the plugin catalog"
+#~ msgstr "Нет в каталоге плагинов"
 
 #: src/pages/shell/message-cards.tsx
 msgid "Not now"
@@ -4120,6 +4251,11 @@ msgstr "Открыть навигацию"
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Open pull requests"
+msgstr ""
+
+#: src/pages/PluginsOverlay.tsx
+#: src/pages/shell/message-cards.tsx
+msgid "Open sign-in"
 msgstr ""
 
 #: src/pages/ScratchpadSection.tsx
@@ -4313,6 +4449,10 @@ msgstr "Закрепить"
 msgid "Pinned"
 msgstr "Закреплённые"
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Plan distribution, outreach and follow-up."
+msgstr ""
+
 #: src/components/ArtifactFileCard.tsx
 msgid "Play {name}"
 msgstr "Воспроизвести {name}"
@@ -4325,6 +4465,10 @@ msgstr "Воспроизведение…"
 msgid "Plugin"
 msgstr "Плагин"
 
+#: src/pages/PluginsOverlay.tsx
+msgid "Popular"
+msgstr ""
+
 #: src/pages/RoutineEditor.tsx
 msgid "Post \"No changes\" in chat"
 msgstr "Писать «Без изменений» в чат"
@@ -4332,6 +4476,10 @@ msgstr "Писать «Без изменений» в чат"
 #: src/pages/RoutineEditor.tsx
 msgid "POST to"
 msgstr "ОТПРАВИТЬ в"
+
+#: src/pages/PluginsOverlay.tsx
+msgid "Posts, comments and messages"
+msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
@@ -4342,12 +4490,18 @@ msgid "Preview"
 msgstr ""
 
 #. placeholder {0}: props.name
+#. placeholder {0}: skill.name
 #: src/components/ArtifactFileCard.tsx
+#: src/components/SkillCatalogPicker.tsx
 msgid "Preview {0}"
 msgstr "Предварительный просмотр {0}"
 
 #: src/pages/Artifacts.tsx
 msgid "Preview isn't available for this file type — download it to view it."
+msgstr ""
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "Preview unavailable."
 msgstr ""
 
 #: src/components/markdown-copy.tsx
@@ -4559,6 +4713,7 @@ msgid "Reload"
 msgstr "Перезагрузить"
 
 #: src/components/ApprovalRulesSettings.tsx
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/ModelRoleSettings.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -4568,6 +4723,8 @@ msgid "Remove"
 msgstr "Удалить"
 
 #. placeholder {0}: attachment.file.name
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/shell/composer.tsx
 msgid "Remove {0}"
 msgstr "Удалить {0}"
@@ -4751,6 +4908,7 @@ msgid "Restoring your workspace"
 msgstr "Восстановление вашего рабочего пространства"
 
 #: src/components/AccountAccess.tsx
+#: src/components/BetaAccessGate.tsx
 #: src/components/PasskeySettings.tsx
 #: src/pages/Auth.tsx
 #: src/pages/ModelRoleSettings.tsx
@@ -4788,6 +4946,7 @@ msgid "Revision {0}"
 msgstr ""
 
 #: src/pages/MessagingSettingsPanel.tsx
+#: src/pages/ProjectSettings.tsx
 msgid "Revoke"
 msgstr "Отозвать"
 
@@ -4873,6 +5032,7 @@ msgstr "суббота"
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
+#: src/pages/ProjectSettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/bot-panel.tsx
 #: src/pages/shell/dialogs.tsx
@@ -4890,6 +5050,10 @@ msgstr ""
 #: src/components/ComputerMaintenanceActions.tsx
 msgid "Save the workspace and install current software."
 msgstr "Сохранить рабочее пространство и установить актуальное ПО."
+
+#: src/pages/McpServersOverlay.tsx
+msgid "Save, then connect OAuth"
+msgstr ""
 
 #: src/components/AskCard.tsx
 #: src/components/teach/SkillDraftCard.tsx
@@ -4946,6 +5110,7 @@ msgstr "Области доступа (необязательно)"
 msgid "Screen not connected"
 msgstr "Экран не подключён"
 
+#: src/components/SkillCatalogPicker.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -4980,8 +5145,8 @@ msgid "Search Cloudflare documentation"
 msgstr ""
 
 #: src/components/integrations/IntegrationSetup.tsx
-msgid "Search integrations.sh"
-msgstr "Поиск integrations.sh"
+#~ msgid "Search integrations.sh"
+#~ msgstr "Поиск integrations.sh"
 
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/role-model-picker.tsx
@@ -5004,6 +5169,10 @@ msgstr ""
 #. placeholder {0}: filters.query.trim()
 #: src/pages/ActivityList.tsx
 msgid "Search: {0}"
+msgstr ""
+
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Searching integrations…"
 msgstr ""
 
 #: src/pages/PluginsOverlay.tsx
@@ -5099,6 +5268,10 @@ msgstr "Имя сервера"
 msgid "Server URL"
 msgstr "URL-адрес сервера"
 
+#: src/components/integrations/IntegrationSetup.tsx
+msgid "Set up"
+msgstr ""
+
 #: src/components/call/CallCard.tsx
 #: src/components/SidebarFooter.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -5119,6 +5292,10 @@ msgstr "Настройки: Использование"
 msgid "Setup complete"
 msgstr "Настройка завершена"
 
+#: src/pages/McpServersOverlay.tsx
+msgid "Setup guide"
+msgstr ""
+
 #: src/pages/model-settings/compatible-model-fields.tsx
 msgid "Setup help"
 msgstr "Помощь по настройке"
@@ -5130,6 +5307,10 @@ msgstr "Форма"
 #. placeholder {0}: index + 1
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Shape {0}"
+msgstr ""
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Shape ideas, design and creative work."
 msgstr ""
 
 #: src/pages/MemorySettingsOverlay.tsx
@@ -5157,6 +5338,7 @@ msgstr ""
 msgid "Show list"
 msgstr ""
 
+#: src/components/integrations/IntegrationSetup.tsx
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/ScratchpadSection.tsx
@@ -5209,8 +5391,12 @@ msgid "Sign in at <0>{0}</0>, then paste the code here."
 msgstr "Войдите на <0>{0}</0>, затем вставьте код сюда."
 
 #: src/pages/Auth.tsx
-msgid "Sign in to Rakazo"
-msgstr "Войти в Rakazo"
+msgid "Sign in to MuseOrg"
+msgstr ""
+
+#: src/pages/Auth.tsx
+#~ msgid "Sign in to Rakazo"
+#~ msgstr "Войти в Rakazo"
 
 #: src/lib/user-error.ts
 msgid "Sign in to your existing account to link SSO"
@@ -5223,6 +5409,10 @@ msgstr "Войти с ключом доступа"
 #: src/lib/model-connection-preflight.ts
 msgid "Sign in with the subscription, or test the API key instead."
 msgstr "Войдите по подписке или протестируйте API-ключ."
+
+#: src/components/BetaAccessGate.tsx
+msgid "Sign out"
+msgstr ""
 
 #: src/pages/Auth.tsx
 #: src/pages/Welcome.tsx
@@ -5353,6 +5543,10 @@ msgstr "Речевая модель"
 #: src/lib/user-error.ts
 msgid "SSO is temporarily unavailable. Try again."
 msgstr "SSO временно недоступен. Попробуйте снова."
+
+#: src/pages/MetaOnboarding.tsx
+msgid "Staff Engineer"
+msgstr ""
 
 #: src/pages/ProjectScopeForm.tsx
 msgid "Stage ads"
@@ -5836,9 +6030,15 @@ msgstr ""
 msgid "Trial ends {day}"
 msgstr ""
 
+#: src/components/OnboardingUnavailable.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/MetaOnboarding.tsx
 #: src/pages/Onboarding.tsx
 msgid "Try again"
+msgstr ""
+
+#: src/components/BetaAccessGate.tsx
+msgid "Try again in a minute"
 msgstr ""
 
 #: src/lib/model-connection-preflight.ts
@@ -6074,9 +6274,18 @@ msgstr "Проверка…"
 msgid "Version"
 msgstr ""
 
+#. placeholder {0}: skill.name
+#: src/components/SkillCatalogPicker.tsx
+msgid "View {0} on skills.sh"
+msgstr ""
+
 #: src/pages/RoutineRunHistory.tsx
 msgid "View chat"
 msgstr "Открыть чат"
+
+#: src/components/SkillCatalogPicker.tsx
+msgid "View on skills.sh"
+msgstr ""
 
 #: src/pages/SettingsOverlay.tsx
 #: src/pages/shell/bot-panel.tsx
@@ -6280,6 +6489,10 @@ msgstr "Ваш первый бот уже существовал, поэтому
 msgid "Your first bot already exists."
 msgstr "Ваш первый бот уже существует."
 
+#: src/pages/MetaOnboarding.tsx
+msgid "Your Meta connection is not ready. Try again."
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/lib/run-error.ts
 msgid "Your model provider"
@@ -6314,65 +6527,3 @@ msgstr "У вашего голосового провайдера закончи
 #: src/lib/user-error.ts
 msgid "Your voice provider key was rejected."
 msgstr "Ваш голосовой провайдер отклонил ключ."
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Business messages"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Campaigns and ads"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Databases and projects"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Posts, comments and messages"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Popular"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "Connect through an MCP server. Account access is granted during setup."
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "Preview unavailable."
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View on skills.sh"
-msgstr ""
-
-#: src/components/SkillCatalogPicker.tsx
-msgid "View {0} on skills.sh"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-msgid "More connections"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Searching integrations…"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Set up"
-msgstr ""
-
-#: src/components/integrations/IntegrationSetup.tsx
-msgid "Manual setup"
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Allow popups to connect this app."
-msgstr ""
-
-#: src/pages/PluginsOverlay.tsx
-#: src/pages/shell/message-cards.tsx
-msgid "Open sign-in"
-msgstr ""
