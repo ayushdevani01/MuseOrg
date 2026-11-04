@@ -1465,6 +1465,8 @@ model McpServer {
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   assignments   BotMcpServer[]
+  /// Approved servers are assigned to newly created bots; imports wait for approval.
+  defaultForBots Boolean           @default(true)
   oauthSessions McpOAuthSession[]
 
   @@unique([spaceId, userId, slug])

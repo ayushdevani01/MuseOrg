@@ -16,6 +16,7 @@ import { chooseBotAvatar } from "./bot-avatar-choice.js";
 import type { Prisma, PrismaClient } from "./client.js";
 import type { ComputerMode } from "./computers.js";
 import { ensureComputerRecord, parseComputerMode } from "./computers.js";
+import { inheritDefaultMcpServers } from "./mcp-default-access.js";
 import { createThreadMessageInTransaction } from "./messages.js";
 import { withNewestThreadMessages } from "./preview-messages.js";
 import { BotSectionNameConflictError, IsolationError } from "./scope.js";
@@ -640,6 +641,7 @@ export function createRepos(
               content: initialBotMemory(input.name),
             },
           });
+          await inheritDefaultMcpServers(tx, actor, created.id);
           await input.seed?.(tx, created.id);
           return tx.bot.findFirstOrThrow({
             where: { id: created.id },
