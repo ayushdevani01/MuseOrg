@@ -59,8 +59,11 @@ the real repair/PR/check/approval/merge/deployment chain.
 
 Local campaign JSON is not remote platform staging or publishing. Facebook,
 Instagram and Threads publishing receipts, scoped real inbound replies and
-revision-bound social delivery still need verification. The read-only Ads MCP
-connection returned no eligible ad account, so campaign staging remains blocked.
+revision-bound social delivery still need verification. The later
+[official Ads MCP rehearsal](./2026-11-04-meta-connections.md) created a real
+paused traffic campaign and uploaded the generated artwork, with independent
+readback. No ad set/ad or delivery budget was configured; the campaign remains
+Off. The earlier empty-account blocker has been resolved.
 Google and WhatsApp setup remain deferred. MuseOrg deployment to a separate EC2
 is paused; the existing Launchpad instance is not the deployment target.
 
