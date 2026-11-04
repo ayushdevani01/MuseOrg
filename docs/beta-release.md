@@ -5,6 +5,11 @@ creates the account; the web app then asks for the invite. The API checks the
 account's persisted admission before resolving an authenticated workspace.
 Failed status checks keep the web gate closed. Redemption is rate limited.
 
+Signup creates account and workspace metadata without starting a computer.
+Employee creation and computer boot require admission through the same API
+session check. Computers start on demand as isolated Linux containers on the
+deployment's EC2 host, with a shared computer per workspace by default.
+
 Set the real code in the server environment, outside source control. Changing
 the code changes future admissions; already admitted accounts remain admitted.
 Leaving it empty preserves normal self-hosted behavior. Native clients can use
@@ -38,3 +43,19 @@ Use the production Compose file with its Docker sandbox overlay for the beta.
 Keep its database and app volumes on the new host. The deployment environment
 must supply fresh auth, database and encryption secrets and the shared model
 key; none belong in a release archive. See [self-hosting](./self-host.md).
+
+Build the shared application image once before starting the services. This
+avoids concurrent exports of the same image tag on a fresh Docker host:
+
+```sh
+COMPOSE_PARALLEL_LIMIT=1 docker compose --env-file .env \
+  -f infra/compose/docker-compose.prod.yml \
+  -f infra/compose/docker-compose.prod.docker.yml build computer api
+docker compose --env-file .env \
+  -f infra/compose/docker-compose.prod.yml \
+  -f infra/compose/docker-compose.prod.docker.yml up -d --no-build --pull never --wait
+```
+
+Run `pnpm --filter @rakazo/web intl:extract` before releasing new UI copy. A
+development render can show source messages that are absent from production
+catalogs, so verify the production browser flow as well as the API.
