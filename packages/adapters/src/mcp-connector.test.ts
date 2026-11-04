@@ -2199,10 +2199,14 @@ describe("MCP connector stdio credential files", () => {
     const [launch] = launches;
     const file = launch?.files.MAIL_CREDENTIALS;
     expect(launch?.env.MAIL_REGION).toBe("eu");
-    expect(launch?.env.MAIL_CREDENTIALS).toMatch(/\/MAIL_CREDENTIALS$/);
-    expect(file?.dir.startsWith(`${credentialRoot}/rakazo-mcp-`)).toBe(true);
-    expect(file?.dirMode).toBe(0o700);
-    expect(file?.mode).toBe(0o600);
+    expect(file).toBeDefined();
+    expect(launch?.env.MAIL_CREDENTIALS).toBe(join(file!.dir, "MAIL_CREDENTIALS"));
+    expect(file?.dir.startsWith(join(credentialRoot, "rakazo-mcp-"))).toBe(true);
+    // Windows reports DOS permissions here; POSIX mode bits apply on Unix.
+    if (process.platform !== "win32") {
+      expect(file?.dirMode).toBe(0o700);
+      expect(file?.mode).toBe(0o600);
+    }
     expect(JSON.parse(file?.content ?? "")).toEqual({
       token: "access-1",
       expiry: expect.any(Number),
