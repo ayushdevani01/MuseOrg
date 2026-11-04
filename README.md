@@ -3,30 +3,47 @@
 Persistent AI coworkers that share a computer, collaborate in chat and carry
 out work with connected tools.
 
-MuseOrg is a work in progress for the Meta Global AI Developer Hackathon.
-Users can hire and task coworkers directly; Chief, Engineer, Creative and Growth
-are starter profiles on the same reusable runtime.
+MuseOrg is a beta for the Meta Global AI Developer Hackathon. Users hire and
+task continuing coworkers directly. Chief of Staff, Staff Engineer, Creative
+Director and Meta Growth Operator are selected starter profiles on the same
+runtime; custom coworkers use that runtime too.
 
 ## Current state
 
-- Private account setup and personal Meta model-key onboarding are implemented.
-- A live development run verified shared-computer repair and independent peer
-  review, durable messages, retained files after restart and downloadable source.
-- MCP, OpenAPI and GraphQL setup is available, with seven MCP presets. Public
-  documentation MCP discovery and one real worker tool call are verified.
+- The hosted beta requires an invite after signup and uses a server-held Meta
+  model connection. Workspace access and computer boot are blocked before
+  admission. Computers start on demand as isolated Linux containers on EC2.
+- Model-ready users can hire the four starter roles without entering a personal
+  key or choosing different models for each coworker. Retrying a partial hire
+  reuses its saved coworkers. Web and Electron share this onboarding; native
+  mobile accounts redeem invitations on web and use ordinary coworker hiring.
+- Shared files, durable peer messages, parallel helpers, preferences after
+  restart, background work and controlled worker recovery have live evidence.
+- MCP, OpenAPI and GraphQL setup includes popular presets and local logos.
+  Each user authorizes their own app accounts; shared model funding does not
+  share the operator's social accounts.
 - Hiring includes role choices and optional skills.sh search, preview and import.
   Imported instructions and supporting text files are available to the runtime.
-  Integration browsing preloads twelve popular apps with local logos and setup
-  routes, even without a managed app catalog.
-- Live Meta Spark inference, tool work, saved preferences and attached Team
-  Computer reports are verified. Meta media, social account actions and the
-  complete marketing launch demonstration remain unfinished.
-  Shared corrections, worker recovery and the engineering
-  repair-to-PR-to-deployment demonstration are verified.
+  Preview and import were checked through the live application and runtime.
+- Live Meta Spark tool work, video/audio transcription, SAM segmentation,
+  transparent cutouts and image editing have verified saved artifacts.
+- The engineering demo repaired a disclosed website failure, opened a PR,
+  passed its checks, required authorized merging and verified the deployed
+  revision through a real browser interaction.
+- An employee used the official Meta Ads MCP to create and read back a paused
+  campaign, upload generated artwork and verify its stored image. No ad set,
+  delivery budget, payment method or active ad was configured.
+
+Social draft files are review candidates, not proof of platform publishing.
+Facebook, Instagram and Threads publishing/replies, and the full coordinated
+launch rehearsal, remain separate verification work. Google and WhatsApp account
+setup is deferred. Account connections can require fresh authorization.
 
 Earlier core development checks used an isolated temporary Codex connection.
-[The Meta verification](docs/verification/2026-11-02-meta-and-integrations.md)
-used a personal Meta API-key connection. Submission configuration requires Meta.
+The hosted beta has its own database and native Meta connection; those temporary
+development credentials are not part of its deployment. See the
+[Meta evidence](docs/verification/2026-11-04-video-rehearsal.md) and
+[beta configuration](docs/beta-release.md).
 
 See [implementation status](docs/CORE_IMPLEMENTATION.md),
 [verification records](docs/verification/), [account access status](docs/ACCESS_MATRIX.md)
@@ -47,9 +64,11 @@ Set fresh local database passwords and put the matching passwords in
 `DATABASE_URL` and `DATABASE_MIGRATION_URL`. Generate independent long random
 values for `BETTER_AUTH_SECRET`, `ENCRYPTION_KEY`, `SCREEN_PROXY_SECRET` and
 `SANDBOX_SUPERVISOR_TOKEN` in the ignored `.env`. The example contains placeholders.
-For Docker Desktop, also set `SANDBOX_CONTROL_VIA_LOOPBACK=true`. Keep
-`REQUIRED_PERSONAL_MODEL_PROVIDER=meta` for the submission configuration; connect
-the model through onboarding instead of putting a personal model key in source.
+For Docker Desktop, also set `SANDBOX_CONTROL_VIA_LOOPBACK=true`.
+Self-hosted deployments can configure their own model connection. To require
+personal Meta keys, set `REQUIRED_PERSONAL_MODEL_PROVIDER=meta`. For the invite
+beta's shared connection, follow [beta configuration](docs/beta-release.md).
+Real invite codes and model credentials belong in the server environment.
 
 ```sh
 pnpm sandbox:build

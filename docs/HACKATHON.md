@@ -29,9 +29,10 @@ before submitting; this checklist does not replace the organizers' rules.
 
 ## Submission still to complete
 
-- Demonstrate useful live Meta model execution. Temporary Codex development
-  access does not establish the Meta requirement; submission configuration
-  requires a personal Meta API-key connection.
+- Preserve the live Meta execution evidence and ensure the submitted deployment
+  uses its configured native Meta connection. The invite beta uses server-held
+  credentials; self-hosted personal-key mode is optional. Temporary Codex testing
+  credentials are not deployed.
 - Provide an accessible three-minute demo video, identify the features built
   during the event, and accurately describe reused components.
 - Provide the live product and required submission fields, identify team

@@ -10,6 +10,14 @@ Employee creation and computer boot require admission through the same API
 session check. Computers start on demand as isolated Linux containers on the
 deployment's EC2 host, with a shared computer per workspace by default.
 
+After admission and model readiness, web and Electron offer Chief of Staff,
+Staff Engineer, Creative Director and Meta Growth Operator, all initially
+selected. The backend validates model readiness and hires the selected profiles
+idempotently. Coworkers inherit the configured shared model without personal
+credentials or fixed per-role model choices. A partially completed hire can be
+retried without duplicating coworkers. Native mobile uses ordinary coworker
+hiring after the account has redeemed its invitation on web.
+
 Set the real code in the server environment, outside source control. Changing
 the code changes future admissions; already admitted accounts remain admitted.
 Leaving it empty preserves normal self-hosted behavior. Native clients can use
