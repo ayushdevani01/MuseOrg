@@ -85,12 +85,11 @@ beforeEach(() => {
   access.bots.mockReset().mockResolvedValue([]);
 });
 
-function overlay(editServerId?: string, stdioEnabled = true, activeBotId?: string) {
+function overlay(editServerId?: string, stdioEnabled = true) {
   return (
     <QueryClientProvider client={client}>
       <McpServersOverlay
         editServerId={editServerId}
-        activeBotId={activeBotId}
         stdioEnabled={stdioEnabled}
         onClose={() => {}}
       />
@@ -123,7 +122,7 @@ function server(id: string, status: McpServer["health"]["status"] = "unknown"): 
   };
 }
 
-it("preselects only the current coworker for a new server and lets the owner opt out", async () => {
+it("includes every coworker by default and lets the owner exclude one", async () => {
   mocks.list.mockReset().mockResolvedValue([]);
   access.bots.mockResolvedValue([
     { id: "bot_1", name: "Ada" },
@@ -132,32 +131,33 @@ it("preselects only the current coworker for a new server and lets the owner opt
   const host = document.createElement("div");
   const root = createRoot(host);
   try {
-    await act(async () => root.render(overlay(undefined, true, "bot_1")));
+    await act(async () => root.render(overlay(undefined, true)));
     const button = (name: string) =>
       Array.from(host.querySelectorAll("button")).find((item) => item.textContent === name)!;
     await vi.waitFor(() => expect(button("Ada")?.getAttribute("aria-pressed")).toBe("true"));
-    expect(button("Bea").getAttribute("aria-pressed")).toBe("false");
+    expect(button("Bea").getAttribute("aria-pressed")).toBe("true");
     await act(async () => button("Ada").click());
     expect(button("Ada").getAttribute("aria-pressed")).toBe("false");
+    expect(button("Bea").getAttribute("aria-pressed")).toBe("true");
     expect(access.replace).not.toHaveBeenCalled();
   } finally {
     await act(async () => root.unmount());
   }
 });
 
-it("does not preselect an unavailable coworker or change an edited server's assignments", async () => {
+it("defaults to all without a current coworker and preserves edited server assignments", async () => {
   mocks.list.mockReset().mockResolvedValue([server("docs")]);
   access.bots.mockResolvedValue([{ id: "bot_1", name: "Ada" }]);
   const host = document.createElement("div");
   const root = createRoot(host);
   try {
-    await act(async () => root.render(overlay(undefined, true, "missing-bot")));
+    await act(async () => root.render(overlay(undefined, true)));
     await vi.waitFor(() => expect(host.textContent).toContain("Ada"));
-    for (const button of Array.from(host.querySelectorAll("button")).filter(
+    const initial = Array.from(host.querySelectorAll("button")).filter(
       (item) => item.textContent === "Ada",
-    ))
-      expect(button.getAttribute("aria-pressed")).toBe("false");
-    await act(async () => root.render(overlay("docs", true, "bot_1")));
+    );
+    expect(initial.map((button) => button.getAttribute("aria-pressed"))).toEqual(["true", "false"]);
+    await act(async () => root.render(overlay("docs", true)));
     await vi.waitFor(() => expect(host.textContent).toContain("Cancel"));
     const agents = Array.from(host.querySelectorAll("button")).filter(
       (item) => item.textContent === "Ada",

@@ -64,7 +64,6 @@ export function AppOverlays({
           key={overlay.serverId ?? overlay.presetId ?? "mcp"}
           editServerId={overlay.serverId}
           presetId={overlay.presetId}
-          activeBotId={activeBotId}
           stdioEnabled={stdioEnabled}
           onCreated={() => setOverlay({ kind: "mcp" })}
           onClose={() => setOverlay(null)}

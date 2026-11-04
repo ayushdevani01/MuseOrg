@@ -77,7 +77,6 @@ export function McpServersOverlay({
   onClose,
   editServerId,
   presetId,
-  activeBotId,
   stdioEnabled,
   onCreated,
 }: {
@@ -86,8 +85,6 @@ export function McpServersOverlay({
   editServerId?: string;
   /** A reviewed catalog entry fills the normal form without saving anything. */
   presetId?: string;
-  /** The current coworker is a visible, editable default for a new server. */
-  activeBotId?: string;
   /** Whether this deployment runs stdio servers. */
   stdioEnabled: boolean;
   onCreated?: () => void;
@@ -98,8 +95,7 @@ export function McpServersOverlay({
     : undefined;
   const [editing, setEditing] = useState<McpServer | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState<string | null>(null);
-  const [selectedBotIds, setSelectedBotIds] = useState<string[]>([]);
-  const initialBotSelection = useRef(false);
+  const [excludedBotIds, setExcludedBotIds] = useState<string[]>([]);
   const [transport, setTransport] = useState<McpTransport>("streamable_http");
   const [name, setName] = useState(initialPreset?.name ?? "");
   const [endpoint, setEndpoint] = useState(initialPreset?.endpoint ?? "");
@@ -144,13 +140,6 @@ export function McpServersOverlay({
     () => (botsQuery.data ?? []).filter((bot) => !bot.archivedAt),
     [botsQuery.data],
   );
-  useEffect(() => {
-    if (initialBotSelection.current || editServerId || !botsQuery.isSuccess) return;
-    initialBotSelection.current = true;
-    setSelectedBotIds(
-      activeBotId && bots.some((bot) => bot.id === activeBotId) ? [activeBotId] : [],
-    );
-  }, [activeBotId, bots, botsQuery.isSuccess, editServerId]);
   const botAssignments = useMemo(() => {
     const assignments = assignmentsQuery.data ?? [];
     return Object.fromEntries(
@@ -194,7 +183,7 @@ export function McpServersOverlay({
   }, [queries]);
 
   function toggleBot(id: string) {
-    setSelectedBotIds((current) =>
+    setExcludedBotIds((current) =>
       current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
     );
   }
@@ -228,9 +217,7 @@ export function McpServersOverlay({
     setCommand("");
     setArgs("");
     setEnvRows([emptyEnvRow()]);
-    setSelectedBotIds(
-      activeBotId && bots.some((bot) => bot.id === activeBotId) ? [activeBotId] : [],
-    );
+    setExcludedBotIds([]);
   }
 
   /** Stored values are never sent back to the client, so a blank one keeps what is stored. */
@@ -253,7 +240,7 @@ export function McpServersOverlay({
 
   async function saveServer() {
     if (transport === "stdio" && duplicateNames.size > 0) return;
-    if (!editing && selectedBotIds.length > 0 && !assignmentsReady) return;
+    if (!editing && (!assignmentsReady || !botsQuery.isSuccess)) return;
     setError(null);
     if (!name.trim()) {
       setError(t`Add a server name.`);
@@ -341,22 +328,7 @@ export function McpServersOverlay({
         resetForm();
         return;
       }
-      const created = await rpc.mcp.servers.create(config);
-      // replace() overwrites the bot's whole list, so merge with what it already has.
-      await Promise.all(
-        selectedBotIds.map((botId) => {
-          const existing = (botAssignments[botId] ?? []).filter(
-            (entry) => entry.serverId !== created.id,
-          );
-          return rpc.mcp.assignments.replace({
-            botId,
-            assignments: [
-              ...existing,
-              { serverId: created.id, allowAllTools: true, allowedTools: [] },
-            ],
-          });
-        }),
-      );
+      await rpc.mcp.servers.create({ ...config, excludedBotIds });
       await refresh();
       resetForm();
       onCreated?.();
@@ -827,7 +799,7 @@ export function McpServersOverlay({
                     </FieldTitle>
                     <div className="flex flex-wrap gap-1.5">
                       {bots.map((bot) => {
-                        const selected = selectedBotIds.includes(bot.id);
+                        const selected = !excludedBotIds.includes(bot.id);
                         return (
                           <Button
                             key={bot.id}
@@ -853,7 +825,7 @@ export function McpServersOverlay({
                 disabled={
                   saving ||
                   (transport === "stdio" && duplicateNames.size > 0) ||
-                  (!editing && selectedBotIds.length > 0 && !assignmentsReady)
+                  (!editing && (!assignmentsReady || !botsQuery.isSuccess))
                 }
                 onClick={() => void saveServer()}
               >
