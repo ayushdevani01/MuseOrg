@@ -1891,6 +1891,7 @@ model SpaceModelRoleChoice {
   modelId       String
   thinkingLevel String?
   credentialId  String?
+  fallbackOn    String?
   credential    UserModelCredential? @relation(fields: [credentialId, userId], references: [id, userId], onDelete: Cascade)
 
   @@id([spaceId, userId, role, position])
@@ -1922,6 +1923,7 @@ model UserModelRoleChoice {
   modelId       String
   thinkingLevel String?
   credentialId  String?
+  fallbackOn    String?
   credential    UserModelCredential? @relation(fields: [credentialId, userId], references: [id, userId], onDelete: Cascade)
 
   @@id([userId, role, position])

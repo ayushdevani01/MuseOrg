@@ -1,5 +1,28 @@
 import { describe, expect, it } from "vitest";
-import { isRetryableProviderUnavailable, isTransientModelError } from "./model-errors.js";
+import {
+  isModelRateLimitError,
+  isRetryableProviderUnavailable,
+  isTransientModelError,
+} from "./model-errors.js";
+
+describe("rate-limit-only fallback", () => {
+  it.each([
+    [{ status: 429, error: { code: "rate_limit_exceeded" } }, true],
+    ["429 rate_limit_error: requests per minute exceeded", true],
+    ["rate_limit_exceeded", true],
+    ["too many requests", true],
+    ["503 overloaded", false],
+    ["Request timed out", false],
+    ["401 invalid_api_key; rate_limit_exceeded", false],
+    ["400 invalid request; 429 rate limit", false],
+    ["429 insufficient_quota", false],
+    ["429 exceeded your current quota", false],
+    ["402 insufficient_balance_error", false],
+    ["aborted; 429 rate limit", false],
+  ])("classifies %j as %s", (error, expected) => {
+    expect(isModelRateLimitError(error)).toBe(expected);
+  });
+});
 
 describe("transient model errors", () => {
   it.each([

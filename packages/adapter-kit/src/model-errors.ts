@@ -153,3 +153,11 @@ export function isTransientModelError(error: unknown): boolean {
     !(text.includes("usage limit") && !shortWindow)
   );
 }
+
+/** A short provider rate window, excluding billing quota and other availability faults. */
+export function isModelRateLimitError(error: unknown): boolean {
+  if (!isTransientModelError(error)) return false;
+  const { text, statuses } = errorFacts(error);
+  if (statuses.size) return statuses.has(429);
+  return /rate[ _-]?limit|too many requests|requests per minute|tokens per minute/.test(text);
+}

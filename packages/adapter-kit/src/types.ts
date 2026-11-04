@@ -1,6 +1,7 @@
 import type {
   CacheCapabilities as ConnectionCacheCapabilities,
   ConnectionCatalogItem,
+  ModelFallbackTrigger,
   SandboxKind,
 } from "@rakazo/contracts";
 
@@ -524,7 +525,11 @@ export interface AgentRunRequest {
   tools: ConnectorTool[];
   model: AgentRunModel;
   /** Ordered, user-selected models eligible after provider unavailability. */
-  fallbackModels?: Array<Pick<AgentRunModel, "provider" | "id" | "connectionId">>;
+  fallbackModels?: Array<
+    Pick<AgentRunModel, "provider" | "id" | "connectionId"> & {
+      fallbackOn?: ModelFallbackTrigger;
+    }
+  >;
   /** Resolve one configured backup lazily so healthy primary turns do no extra auth work. */
   resolveFallbackModel?: (
     provider: string,

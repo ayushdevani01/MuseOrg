@@ -7,6 +7,7 @@ import type {
 import {
   backupChoiceKey,
   canonicalPiProviderId,
+  ModelFallbackTriggerSchema,
   modelRoleChoiceKey,
   ThinkingLevelSchema,
 } from "@rakazo/contracts";
@@ -26,6 +27,7 @@ type StoredChoice = {
   modelId: string;
   thinkingLevel: string | null;
   credentialId: string | null;
+  fallbackOn: string | null;
 };
 type RoleOwner = { userId: string; spaceId?: string };
 /** The columns both copies share; the Space's rows are also keyed by its id. */
@@ -45,6 +47,7 @@ const storedChoice = {
   modelId: true,
   thinkingLevel: true,
   credentialId: true,
+  fallbackOn: true,
 } as const;
 
 function roleChoice(row: StoredChoice): ModelRoleChoice {
@@ -54,6 +57,9 @@ function roleChoice(row: StoredChoice): ModelRoleChoice {
     modelId: row.modelId,
     ...(thinkingLevel.success ? { thinkingLevel: thinkingLevel.data } : {}),
     ...(row.credentialId ? { credentialId: row.credentialId } : {}),
+    ...(row.fallbackOn != null
+      ? { fallbackOn: ModelFallbackTriggerSchema.parse(row.fallbackOn) }
+      : {}),
   };
 }
 
@@ -196,6 +202,11 @@ export async function writeModelRole(
       ...(credentialId ? { credentialId } : {}),
       thinkingLevel:
         choice.thinkingLevel !== undefined ? choice.thinkingLevel : savedThinking(choice),
+      fallbackOn:
+        choice.fallbackOn ??
+        saved.find(
+          (item) => modelRoleChoiceKey(item) === modelRoleChoiceKey({ ...choice, credentialId }),
+        )?.fallbackOn,
     };
   };
   const primary =
@@ -221,6 +232,7 @@ export async function writeModelRole(
       modelId: row.modelId,
       thinkingLevel: row.thinkingLevel ?? null,
       credentialId: row.credentialId ?? null,
+      fallbackOn: row.fallbackOn ?? null,
     })),
   });
   return getModelRole(tx, target, role);

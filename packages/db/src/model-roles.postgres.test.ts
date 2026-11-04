@@ -76,6 +76,35 @@ describePostgres("model roles (PostgreSQL)", () => {
     await prisma.userModelRoleChoice.deleteMany({ where: { userId } });
   });
 
+  it.each(["account", "space"] as const)(
+    "persists and preserves restricted backups in %s settings",
+    async (scope) => {
+      const target = { userId, spaceId, scope };
+      const backup = {
+        provider: "meta",
+        modelId: "synthetic-backup",
+        fallbackOn: "rate_limit" as const,
+      };
+      await updateModelRole(prisma, target, "main", {
+        primary: { provider: "meta", modelId: "synthetic-primary" },
+        backups: [backup],
+      });
+      expect((await getModelRole(prisma, target, "main")).backups[0]).toMatchObject(backup);
+      await updateModelRole(prisma, target, "main", {
+        backups: [{ provider: backup.provider, modelId: backup.modelId }],
+      });
+      expect((await getModelRole(prisma, target, "main")).backups[0]?.fallbackOn).toBe(
+        "rate_limit",
+      );
+      await updateModelRole(prisma, target, "main", {
+        backups: [{ ...backup, fallbackOn: "unavailable" }],
+      });
+      expect((await getModelRole(prisma, target, "main")).backups[0]?.fallbackOn).toBe(
+        "unavailable",
+      );
+    },
+  );
+
   afterAll(async () => {
     if (!prisma) return;
     await prisma.organization.deleteMany({ where: { id: organizationId } });
