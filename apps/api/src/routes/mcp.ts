@@ -37,8 +37,9 @@ import {
   promptFocus,
   startOnboarding,
 } from "../onboarding.js";
+import { hireOnboardingCoworkers } from "../onboarding-coworkers.js";
 import type { RouterContext } from "./context.js";
-import { computerContext, isUniqueViolation } from "./shared.js";
+import { computerContext, isUniqueViolation, modelSetup } from "./shared.js";
 
 export function mcpRoutes(ctx: RouterContext) {
   const {
@@ -793,6 +794,14 @@ export function mcpRoutes(ctx: RouterContext) {
       },
     },
     onboarding: {
+      hireCoworkers: authed.onboarding.hireCoworkers.handler(async ({ context, input }) => ({
+        botIds: await hireOnboardingCoworkers(
+          ctx.repos,
+          context.actor,
+          input.templateIds,
+          await modelSetup(deps, context.actor),
+        ),
+      })),
       signupSurvey: authed.onboarding.signupSurvey.handler(async ({ context, input }) => {
         const answers = {
           reason: input.reason || null,

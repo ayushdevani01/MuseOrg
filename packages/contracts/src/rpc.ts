@@ -950,6 +950,9 @@ export const appContract = {
     },
   },
   onboarding: {
+    hireCoworkers: oc
+      .input(z.object({ templateIds: z.array(z.string().min(1).max(40)).min(1).max(4) }))
+      .output(z.object({ botIds: z.array(Id) })),
     /** Record the optional signup survey; an empty submission marks it skipped. */
     signupSurvey: oc.input(SignupSurveySchema).output(z.object({ ok: z.literal(true) })),
     /** Seed the first-run greeting into the bot's thread (focus card is separate). */
