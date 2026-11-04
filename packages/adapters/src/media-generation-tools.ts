@@ -137,7 +137,12 @@ export async function generateMediaFromTool(options: {
           if (!options.loadSource) return { error: "Source files are unavailable." };
           source = await options.loadSource(input.data.sourcePath);
         }
-        // A unique slot makes the per-run cap durable even across concurrent calls/restarts.
+        // Processing inputs must leave room to generate from them in the same run.
+        // Keep the existing shared image/video slots so upgrades preserve generation limits.
+        const slotGroup = ["transcribe_media", "segment_image"].includes(options.name)
+          ? `${run.id}:${options.name}`
+          : run.id;
+        // Unique slots keep each cap durable across concurrent calls and restarts.
         for (let slot = 0; slot < 2; slot++) {
           try {
             reservation = await prisma.externalEffect.create({
@@ -145,7 +150,7 @@ export async function generateMediaFromTool(options: {
                 spaceId: run.spaceId,
                 runId: run.id,
                 kind: JOB_KIND,
-                idempotencyKey: `media:${run.id}:${slot}`,
+                idempotencyKey: `media:${slotGroup}:${slot}`,
                 status: "media_submitting",
                 request: {
                   tool: options.name,
@@ -164,7 +169,9 @@ export async function generateMediaFromTool(options: {
           }
         }
         if (!reservation)
-          return { error: "Media generation limit reached (two submissions per run)." };
+          return {
+            error: "Media submission limit reached for this operation (two attempts per run).",
+          };
       }
     }
     const saved = savedJob.parse(reservation.result);

@@ -2042,7 +2042,9 @@ background. Use the existing per-bot tool switches and action approval rules to
 control access. Both tools require approval by default. Ticket board runs keep
 these chat-only media tools unavailable so ticket work stays on the board.
 
-Each run allows at most two submissions (including failures). Submissions are
+Each run allows at most two image/video generation submissions in total, plus
+two transcription and two segmentation submissions (including failures). Input
+processing therefore leaves room for the generated output. Submissions are
 never retried automatically: a lost response can mean the provider accepted and
 charged for the request. Provider errors omit remote response bodies. Configure
 account budgets and rate limits with your provider; the run cap is not a currency

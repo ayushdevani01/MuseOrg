@@ -186,6 +186,50 @@ describe("bot media tools", () => {
     expect(externalEffect.create).toHaveBeenCalledTimes(2);
     expect(generate).not.toHaveBeenCalled();
   });
+  it("leaves generation slots available after transcription and segmentation", async () => {
+    const { options, externalEffect, provider } = setup();
+    const slots = new Set<string>();
+    externalEffect.create.mockImplementation(async ({ data }) => {
+      if (slots.has(data.idempotencyKey)) throw { code: "P2002" };
+      slots.add(data.idempotencyKey);
+      return { id: data.idempotencyKey, ...data };
+    });
+    const transcribe = vi.fn(async () => ({
+      bytes: new TextEncoder().encode("{}"),
+      mimeType: "application/json",
+    }));
+    const segmentImage = vi.fn(async () => ({
+      bytes: new TextEncoder().encode("{}"),
+      mimeType: "application/json",
+    }));
+    const media = Object.assign(provider, {
+      capabilities: { ...provider.capabilities, transcription: true, segmentation: true },
+      transcribe,
+      segmentImage,
+    });
+    const loadSource = vi.fn(async () => ({ bytes: new Uint8Array([1]), mimeType: "image/png" }));
+    for (const name of ["transcribe_media", "segment_image"] as const)
+      expect(
+        await generateMediaFromTool({
+          ...options,
+          provider: media,
+          name,
+          args: { prompt: "input", sourcePath: "shared/input" },
+          loadSource,
+          executionId: name,
+        }),
+      ).toHaveProperty("status", "completed");
+    for (let attempt = 0; attempt < 2; attempt++)
+      expect(
+        await generateMediaFromTool({ ...options, executionId: `image-${attempt}` }),
+      ).toHaveProperty("status", "completed");
+    expect(await generateMediaFromTool({ ...options, executionId: "image-excess" })).toHaveProperty(
+      "error",
+    );
+    expect(slots.size).toBe(4);
+    expect(transcribe).toHaveBeenCalledOnce();
+    expect(segmentImage).toHaveBeenCalledOnce();
+  });
   it("does not rebill a replayed execution", async () => {
     const { options, externalEffect, row, provider } = setup();
     externalEffect.findFirst.mockResolvedValue(row);
