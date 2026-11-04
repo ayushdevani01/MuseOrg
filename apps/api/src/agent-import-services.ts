@@ -115,7 +115,8 @@ export function createAgentImportServices({
     afterModelKey: (provider) =>
       (deps.providerCatalog ?? providerCatalogCache).invalidate(canonicalPiProviderId(provider)),
     prepareMcpServer,
-    insertMcpServer,
+    insertMcpServer: (tx, actor, input, stored) =>
+      insertMcpServer(tx, actor, input, stored, { defaultForBots: false }),
     inTransaction: (run) =>
       withSerializableRetry(() =>
         deps.prisma.$transaction(run, {

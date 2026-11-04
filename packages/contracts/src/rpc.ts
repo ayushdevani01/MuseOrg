@@ -889,7 +889,11 @@ export const appContract = {
   mcp: {
     servers: {
       list: oc.output(z.array(McpServerSchema)),
-      create: oc.input(McpServerConfigInput).output(McpServerSchema),
+      create: oc
+        .input(
+          McpServerConfigInput.and(z.object({ excludedBotIds: z.array(Id).max(1000).default([]) })),
+        )
+        .output(McpServerSchema),
       update: oc
         .input(
           z.union([

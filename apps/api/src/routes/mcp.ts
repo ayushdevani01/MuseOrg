@@ -12,7 +12,7 @@ import {
 import { signupSurveyAsksTeamSize } from "@rakazo/contracts";
 import { containsSecret } from "@rakazo/core";
 import type { Prisma } from "@rakazo/db";
-import { IsolationError } from "@rakazo/db";
+import { assignMcpServerToBots, IsolationError, lockSpaceForContentCreation } from "@rakazo/db";
 import { getLogger } from "@rakazo/logging";
 import { searchIntegrationCatalog } from "../integration-catalog.js";
 import {
@@ -276,7 +276,11 @@ export function mcpRoutes(ctx: RouterContext) {
         create: authed.mcp.servers.create.handler(async ({ context, input }) => {
           const stored = await prepareMcpServer(context.actor, input);
           const row = await deps.prisma
-            .$transaction((tx) => insertMcpServer(tx, context.actor, input, stored))
+            .$transaction((tx) =>
+              insertMcpServer(tx, context.actor, input, stored, {
+                excludedBotIds: input.excludedBotIds,
+              }),
+            )
             .catch((error: unknown) => {
               // The slug comes from the name, so this is a second server with the same name.
               if (isUniqueViolation(error)) {
@@ -555,6 +559,7 @@ export function mcpRoutes(ctx: RouterContext) {
             },
             async (tx, decision) => {
               if (!decision.assign) throw new IsolationError();
+              await lockSpaceForContentCreation(tx, context.actor);
               const [bot, server] = await Promise.all([
                 tx.bot.findFirst({
                   where: {
@@ -571,10 +576,17 @@ export function mcpRoutes(ctx: RouterContext) {
                     userId: context.actor.userId,
                     enabled: true,
                   },
-                  select: { id: true },
+                  select: { id: true, defaultForBots: true },
                 }),
               ]);
               if (!bot || !server) throw new IsolationError();
+              if (!server.defaultForBots) {
+                await tx.mcpServer.update({
+                  where: { id: server.id },
+                  data: { defaultForBots: true },
+                });
+                await assignMcpServerToBots(tx, context.actor, server.id);
+              }
               const assignment = await tx.botMcpServer.upsert({
                 where: { botId_serverId: { botId: bot.id, serverId: server.id } },
                 create: {
@@ -621,6 +633,7 @@ export function mcpRoutes(ctx: RouterContext) {
         }),
         replace: authed.mcp.assignments.replace.handler(async ({ context, input }) => {
           const { rows, seqs } = await deps.prisma.$transaction(async (tx) => {
+            await lockSpaceForContentCreation(tx, context.actor);
             const bot = await tx.bot.findFirst({
               where: {
                 id: input.botId,
@@ -636,9 +649,18 @@ export function mcpRoutes(ctx: RouterContext) {
                 spaceId: context.actor.spaceId,
                 userId: context.actor.userId,
               },
-              select: { id: true },
+              select: { id: true, defaultForBots: true },
             });
             if (servers.length !== input.assignments.length) throw new IsolationError();
+            for (const server of servers) {
+              if (!server.defaultForBots) {
+                await tx.mcpServer.update({
+                  where: { id: server.id },
+                  data: { defaultForBots: true },
+                });
+                await assignMcpServerToBots(tx, context.actor, server.id);
+              }
+            }
             const previous = await tx.botMcpServer.findMany({
               where: {
                 botId: bot.id,

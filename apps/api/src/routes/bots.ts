@@ -312,29 +312,31 @@ export function botsRoutes(ctx: RouterContext) {
             modelId: source.modelId,
             thinkingLevel: source.thinkingLevel,
             disabledBuiltinTools: source.disabledBuiltinTools,
+            seed: async (tx, botId) => {
+              const assignments = await tx.botMcpServer.findMany({
+                where: {
+                  botId: source.id,
+                  spaceId: context.actor.spaceId,
+                  userId: context.actor.userId,
+                },
+              });
+              await tx.botMcpServer.deleteMany({ where: { botId } });
+              if (assignments.length)
+                await tx.botMcpServer.createMany({
+                  data: assignments.map((assignment) => ({
+                    spaceId: context.actor.spaceId,
+                    userId: context.actor.userId,
+                    botId,
+                    serverId: assignment.serverId,
+                    allowAllTools: assignment.allowAllTools,
+                    allowedTools: assignment.allowedTools as Prisma.InputJsonValue,
+                  })),
+                });
+            },
           })
           .catch((error: unknown) => {
             throw mapSpaceLifecycleError(error);
           });
-        const assignments = await deps.prisma.botMcpServer.findMany({
-          where: {
-            botId: source.id,
-            spaceId: context.actor.spaceId,
-            userId: context.actor.userId,
-          },
-        });
-        if (assignments.length) {
-          await deps.prisma.botMcpServer.createMany({
-            data: assignments.map((assignment) => ({
-              spaceId: context.actor.spaceId,
-              userId: context.actor.userId,
-              botId: duplicate.id,
-              serverId: assignment.serverId,
-              allowAllTools: assignment.allowAllTools,
-              allowedTools: assignment.allowedTools as Prisma.InputJsonValue,
-            })),
-          });
-        }
         return duplicate;
       }),
       reorder: authed.bots.reorder.handler(async ({ context, input }) => {

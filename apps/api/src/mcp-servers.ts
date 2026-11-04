@@ -10,6 +10,7 @@ import {
 import type { Actor, McpServer, McpServerConfigInput } from "@rakazo/contracts";
 import { mcpOAuthEnvReferences } from "@rakazo/contracts";
 import type { McpServer as McpServerRow, Prisma } from "@rakazo/db";
+import { assignMcpServerToBots, lockSpaceForContentCreation } from "@rakazo/db";
 import { getLogger } from "@rakazo/logging";
 import { dismissMcpServerApprovals } from "./mcp-approval.js";
 import type { McpSecretMaterial } from "./mcp-material.js";
@@ -286,7 +287,9 @@ export function createMcpServers(
     actor: Actor,
     input: McpServerConfigInput,
     stored: Awaited<ReturnType<typeof prepareMcpServer>>,
+    access: { defaultForBots?: boolean; excludedBotIds?: string[] } = {},
   ) => {
+    await lockSpaceForContentCreation(tx, actor);
     if (stored) {
       await tx.secret.create({
         data: {
@@ -298,7 +301,7 @@ export function createMcpServers(
         },
       });
     }
-    return tx.mcpServer.create({
+    const server = await tx.mcpServer.create({
       data: {
         spaceId: actor.spaceId,
         userId: actor.userId,
@@ -320,8 +323,12 @@ export function createMcpServers(
           : {}) as Prisma.InputJsonValue,
         secretId: stored?.id,
         enabled: input.enabled,
+        defaultForBots: access.defaultForBots ?? true,
       },
     });
+    if (server.defaultForBots)
+      await assignMcpServerToBots(tx, actor, server.id, access.excludedBotIds);
+    return server;
   };
   const announceMcpServer = async (row: McpServerRow, actor: Actor) => {
     const oauth = await mcpOAuth.summaryFor(row, actor);
