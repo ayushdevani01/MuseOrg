@@ -13,6 +13,7 @@ import {
 } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { LoadingState } from "./components/ai/primitives";
+import { BetaAccessGate } from "./components/BetaAccessGate";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PageLoading } from "./components/PageLoading";
 import { PersonalModelGate } from "./components/PersonalModelGate";
@@ -149,7 +150,7 @@ function SessionApp() {
   }
 
   const user = session.data?.user;
-  return (
+  const content = (
     <QueryUserProvider value={user?.id ?? null}>
       <div className="h-full" data-rakazo-app-state="ready">
         <Suspense fallback={<PageLoading />}>
@@ -221,6 +222,7 @@ function SessionApp() {
       </div>
     </QueryUserProvider>
   );
+  return user ? <BetaAccessGate key={user.id}>{content}</BetaAccessGate> : content;
 }
 
 /**

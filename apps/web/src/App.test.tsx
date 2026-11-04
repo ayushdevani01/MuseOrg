@@ -52,6 +52,9 @@ vi.mock("./lib/rpc", () => ({ rpc: { analytics: { screen: capability.screen } } 
 vi.mock("./components/SubscriptionGate", () => ({
   SubscriptionGate: ({ children }: { children: ReactNode }) => children,
 }));
+vi.mock("./components/BetaAccessGate", () => ({
+  BetaAccessGate: ({ children }: { children: ReactNode }) => children,
+}));
 vi.mock("./components/PersonalModelGate", () => ({
   PersonalModelGate: ({ children }: { children: ReactNode }) => children,
 }));
