@@ -10,6 +10,7 @@ import type {
   AutoReviewResult,
   CacheCapabilities,
 } from "@rakazo/adapter-kit";
+import type { ModelFallbackTrigger } from "@rakazo/contracts";
 import type { AutoReviewJudgeDecision } from "@rakazo/core";
 import { escapePromptData, redactSecrets } from "@rakazo/core";
 import { formatCurrentTimeInstruction } from "./current-time.js";
@@ -40,6 +41,7 @@ export type AutoReviewChecker = {
   thinkingLevel?: AgentRunModel["thinkingLevel"];
   /** The connection the approval choice is pinned to. */
   credentialId?: string;
+  fallbackOn?: ModelFallbackTrigger;
 };
 
 export type AutoReviewJudgeResult = AutoReviewResult;

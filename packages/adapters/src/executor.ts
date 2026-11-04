@@ -1454,11 +1454,14 @@ export function createRunExecutor(deps: ExecutorDeps) {
                     }
                   : undefined,
               },
-              fallbackModels: fallbackModels.map(({ provider, modelId, credentialId }) => ({
-                provider,
-                id: modelId,
-                ...(credentialId ? { connectionId: credentialId } : {}),
-              })),
+              fallbackModels: fallbackModels.map(
+                ({ provider, modelId, credentialId, fallbackOn }) => ({
+                  provider,
+                  id: modelId,
+                  ...(credentialId ? { connectionId: credentialId } : {}),
+                  ...(fallbackOn ? { fallbackOn } : {}),
+                }),
+              ),
               resolveFallbackModel: fallbackModelKeys.size
                 ? async (provider, modelId, connectionId) => {
                     const key = fallbackKey(provider, modelId, connectionId);

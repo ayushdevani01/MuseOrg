@@ -608,6 +608,61 @@ describe("Pi runtime transient model retries", () => {
 });
 
 describe("Pi runtime ordered model fallback", () => {
+  it.each([
+    ["429 rate_limit_error", true],
+    ["503 overloaded", false],
+    ["Request timed out", false],
+    ["401 invalid_api_key", false],
+    ["429 insufficient_quota", false],
+  ])("opens a restricted backup for %s only when eligible (%s)", async (failure, eligible) => {
+    const input = request([{ provider: backupA.provider, id: backupA.id, apiKey: "backup-key" }]);
+    input.fallbackModels![0]!.fallbackOn = "rate_limit";
+    input.resolveFallbackModel = vi.fn(async () => ({
+      provider: backupA.provider,
+      id: backupA.id,
+      apiKey: "backup-key",
+    }));
+    let first = true;
+    providerState.stream.mockImplementation((target: Model<"openai-completions">) => {
+      if (first) {
+        first = false;
+        return stream(target, message(target, [], "error", failure));
+      }
+      return stream(target, message(target, [{ type: "text", text: "recovered" }], "stop"));
+    });
+    if (failure === "401 invalid_api_key" || failure === "429 insufficient_quota") {
+      await expect(run(input)).rejects.toThrow(failure);
+    } else {
+      await run(input);
+    }
+    expect(input.resolveFallbackModel).toHaveBeenCalledTimes(eligible ? 1 : 0);
+    expect(providerState.stream.mock.calls.some(([target]) => target.id === backupA.id)).toBe(
+      eligible,
+    );
+  });
+
+  it("retains a restricted backup when a retry changes from overload to rate limit", async () => {
+    const input = request([{ provider: backupA.provider, id: backupA.id, apiKey: "backup-key" }]);
+    input.fallbackModels![0]!.fallbackOn = "rate_limit";
+    providerState.stream
+      .mockImplementationOnce(() =>
+        stream(primary, message(primary, [], "error", "503 overloaded")),
+      )
+      .mockImplementationOnce(() =>
+        stream(primary, message(primary, [], "error", "429 rate_limit_error")),
+      )
+      .mockImplementation((target: Model<"openai-completions">) =>
+        stream(target, message(target, [{ type: "text", text: "recovered" }], "stop")),
+      );
+    const events = await run(input);
+    expect(events.at(-1)).toEqual({ type: "done", text: "recovered" });
+    expect(providerState.stream.mock.calls.map(([target]) => target.id)).toEqual([
+      primary.id,
+      primary.id,
+      backupA.id,
+    ]);
+  });
+
   it.each(["absent", "empty"])(
     "passes the original stream options and terminal content through with %s backups",
     async (backups) => {
@@ -1035,6 +1090,7 @@ describe("Pi runtime ordered model fallback", () => {
     const input = request([
       { provider: backupA.provider, id: backupA.id, apiKey: "fake-backup-a" },
     ]);
+    input.fallbackModels![0]!.fallbackOn = "rate_limit";
     const executeTool = vi.mocked(input.executeTool!);
     let primaryCalls = 0;
     let backupContext: { messages?: unknown[] } | undefined;

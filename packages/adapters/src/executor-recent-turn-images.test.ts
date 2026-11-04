@@ -441,10 +441,16 @@ describe("recent turn images follow model vision", () => {
       provider: "openrouter",
       modelId: "openai/gpt-4o",
       credentialId: "work-credential",
+      fallbackOn: "rate_limit" as const,
     };
     const { prisma, request } = await runWithModel(TEXT_ONLY_MODEL, backup);
     expect(request.fallbackModels).toEqual([
-      { provider: backup.provider, id: backup.modelId, connectionId: "work-credential" },
+      {
+        provider: backup.provider,
+        id: backup.modelId,
+        connectionId: "work-credential",
+        fallbackOn: "rate_limit",
+      },
     ]);
     const resolve = request.resolveFallbackModel;
     if (!resolve) throw new Error("Backup resolver is missing");

@@ -9,7 +9,11 @@ import type {
 import { getSupportedThinkingLevels } from "@earendil-works/pi-ai";
 import { AssistantMessageEventStream } from "@earendil-works/pi-ai/utils/event-stream";
 import type { AgentRunRequest, ConnectorTool } from "@rakazo/adapter-kit";
-import { isRetryableProviderUnavailable, isTransientModelError } from "@rakazo/adapter-kit";
+import {
+  isModelRateLimitError,
+  isRetryableProviderUnavailable,
+  isTransientModelError,
+} from "@rakazo/adapter-kit";
 import type { ModelBackupOutcome } from "@rakazo/core";
 import { abortableDelay, MODEL_OUTPUT_LIMIT_ERROR } from "@rakazo/core";
 import { getLogger } from "@rakazo/logging";
@@ -299,11 +303,16 @@ export function fallbackAwareModelStream(
   };
   const resolveNext = async (
     current: RuntimeModelTarget,
+    error: unknown,
   ): Promise<RuntimeModelTarget | undefined> => {
     const choices = state.request.fallbackModels ?? [];
-    while (state.nextIndex < choices.length && !signalAborted()) {
-      const choice = choices[state.nextIndex++];
+    let index = state.nextIndex;
+    while (index < choices.length && !signalAborted()) {
+      const choice = choices[index++];
       if (!choice) continue;
+      // Do not consume a restricted choice: a same-model retry may later hit a rate limit.
+      if (choice.fallbackOn === "rate_limit" && !isModelRateLimitError(error)) continue;
+      state.nextIndex = index;
       const key = modelTargetKey(choice);
       if (state.attempted.has(key)) continue;
       state.attempted.add(key);
@@ -523,7 +532,7 @@ export function fallbackAwareModelStream(
                 target.config.provider,
                 event.error.errorMessage ?? "Model request failed.",
               );
-              const next = await resolveNext(target);
+              const next = await resolveNext(target, event.error);
               if (failIfAborted(target)) return;
               if (next) {
                 state.messagesBeforeSwitch = context.messages.length;

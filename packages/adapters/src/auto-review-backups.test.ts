@@ -7,6 +7,21 @@ const candidates = [
   { provider: "two", model: "second" },
 ];
 describe("approval model backups", () => {
+  it.each(["429 rate_limit_error", "503 unavailable", "429 insufficient_quota"])(
+    "respects a restricted backup after %s",
+    async (failure) => {
+      const review = vi
+        .fn<() => Promise<AutoReviewResult>>()
+        .mockRejectedValueOnce(new Error(failure))
+        .mockResolvedValue({ decision: "ask", model: "second" });
+      await reviewWithBackups(
+        [candidates[0]!, { ...candidates[1]!, fallbackOn: "rate_limit" }],
+        review,
+        new AbortController().signal,
+      );
+      expect(review).toHaveBeenCalledTimes(failure === "429 rate_limit_error" ? 2 : 1);
+    },
+  );
   it.each(["pass", "ask"] as const)("never retries a deliberate %s", async (decision) => {
     const review = vi.fn(async () => ({ decision, model: "first" }));
     expect(

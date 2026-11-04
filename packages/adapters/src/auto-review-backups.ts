@@ -1,4 +1,5 @@
 import type { AutoReviewResult } from "@rakazo/adapter-kit";
+import { isModelRateLimitError } from "@rakazo/adapter-kit";
 import type { AutoReviewChecker } from "./auto-review.js";
 
 /** A deliberate ask is final. Only unavailable checkers advance to an ordered backup. */
@@ -13,8 +14,15 @@ export async function reviewWithBackups(
     reason: "Checker could not complete the review.",
   };
   const seen = new Set<string>();
+  let previousFailure: unknown;
   for (const candidate of candidates) {
     if (signal.aborted) break;
+    if (
+      seen.size &&
+      candidate.fallbackOn === "rate_limit" &&
+      !isModelRateLimitError(previousFailure)
+    )
+      continue;
     const key = JSON.stringify([
       candidate.provider,
       candidate.model,
@@ -24,7 +32,9 @@ export async function reviewWithBackups(
     seen.add(key);
     try {
       result = await review(candidate);
-    } catch {
+      previousFailure = result.reason;
+    } catch (error) {
+      previousFailure = error;
       result = {
         decision: "error",
         model: `${candidate.provider}/${candidate.model}`,

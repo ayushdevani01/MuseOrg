@@ -721,6 +721,7 @@ async function reviewToolCall(
           model: choice.modelId,
           thinkingLevel: choice.thinkingLevel,
           credentialId: choice.credentialId,
+          fallbackOn: choice.fallbackOn,
         })) ?? []),
       ],
       async (checker) => {
