@@ -14,6 +14,25 @@ const HOST_CREDENTIAL_ENV = [
 ];
 
 describe("resolveDeploymentModel", () => {
+  it("uses a generic deployment key for the explicitly selected provider", () => {
+    expect(
+      resolveDeploymentModel({
+        PI_DEFAULT_PROVIDER: "meta",
+        PI_DEFAULT_MODEL: "muse-spark-1.3-contributor",
+        PI_DEFAULT_API_KEY: "offline-shared-key",
+        OPENROUTER_API_KEY: "other-key",
+      }),
+    ).toMatchObject({
+      provider: "meta",
+      model: "muse-spark-1.3-contributor",
+      key: "offline-shared-key",
+      configured: true,
+    });
+    expect(
+      resolveDeploymentModel({ PI_DEFAULT_PROVIDER: "meta", OPENROUTER_API_KEY: "other-key" })
+        .configured,
+    ).toBe(false);
+  });
   beforeEach(() => {
     for (const name of HOST_CREDENTIAL_ENV) vi.stubEnv(name, "");
   });

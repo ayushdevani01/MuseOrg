@@ -36,7 +36,18 @@ export function deploymentModelRole(
   const provider = defaults.settings?.defaultModelProvider ?? defaults.deployment?.provider;
   const modelId =
     usableModelId(defaults.settings?.defaultModelId) ?? usableModelId(defaults.deployment?.model);
-  return { primary: provider && modelId ? { provider, modelId } : null, backups: [] };
+  const backup = usableModelId((defaults.env ?? process.env).PI_DEFAULT_BACKUP_MODEL);
+  return {
+    primary: provider && modelId ? { provider, modelId } : null,
+    backups:
+      provider &&
+      modelId &&
+      backup &&
+      backup !== modelId &&
+      provider === defaults.deployment?.provider
+        ? [{ provider, modelId: backup, fallbackOn: "rate_limit" }]
+        : [],
+  };
 }
 
 export type EffectiveModelRole = ModelRoleSettings & {

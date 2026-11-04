@@ -45,7 +45,7 @@ export function resolveDeploymentModel(env: NodeJS.ProcessEnv = process.env) {
     anthropic: "claude-sonnet-5",
   };
   const explicitModel = env.PI_DEFAULT_MODEL?.trim();
-  const key = keys[provider];
+  const key = env.PI_DEFAULT_API_KEY?.trim() || keys[provider];
   const hostCredentials =
     !key &&
     Boolean(explicitModel) &&

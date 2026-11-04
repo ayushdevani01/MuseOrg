@@ -442,17 +442,22 @@ export async function resolveConnectedRunModel(
   /** The connection a role row is pinned to. */
   credentialId?: string,
 ): Promise<AgentRunRequest["model"]> {
+  const deployment = resolveDeploymentModel();
+  const usesDeployment =
+    !credentialId &&
+    !requiredPersonalModelProvider(deps) &&
+    deps.deploymentModelConfigured &&
+    provider === deployment.provider &&
+    [deployment.model, process.env.PI_DEFAULT_BACKUP_MODEL?.trim()].includes(modelId);
   const hostedProvider = (await modelCreditBillingEnabled(deps))
     ? resolveDeploymentModel().provider
     : undefined;
-  const validationError = await validateConnectedModelChoice(
-    deps.prisma,
-    deps.secretStore,
-    scope,
-    provider,
-    modelId,
-    { hostedProvider, credentialId },
-  );
+  const validationError = usesDeployment
+    ? null
+    : await validateConnectedModelChoice(deps.prisma, deps.secretStore, scope, provider, modelId, {
+        hostedProvider,
+        credentialId,
+      });
   if (validationError) throw new Error(validationError);
   const credential = await findConnectedModelCredential(
     deps.prisma,
@@ -464,6 +469,7 @@ export async function resolveConnectedRunModel(
   );
   if (
     !credential &&
+    !usesDeployment &&
     !((await modelCreditBillingEnabled(deps)) && provider === resolveDeploymentModel().provider)
   )
     throw new Error(PINNED_PROVIDER_NOT_CONNECTED);
@@ -475,7 +481,7 @@ export async function resolveConnectedRunModel(
     provider,
     modelId,
     registerSecrets,
-    { requireStoredSecret },
+    { requireStoredSecret: requireStoredSecret && !usesDeployment },
   );
   return {
     provider,

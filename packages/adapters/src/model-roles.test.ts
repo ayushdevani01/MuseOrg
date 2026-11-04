@@ -63,6 +63,31 @@ function roleClient(rows: RoleRow[]) {
 }
 
 describe("configured model selection", () => {
+  it("uses the deployment backup only on rate limits and only for the matching provider", () => {
+    const configured = {
+      deployment: { provider: "meta", model: "contributor" },
+      env: { PI_DEFAULT_BACKUP_MODEL: "standard" },
+    };
+    expect(deploymentModelRole("main", configured)).toEqual({
+      primary: { provider: "meta", modelId: "contributor" },
+      backups: [{ provider: "meta", modelId: "standard", fallbackOn: "rate_limit" }],
+    });
+    expect(
+      deploymentModelRole("main", {
+        ...configured,
+        settings: {
+          defaultModelProvider: "other",
+          defaultModelId: "other-model",
+        },
+      }).backups,
+    ).toEqual([]);
+    expect(
+      deploymentModelRole("main", {
+        ...configured,
+        env: { PI_DEFAULT_BACKUP_MODEL: "contributor" },
+      }).backups,
+    ).toEqual([]);
+  });
   it.each<{
     name: string;
     input: Partial<SelectionInput>;
