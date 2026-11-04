@@ -1,6 +1,5 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import type { NavLink } from "@rakazo/contracts";
-import { ANDROID_APK_URL, IOS_APP_STORE_URL } from "@rakazo/contracts";
 import {
   AppMarkStack,
   Button,
@@ -18,7 +17,6 @@ import {
   LogOut,
   Plug,
   Settings,
-  Smartphone,
   SquareKanban,
   UserRound,
 } from "lucide-react";
@@ -156,15 +154,6 @@ export function SidebarFooter({
               <Gauge className="text-muted-foreground" strokeWidth={1.75} />
               <Trans>Usage</Trans>
             </Button>
-            <a
-              className={`${buttonVariants({ variant: "ghost" })} h-9 w-full justify-start gap-2.5 font-normal`}
-              href={/Android/i.test(navigator.userAgent) ? ANDROID_APK_URL : IOS_APP_STORE_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Smartphone className="text-muted-foreground" strokeWidth={1.75} />
-              <Trans>Get the mobile app</Trans>
-            </a>
             <a
               className={`${buttonVariants({ variant: "ghost" })} h-9 w-full justify-start gap-2.5 font-normal`}
               href="https://github.com/elie222/rakazo/blob/main/docs/self-host.md"
