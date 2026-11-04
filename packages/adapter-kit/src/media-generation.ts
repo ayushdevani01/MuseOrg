@@ -4,6 +4,8 @@ export type MediaSource = { bytes: Uint8Array; mimeType: string };
 export type MediaGenerationInput = {
   prompt: string;
   source?: MediaSource;
+  /** Half-open selection in the displayed source image's pixels. */
+  box?: { left: number; top: number; right: number; bottom: number };
 };
 export type MediaToolName =
   | "generate_image"

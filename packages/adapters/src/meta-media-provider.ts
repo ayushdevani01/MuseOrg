@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import { decodeMaskToRaster, parseImageStream, recordsOfKind } from "@meta-sam/parser";
+import {
+  buildObjectPrompt,
+  decodeMaskToRaster,
+  ObjectPromptError,
+  parseImageStream,
+  recordsOfKind,
+} from "@meta-sam/parser";
 import type {
   AdapterContext,
   GeneratedMedia,
@@ -95,7 +101,9 @@ export class MetaMediaGenerationProvider implements MediaGenerationProvider {
             ? "rate_limit"
             : [401, 403].includes(response.status)
               ? "authentication"
-              : "provider_failure",
+              : [400, 422].includes(response.status)
+                ? "invalid_input"
+                : "provider_failure",
         );
       }
       return response;
@@ -199,10 +207,24 @@ export class MetaMediaGenerationProvider implements MediaGenerationProvider {
     context: AdapterContext,
   ): Promise<GeneratedMedia> {
     const source = sourceInput(input);
-    const prompt = mediaPromptSchema.parse(input).prompt;
+    const selection = mediaPromptSchema.parse(input);
     const original = sharp(source.bytes, { limitInputPixels: MAX_PIXELS }).rotate();
     const normalized = await original.png().toBuffer({ resolveWithObject: true });
     const { width, height } = normalized.info;
+    let prompt = selection.prompt;
+    if (selection.box) {
+      try {
+        prompt = buildObjectPrompt({
+          size: { width, height },
+          objects: [{ id: 1, prompts: [{ box: selection.box }] }],
+        });
+      } catch (error) {
+        if (error instanceof ObjectPromptError) throw new MediaGenerationError("invalid_input");
+        throw error;
+      }
+    } else if (prompt.includes("<|box;") && !prompt.startsWith("<0f>")) {
+      throw new MediaGenerationError("invalid_input");
+    }
     const model = this.options.models?.segmentation ?? "sam-3.1";
     const response = await this.request("responses", context, {
       model,

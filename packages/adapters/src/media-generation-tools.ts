@@ -151,6 +151,7 @@ export async function generateMediaFromTool(options: {
                   tool: options.name,
                   prompt: input.data.prompt,
                   ...(input.data.sourcePath ? { sourcePath: input.data.sourcePath } : {}),
+                  ...(input.data.box ? { box: input.data.box } : {}),
                   executionId: options.executionId,
                 },
                 result: { provider: provider.id },

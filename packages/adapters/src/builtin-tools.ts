@@ -249,12 +249,24 @@ export const builtinAgentTools: ConnectorTool[] = [
   {
     name: "segment_image",
     description:
-      "Find an object in an image at sourcePath using a short concrete noun prompt. Saves real masks, a cutout, overlay and raw geometry on the shared computer. Zero matches is a valid result, never invent a mask. For an explicit region, prompt may use the documented SAM box/point grammar in source pixels. May incur charges; do not retry uncertain submissions automatically.",
+      "Find an object in an image at sourcePath using a short concrete noun prompt. Saves real masks, a cutout, overlay and raw geometry on the shared computer. Zero matches is valid. For a selected region, pass box coordinates in displayed source pixels instead of encoding them in prompt. May incur charges; do not retry uncertain submissions automatically.",
     inputSchema: {
       type: "object",
       properties: {
         sourcePath: { type: "string", minLength: 1, maxLength: 500 },
         prompt: { type: "string", minLength: 1, maxLength: 4000 },
+        box: {
+          type: "object",
+          description: "Optional half-open selection in displayed source pixels.",
+          properties: {
+            left: { type: "integer", minimum: 0 },
+            top: { type: "integer", minimum: 0 },
+            right: { type: "integer", minimum: 1 },
+            bottom: { type: "integer", minimum: 1 },
+          },
+          required: ["left", "top", "right", "bottom"],
+          additionalProperties: false,
+        },
       },
       required: ["sourcePath", "prompt"],
     },

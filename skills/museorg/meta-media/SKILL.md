@@ -14,7 +14,9 @@ uncertain facts rather than inventing an offer, price or launch date.
 
 For an image, use `segment_image` with a short noun naming one object. Read the actual
 result: zero matches is valid and supplies no mask. If needed, inspect the source and
-provide an explicit region with SAM's documented box/point prompt grammar. Coordinates
+provide an explicit region using the tool's `box` object with left, top, right and
+bottom coordinates (right and bottom are exclusive). Keep the prompt a noun phrase;
+the provider formats its own protocol. Coordinates
 must be in the source image's pixels. The tool retains raw geometry, mask, cutout and
 overlay separately. Use the returned paths for handoffs to another coworker.
 

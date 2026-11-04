@@ -16,6 +16,16 @@ import { fetchSafeWebBytes } from "./web-ssrf.js";
 export const mediaPromptSchema = z.object({
   prompt: z.string().trim().min(1).max(4000),
   sourcePath: z.string().trim().min(1).max(500).optional(),
+  box: z
+    .object({
+      left: z.number().int().nonnegative(),
+      top: z.number().int().nonnegative(),
+      right: z.number().int().positive(),
+      bottom: z.number().int().positive(),
+    })
+    .strict()
+    .refine((box) => box.right > box.left && box.bottom > box.top)
+    .optional(),
 });
 export function validateGeneratedMedia(
   output: GeneratedMedia,

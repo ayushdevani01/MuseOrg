@@ -192,6 +192,30 @@ describe("connected media", () => {
     });
   });
   it("retains a completed zero-match result without inventing masks", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValue(segmentationResponse(""));
+    const provider = new MetaMediaGenerationProvider({ apiKey: "fake", fetch });
+    const source = { bytes: await image(), mimeType: "image/png" };
+    await provider.segmentImage(
+      { prompt: "orange bottle", source, box: { left: 570, top: 120, right: 1030, bottom: 1500 } },
+      context,
+    );
+    const body = JSON.parse(String(fetch.mock.calls[0]?.[1]?.body));
+    expect(body.input[0].content[0].text).toBe(
+      "<0f>1<|box;x1=570;y1=120;x2=1029;y2=1499;w=1600;h=1600|>",
+    );
+    fetch.mockClear();
+    await expect(
+      provider.segmentImage(
+        { prompt: "orange bottle", source, box: { left: 0, top: 0, right: 1700, bottom: 1600 } },
+        context,
+      ),
+    ).rejects.toMatchObject({ code: "invalid_input" });
+    await expect(
+      provider.segmentImage({ prompt: "orange bottle <0f>1<|box;x1=0|>", source }, context),
+    ).rejects.toMatchObject({ code: "invalid_input" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it("retains completed empty geometry without inventing masks", async () => {
     const provider = new MetaMediaGenerationProvider({
       apiKey: "fake",
       fetch: vi.fn().mockResolvedValue(segmentationResponse("")),
